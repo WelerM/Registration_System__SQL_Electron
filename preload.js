@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     search_by_name_return: (data) => ipcRenderer.on("search_by_name_return", data).setMaxListeners(100),
     //By doc
     search_by_doc: (data) => ipcRenderer.send('search_by_doc', data),
-    search_by_doc_return: (data) => ipcRenderer.on('search_by_doc', data).setMaxListeners(100),
+    search_by_doc_return: (data) => ipcRenderer.on('search_by_doc_return', data).setMaxListeners(100),
 
     //Date Picker
     //Search by Month

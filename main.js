@@ -3,17 +3,21 @@ const path = require('path')
 const date = new Date()
 const date_day = date.getDate()
 const date_month = date.getMonth()
-const date_month_edited = date.getMonth() + 1
-const date_year = date.getFullYear()
+//const date_month_edited = date.getMonth() + 1
+//const date_year = date.getFullYear()
 const array_meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
+const db_name = 'visitors_database'
+const db_password = '1234567'
+const db_port = 'localhost:3306'
 
-//Database
+
+//Database 
 const connection = async () => {
   if (global.conexao && global.conexao.state != 'disconected')
     return global.conexao
   const mysql = require('mysql2/promise')
-  const con = mysql.createConnection('mysql://root:1234567@localhost:3306/visitors_database')
+  const con = mysql.createConnection(`mysql://root:${db_password}@${db_port}/${db_name}`)
   console.log('Conectou');
   global.conexao = con
   return con
@@ -37,19 +41,27 @@ const createWindow = () => {
   // =========== REGISTRATION INTERFACE =========//
   //Obj coming from registration form
   ipcMain.on('insert_data', (event, data) => {
-        const insert_visitor = async () => {
-          const con = await connection();
-          const sql = 'INSERT INTO visitors (name, document, andar, visit_type, date, hour, month, day) VALUES (?,?,?,?,?,?,?,?)'
-          const values = [data.name, data.document, data.andar, data.visit_type, data.date, data.hour, data.month, data.day]
-          await con.query(sql, values)
-        }
-        insert_visitor()
+    const insert_visitor = async () => {
+      const con = await connection();
+      const sql = 'INSERT INTO visitors (name, document, andar, visit_type, date, hour, month, day) VALUES (?,?,?,?,?,?,?,?)'
+      const values = [data.name, data.document, data.andar, data.visit_type, data.date, data.hour, data.month, data.day]
+      await con.query(sql, values)
+    }
+    insert_visitor()
   })
 
   //Reassing of guests
-  /*    ipcMain.on('reassign_guest', (event, data) => {
-       db.insert(data)
-     }) */
+  ipcMain.on('reassign_guest', (event, data) => {
+    const query = async () => {
+      const con = await connection();
+      const sql = 'INSERT INTO visitors (name, document, andar, visit_type, date, hour, month, day) VALUES (?,?,?,?,?,?,?,?)'
+      const values = [data.name, data.document, data.andar, data.visit_type, data.date, data.hour, data.month, data.day]
+      await con.query(sql, values)
+    }
+    query() 
+ 
+
+  })
 
 
 
@@ -59,27 +71,25 @@ const createWindow = () => {
     const sample = data.name
     const sql_search_by_name = async () => {
       const con = await connection()
-      const [linhas] = await con.query(`SELECT * FROM visitors WHERE name LIKE("${sample}%");`)
-      const movies_title_a = linhas
-      win.webContents.send("search_by_name_return", movies_title_a)
+      const [lines] = await con.query(`SELECT * FROM visitors WHERE name LIKE("${sample}%");`)
+      const result = lines
+      win.webContents.send("search_by_name_return", result)
     }
     sql_search_by_name()
   })
+
   //By doc
-  /* ipcMain.on('search_by_doc', (event, data) => {
-    function search_by_doc() {
-      const obj = data
-      const documento = obj.documento
-      console.log(documento);
-      obj.documento = new RegExp(documento)
-      db.find(obj, (err, data) => {
-        if (data) {
-          win.webContents.send("search_by_doc", data)
-        }
-      })
+  ipcMain.on('search_by_doc', (event, data) => {
+    const sample = data.documento
+    const sql_search_by_doc = async () => {
+      const con = await connection()
+      const [lines] = await con.query(`SELECT * FROM visitors WHERE document LIKE("${sample}%");`)
+      const result = lines
+      win.webContents.send("search_by_doc_return", result)
     }
-    search_by_doc()
-  }) */
+    sql_search_by_doc()
+
+  })
 
 
 
@@ -89,7 +99,7 @@ const createWindow = () => {
   //========= SEARCH BY MONTH ========= //
   //January
   ipcMain.on('jan', (event, data) => {
-    const query = async () => {
+    const query = async () => { 
       const con = await connection()
       const [lines] = await con.query(`SELECT * FROM visitors WHERE month = "janeiro";`)
       const data_return = lines
@@ -209,11 +219,44 @@ const createWindow = () => {
   })
 
 
+  // ========= STATISTICS =============//
+  //Today entries
+  ipcMain.on('today_entries_call', (event, dat) => {
+    const query = async () => {
+      const con = await connection()
+      const [lines] = await con.query(`SELECT * FROM visitors WHERE day = ${date_day};`)
+      const data_return = lines
+      win.webContents.send('today_entries_return', data_return)
+    }
+    query()
+
+  })
+
+  //Month entries
+  ipcMain.on('month_entries_call', (event, data) => {
+    const query = async () => {
+      const con = await connection()
+      const [lines] = await con.query(`SELECT * FROM visitors WHERE month = "${array_meses[date_month]}";`)
+      const data_return = lines
+      win.webContents.send('month_entries_return', data_return)
+    }
+    query()
 
 
+    //All entries
+    ipcMain.on('all_data_call', (event, data) => {
+      const query = async () => {
+        const con = await connection()
+        const [lines] = await con.query(`SELECT * FROM visitors;`)
+        const data_return = lines
+        win.webContents.send('all_data_return', data_return)
+      }
+      query()
 
+    })
+    //===========================================//
 
-
+  })
 
   win.loadFile('index.html')
 }
@@ -223,40 +266,4 @@ app.whenReady().then(() => {
 })
 
 
-/*
 
-  // ========= STATISTICS =============//
-  //Today entries
-  ipcMain.on('today_entries_call', (event, dat) => {
-    const obj = dat
-    const data = obj.data
-    obj.data = new RegExp(data)
-    db.find(obj, (err, data) => {
-      win.webContents.send('today_entries_return', data)
-    });
-  })
-
-  //Month entries
-  ipcMain.on('month_entries_call', (event, data) => {
-    function month_entries_return() {
-      const obj = data
-      const mes = obj.mes
-      obj.mes = new RegExp(mes)
-      db.find(obj, (err, data) => {
-        win.webContents.send('month_entries_return', data)
-      });
-    }
-    month_entries_return()
-  })
-
-  //All entries
-  ipcMain.on('all_data_call', (event, data) => {
-    function all_data_return() {
-      db.find({}, (err, data) => {
-        win.webContents.send('all_data_return', data)
-      });
-    }
-    all_data_return()
-  })
-  //===========================================//
- */

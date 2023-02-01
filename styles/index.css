@@ -1,0 +1,29 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    margin: auto;
+    font-family: 'Helvetica';
+    max-width: 1920px;
+    height: 100vh;
+    background-color: #1f1f1f;
+    color: rgba(255, 255, 255, 0.685);
+    background-color: #141414;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+/* ======= MAIN INTERFACE ====== */
+.main-interface {
+    display: flex;
+    width: 100%;
+    margin: auto;
+
+}
+
+input {
+    color: white;
+}
