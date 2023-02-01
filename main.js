@@ -3,16 +3,15 @@ const path = require('path')
 const date = new Date()
 const date_day = date.getDate()
 const date_month = date.getMonth()
-//const date_month_edited = date.getMonth() + 1
-//const date_year = date.getFullYear()
 const array_meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
+
+
+//Database 
 const db_name = ''//Your database name
 const db_password = ''//Your database password
 const db_port = ''//Your port
 
-
-//Database 
 const connection = async () => {
   if (global.conexao && global.conexao.state != 'disconected')
     return global.conexao
