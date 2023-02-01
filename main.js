@@ -7,9 +7,9 @@ const date_month = date.getMonth()
 //const date_year = date.getFullYear()
 const array_meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
-const db_name = 'visitors_database'
-const db_password = '1234567'
-const db_port = 'localhost:3306'
+const db_name = ''//Your database name
+const db_password = ''//Your database password
+const db_port = ''//Your port
 
 
 //Database 
