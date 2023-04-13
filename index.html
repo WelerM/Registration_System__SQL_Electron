@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Registration system by Weler</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="./styles/registration_interface.css">
     <link rel="stylesheet" href="./styles/search_interface.css">
@@ -15,162 +15,168 @@
     <script src="./js/search_interface.js" defer></script>
     <script src="./js/interface_reset.js" defer></script>
     <script src="./js/registration_interface.js" defer></script>
-
 </head>
 
-<body>
+<body> 
+
     <div class="main-interface">
-
         <div class="registration-interface">
-            <h3>cadastrar novo visitante</h4>
-                <p>Nome</p>
-                <input id="input-nome" type="text" placeholder="nome" required>
-                <p>Documento</p>
-                <input id="input-documento" type="text" placeholder="documento">
-                <p>Andar</p>
-                <input id="input-andar" type="text" placeholder="andar">
-                <p>Tipo de visita</p>
-                <div class="options_container">
-                    <h4 class="selecione_aqui">Selecione aqui
-            </h3>
-            <option class="option">horário agendado</option>
-            <option class="option">prestação de serviços</option>
-            <option class="option">entrega no andar</option>
-            <option class="option">falar com funcionários</option>
-            <option class="option">outro</option>
-        </div>
-        <p class="cadastro-warning-hide">É necessário preencher todos os campos!</p>
-        <div class="clean_btns_container">
-            <div id="limpar-dados">
-                <img src="./img/trash_can.png" alt="">
-                <p>LIMPAR CAMPOS</p>
-            </div>
-            <div id="btn_clean_columns">
-                <img src="./img/trash_can.png" alt="">
-                <p>LIMPAR COLUNAS</p>
-            </div>
-        </div>
-        <button id="btn_cadastrar">
-            <img src="./img/save.png" alt="">
-            <p>INSERIR</p>
-        </button>
-    </div>
+            <h3>register new client</h3>
+            <p>Name</p>
+            <input id="input-nome" type="text" placeholder="nome" required>
+            <p>Id</p>
+            <input id="input-documento" type="text" placeholder="documento">
+            <p>Floor</p>
+            <input id="input-andar" type="text" placeholder="andar">
+            <p>Visit purpose</p>
 
-    <div class="pagina-busca-container">
-        <div class="output-filtro-container">
-            <div class="busca-options-left-container">
-                <h3>pesquisa rápida</h3>
-                <input id="pesquisar-por-nome" type="text" placeholder="Pesquisar por nome">
-                <input id="pesquisar-por-documento" type="text" placeholder="Pesquisar por documento">
-            </div>
+            <select name="" id="">
+                <option class="option">Choose</option>
+                <option class="option">scheduled</option>
+                <option class="option">random services</option>
+                <option class="option">delivery</option>
+                <option class="option">speak to employee</option>
+                <option class="option">another subject</option>
+            </select>
 
-            <div class="busca-options-right-container">
-                <h3>pesquisa por data</h3>
-                <div class="dia-container">
-                    <div class="dia-container-mes">
-                        <img src="./img/arrow.png" id="anterior">
-                        <p id="dp_mes"></p>
-                        <img src="./img/arrow.png" id="proximo">
-                    </div>
-                    <div class="dia-container-dia">
-                        <div id="te" class="dia">1</div>
-                        <div id="te" class="dia">2</div>
-                        <div id="te" class="dia">3</div>
-                        <div id="te" class="dia">4</div>
-                        <div id="te" class="dia">5</div>
-                        <div id="te" class="dia">6</div>
-                        <div id="te" class="dia">7</div>
-                        <div id="te" class="dia">8</div>
-                        <div id="te" class="dia">9</div>
-                        <div class="dia">10</div>
-                        <div class="dia">11</div>
-                        <div class="dia">12</div>
-                        <div class="dia">13</div>
-                        <div class="dia">14</div>
-                        <div class="dia">15</div>
-                        <div class="dia">16</div>
-                        <div class="dia">17</div>
-                        <div class="dia">18</div>
-                        <div class="dia">19</div>
-                        <div class="dia">20</div>
-                        <div class="dia">21</div>
-                        <div class="dia">22</div>
-                        <div class="dia">23</div>
-                        <div class="dia">24</div>
-                        <div class="dia">25</div>
-                        <div class="dia">26</div>
-                        <div class="dia">27</div>
-                        <div class="dia">28</div>
-                        <div class="dia">29</div>
-                        <div class="dia">30</div>
-                        <div class="dia">31</div>
-                        <div class="dia" id="todos-dias">todos</div>
-                    </div>
+            <p class="cadastro-warning-hide">É necessário preencher todos os campos!</p>
+
+            <div class="clean_btns_container">
+                <div id="limpar-dados">
+                    <img src="./img/trash_can.png" alt="">
+                    <p>clean fields</p>
                 </div>
-                <button id="procurar">
-                    <img src="./img/search.png" alt="">
-                    <p>PROCURAR</p>
-                </button>
+                <div id="btn_clean_columns">
+                    <img src="./img/trash_can.png" alt="">
+                    <p>clean results</p>
+                </div>
             </div>
 
-            <div class="statistics-container">
-                <h3>estatisticas de cadastros</h3>
-                <div class="statistics-inner-container">
-                    <p class="statistic_line">Hoje:<span id="statistic_today"></span></p>
-                    <p class="statistic_line">Neste mês:<span id="statistic_month"></span></p>
-                    <p class="statistic_line">Total::<span id="statistic_total"></span></p>
+            <button id="btn_cadastrar">
+                <img src="./img/save.png" alt="">
+                <p>insert</p>
+            </button>
+
+        </div>
+
+        <div class="pagina-busca-container">
+
+            <div class="output-filtro-container">
+
+                <!-- QUICK SEARCH -->
+                <div class="busca-options-left-container">
+                    <h3>quick search</h3>
+                    <input id="pesquisar-por-nome" type="text" placeholder="Pesquisar por nome">
+                    <input id="pesquisar-por-documento" type="text" placeholder="Pesquisar por documento">
+                </div>
+                <!-- DATE PICKER -->
+                <div class="busca-options-right-container">
+                    <h3>search by date</h3>
+                    <div class="dia-container">
+                        <div class="dia-container-mes">
+                            <img src="./img/arrow.png" id="anterior">
+                            <p id="dp_mes"></p>
+                            <img src="./img/arrow.png" id="proximo">
+                        </div>
+                        <div class="dia-container-dia">
+                            <div id="te" class="dia">1</div>
+                            <div id="te" class="dia">2</div>
+                            <div id="te" class="dia">3</div>
+                            <div id="te" class="dia">4</div>
+                            <div id="te" class="dia">5</div>
+                            <div id="te" class="dia">6</div>
+                            <div id="te" class="dia">7</div>
+                            <div id="te" class="dia">8</div>
+                            <div id="te" class="dia">9</div>
+                            <div class="dia">10</div>
+                            <div class="dia">11</div>
+                            <div class="dia">12</div>
+                            <div class="dia">13</div>
+                            <div class="dia">14</div>
+                            <div class="dia">15</div>
+                            <div class="dia">16</div>
+                            <div class="dia">17</div>
+                            <div class="dia">18</div>
+                            <div class="dia">19</div>
+                            <div class="dia">20</div>
+                            <div class="dia">21</div>
+                            <div class="dia">22</div>
+                            <div class="dia">23</div>
+                            <div class="dia">24</div>
+                            <div class="dia">25</div>
+                            <div class="dia">26</div>
+                            <div class="dia">27</div>
+                            <div class="dia">28</div>
+                            <div class="dia">29</div>
+                            <div class="dia">30</div>
+                            <div class="dia">31</div>
+                            <div class="dia" id="todos-dias">all</div>
+                        </div>
+                    </div>
+                    <button id="procurar">
+                        <img src="./img/search.png" alt="">
+                        <p>search</p>
+                    </button>
+                </div>
+                <!-- STATISTICS  -->
+                <div class="statistics-container">
+                    <h3>statistics</h3>
+                    <div class="statistics-inner-container">
+                        <p class="statistic_line">today:<span id="statistic_today"></span></p>
+                        <p class="statistic_line">this month:<span id="statistic_month"></span></p>
+                        <p class="statistic_line">total:<span id="statistic_total"></span></p>
+                    </div>
+
                 </div>
 
             </div>
+
+            <div class="output-screen">
+                <h3 id="output-h2">result</h3>
+                <div class="output-screen-container-titles">
+                    <div class="col-title">date</div>
+                    <div class="col-title">hour</div>
+                    <div class="col-title">name</div>
+                    <div class="col-title">id</div>
+                    <div class="col-title">floor</div>
+                    <div class="col-title-visita">visit purpose</div>
+                    <div class="col-title-blank"></div>
+                </div>
+
+                <div class="nada-encontrado">
+                    <h4>no results found</h4>
+                </div>
+
+                <!-- Colums (built by JavaScript)-->
+                <div class="colunas-container">
+                </div>
+            </div>
+
         </div>
+    </div> 
 
-        <div class="output-screen">
-            <h3 id="output-h2">resultado</h3>
-            <div class="output-screen-container-titles">
-                <div class="col-title">data</div>
-                <div class="col-title">hora</div>
-                <div class="col-title">nome</div>
-                <div class="col-title">documento</div>
-                <div class="col-title">andar</div>
-                <div class="col-title-visita">tipo de visita</div>
-                <div class="col-title-blank"></div>
-            </div>
-
-            <div class="nada-encontrado">
-                <h4>Nenhum dado encontrado</h4>
-            </div>
-
-            <!-- Colums (built by JavaScript)-->
-            <div class="colunas-container">
-            </div>
-        </div>
-
-    </div>
-
-    </div>
-
+    <!-- HIDE -->
     <div class="confirm-registration-screen">
-        <h1>novo cadastro para</h1>
-        <h3>Nome: <span id="confirm_name"></span></h3>
-        <h3>Documento: <span id="confirm_doc"></span></h3>
-        <h3>Andar: <span id="confirm_floor"></span></h3>
+        <h1>new register for</h1>
+        <h3>name: <span id="confirm_name"></span></h3>
+        <h3>id: <span id="confirm_doc"></span></h3>
+        <h3>floor: <span id="confirm_floor"></span></h3>
         <div class="confirm-registration-btns">
-            <button id="btn-confirmar">CONFIRMAR</button>
-            <button id="btn-cancelar">CANCELAR</button>
+            <button id="btn-confirmar">confirm</button>
+            <button id="btn-cancelar">cancel</button>
         </div>
     </div>
-
+    <!-- HIDE -->
     <div class="confirm-re-registration-screen">
-        <h1>novo cadastro para</h1>
-        <h3>Nome: <span id="re_confirm_name"> </span></h3>
-        <h3>Documento: <span id="re_confirm_doc"> </span></h3>
-        <h3>Andar: <span id="re_confirm_floor"> </span></h3>
+        <h1>new register for</h1>
+        <h3>name: <span id="re_confirm_name"> </span></h3>
+        <h3>id: <span id="re_confirm_doc"> </span></h3>
+        <h3>floor: <span id="re_confirm_floor"> </span></h3>
         <div class="re-confirm-registration-btns">
-            <button id="re_btn_confirmar">CONFIRMAR</button>
-            <button id="re_btn_cancelar">CANCELAR</button>
+            <button id="re_btn_confirmar">confirm</button>
+            <button id="re_btn_cancelar">cancel</button>
         </div>
     </div>
 
 </body>
-
 </html>

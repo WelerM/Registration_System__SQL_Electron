@@ -18,7 +18,7 @@ function limpaColunas() {
 //const dias = document.querySelectorAll('.dia')
 function clean_backgroundd() {
     for (i of dias) {
-        i.style.backgroundColor = '#2C2C2C'
+        i.style.backgroundColor = 'rgba(42, 42, 42, 0.516)'
         i.style.color = 'white'
     }
 }

@@ -1,14 +1,17 @@
 
-/* ========= REGISTRATION INTERFACE ======= */
+/* ======= MAIN INTERFACE ====== */
+.main-interface {
+    display: flex;
+    width: 100%;
+}
 .registration-interface {
     display: flex;
     flex-direction: column;
     gap: 5px;
     padding: 20px 25px;
-    width: 500px;
-    background-color: rgba(53, 53, 53, 0.757);
-    box-shadow: 10px 0px 15px rgba(255, 255, 255, 0.065);
-    border-right: 1px solid rgba(255, 255, 255, 0.406);
+    width: 100%;
+    background-color:var(--component_background);
+    border-right: var( --component_border);
     height: 100vh;
     position:relative;
 }
@@ -29,8 +32,19 @@
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.128);
 }
+.registration-interface>h4 {
+    text-align: center;
+}
+.registration-interface>p {
+    margin-bottom: 5px;
+    position: relative;
+    left: 3px;
+}
 
-.options_container {
+
+
+
+select {
     width: 100%;
     height: 40px;
     background-color: rgba(0, 0, 0, 0.356);
@@ -75,15 +89,6 @@
     display: flex;
 }
 
-.registration-interface>h4 {
-    text-align: center;
-}
-
-.registration-interface>p {
-    margin-bottom: 5px;
-    position: relative;
-    left: 3px;
-}
 
 span {
     font-size: 18px;
@@ -132,16 +137,17 @@ span {
 .cadastro-warning-show {
     display: block;
 }
+
+
 .clean_btns_container{
     display: flex;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     gap: 10px;
 }
-
 #limpar-dados {
-    width: 155px;
+    width: 50%;
     padding: 5px 5px;
     font-size: 14px;
     position: relative;
@@ -150,10 +156,9 @@ span {
     font-weight: bold;
     margin-top: 10px;
     transition: 0.5s;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.292);
-    background-color: rgba(56, 56, 56, 0.516);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.245);
+    background-color: var(--btn_background);
+    color: var(--btn_color);
+    border: var(--btn_border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -162,7 +167,6 @@ span {
 #limpar-dados > img{
     width: 20px;
 }
-
 #limpar-dados:hover {
     cursor: pointer;
     background-color: rgba(31, 31, 31, 0.516);
@@ -170,7 +174,7 @@ span {
 }
 
 #btn_clean_columns{
-    width: 160px;
+    width: 50%;
     padding: 5px 3px;
     font-size: 13px;
     position: relative;
@@ -179,10 +183,9 @@ span {
     font-weight: bold;
     margin-top: 10px;
     transition: 0.5s;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.292);
-    background-color: rgba(56, 56, 56, 0.516);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.245);
+    background-color: var(--btn_background);
+    color: var(--btn_color);
+    border: var(--btn_border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,12 +203,11 @@ span {
 #btn_cadastrar {
     height: 40px;
     width: 100%;
-    color:white;
+    color: var(--btn_color);
     border: none;
     margin: auto;
     border-radius: 5px;
     margin-top: 15px;
-    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.292);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -213,8 +215,8 @@ span {
     transition: 0.5s;
     gap: 10px;
     position: relative;
-    background-color: rgba(56, 56, 56, 0.516);
-    border: 1px solid rgba(255, 255, 255, 0.245);
+    background-color: var(--btn_background);
+    border: var(--btn_border);
 }
 #btn_cadastrar > img{
     width: 25px;

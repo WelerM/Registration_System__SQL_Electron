@@ -3,7 +3,6 @@ const left_menu = document.querySelector('.left-menu')
 const input_nome = document.querySelector('#input-nome')
 const input_documento = document.querySelector('#input-documento')
 const input_andar = document.querySelector('#input-andar')
-const options_container = document.querySelector('.options_container')
 const options = document.querySelectorAll('.option')
 const selecione_aqui = document.querySelector('.selecione_aqui')
 const cadastro_warning = document.querySelector('.cadastro-warning-hide')
@@ -19,17 +18,11 @@ const confirm_name = document.querySelector('#confirm_name')
 const confirm_doc = document.querySelector('#confirm_doc')
 const confirm_floor = document.querySelector('#confirm_floor')
 
-//STATISTIC INTERFACE variables
-const statistic_today = document.querySelector('#statistic_today')
-const statistic_month = document.querySelector('#statistic_month')
-const statistic_total = document.querySelector('#statistic_total')
-const statistic_line = document.querySelectorAll('.statistic_line')
 
+ 
  
 
 //=============== REGISTRATION INTERFACE ================================//
-
-//Clears input values
 
 //If inputs are filled, opens up screen for registration
 btn_register.addEventListener('click', () => {
@@ -67,14 +60,6 @@ pop_up_btn_cancel.addEventListener('click', () => {
 
 
 
-//HTML - select 'tipo de visita'
-options_container.addEventListener('click', ()=>{
-    options_container.classList.toggle('options_container-on')
-    selecione_aqui.classList.toggle('selecione_aqui-hide')
-    for (let i = 0;i< options.length; i++){
-        options[i].classList.toggle('option-on')
-    }
-}) 
 
 
 var visita_selecionada 
@@ -144,47 +129,6 @@ async function saveToDatabase() {
     setTimeout(reloadStatistics, 1000)
 }
 
-//================== STATISTIC INTERFACE =======================//
-
-//HTML - 'Statistics screen'
-//Filters and fetches entries of current month in the database
-//By sending to the server an object
-//that matches what i'm looking for
-
-//Loads statistics in the inicialization
-function loadStatistics() {
-    //Today entries
-    window.electronAPI.today_entries_call({ data: data_atual })
-    window.electronAPI.today_entries_return((event, data) => {
-        statistic_today.innerHTML = data.length
-    })
-
-    //Month entries
-    window.electronAPI.month_entries_call({ mes: array_meses[current_month] })
-    window.electronAPI.month_entries_return((event, data) => {
-        statistic_month.textContent = data.length
-    })
-
-    //All entries
-    window.electronAPI.all_data_call()
-    window.electronAPI.all_data_return((event, data) => {
-        statistic_total.textContent = data.length
-    })
-}
-loadStatistics()
-
-//Provides animation to statistic screen when succesful registration
-function reloadStatistics() {
-    for (let i = 0; i < statistic_line.length; i++) {
-        statistic_line[i].style.backgroundColor = 'green'
-        setTimeout(() => {
-            statistic_line[i].style.backgroundColor = 'transparent'
-            setTimeout(() => {
-                loadStatistics()
-            }, 500)
-        }, 1300)
-    }
-}
 
 
 
@@ -222,4 +166,4 @@ async function reAssignGuest() {
     setTimeout(reloadStatistics, 1000)
 }
 
-
+ 

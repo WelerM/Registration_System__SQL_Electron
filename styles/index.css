@@ -7,6 +7,7 @@
 body {
     margin: auto;
     font-family: 'Helvetica';
+    width: 100%;
     max-width: 1920px;
     height: 100vh;
     background-color: #1f1f1f;
@@ -14,14 +15,18 @@ body {
     background-color: #141414;
     overflow: hidden;
     overflow-y: scroll;
+    display: flex;
+    flex-direction: row;
+    flex-direction: column;
 }
 
-/* ======= MAIN INTERFACE ====== */
-.main-interface {
-    display: flex;
-    width: 100%;
-    margin: auto;
+:root{
+    --component_background:  rgb(31, 31, 31);
+    --component_border: 1px solid rgba(255, 255, 255, 0.245);
 
+    --btn_background: rgba(42, 42, 42, 0.516);
+    --btn_border: 1px solid rgba(255, 255, 255, 0.245);
+    --btn_color: white;
 }
 
 input {
