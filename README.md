@@ -15,6 +15,7 @@ This project was then created to avoid writing all of that info by hand on a boo
 
 
 # Instalation
+- Clone this repo to your machine <br>
 - Requires XAMPP server running <br>
 - Use the sql database file 'sql_database' folder to install the database (ex: import the file into PhpMyAdmin) <br>
 - run: npm install <br>
