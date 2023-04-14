@@ -95,7 +95,7 @@ async function search_byName_dataReturn() {
         returnDataFromMonth(data)
     })
 }
-
+ 
 
 //Search by doc
 search_by_doc.addEventListener('keydown', (e) => {
@@ -116,7 +116,7 @@ async function search_byDoc_saveData() {
     let obj = { documento: text }
     window.electronAPI.search_by_doc(obj)
 
-}
+}  
 //Returns
 async function search_byDoc_dataReturn() {
     window.electronAPI.search_by_doc_return((event, data) => {
@@ -156,10 +156,13 @@ function insertCurrentMonth() {
     dp_mes.textContent = month
 }
 insertCurrentMonth()
+
+
 // Date picker arrow previus month
 previous_month.addEventListener('click', () => {
     if (m == 0) {
         m = m
+        //Shows current month on date picker screen
         dp_mes.textContent = array_meses[m]
     } else {
         m = m - 1
@@ -171,6 +174,7 @@ previous_month.addEventListener('click', () => {
 next_month.addEventListener('click', () => {
     if (m == 11) {
         m = m
+        //Shows current month on date picker screen
         dp_mes.textContent = array_meses[m]
     } else {
         m = m + 1
@@ -178,228 +182,69 @@ next_month.addEventListener('click', () => {
         mes_value = m
     }
 })
+
+
+//let month_test = {}
+
 //HTML - 'Search button'
 search.addEventListener('click', () => {
     nada_encontrado.style.display = 'none'
-    //Janeiro
-    if (m == 0) {//Returns choosen day within 'Janeiro' month
-         function getJaneiro() {
-            window.electronAPI.search_by_month_jan()
-            window.electronAPI.search_by_month_jan_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getJaneiro()
-        //Fevereiro
-    } else if (m == 1) {
-         function getFevereiro() {
-            window.electronAPI.search_by_month_feb()
-            window.electronAPI.search_by_month_feb_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getFevereiro()
-        //Março
-    } else if (m == 2) {
-     function getMarço() {
-            window.electronAPI.search_by_month_mar()
-            window.electronAPI.search_by_month_mar_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getMarço()
-        //Abril 
-    } else if (m == 3) {
-        function getAbril() {
-            window.electronAPI.search_by_month_apr()
-            window.electronAPI.search_by_month_apr_return(async (event, data) => {
-                if (data) { 
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
 
-            })
-        }
-        getAbril()
-        //Maio 
-    } else if (m == 4) {
-         function getMaio() {
-            window.electronAPI.search_by_month_may()
-            window.electronAPI.search_by_month_may_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getMaio()
-        //Junho
-    } else if (m == 5) {
-         function getJunho() {
-            window.electronAPI.search_by_month_jun()
-            window.electronAPI.search_by_month_jun_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getJunho()
-        //Julho
-    } else if (m == 6) {
-         function getJulho() {
-            window.electronAPI.search_by_month_jul()
-            window.electronAPI.search_by_month_jul_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getJulho()
-        //Agosto
-    } else if (m == 7) {
-         function getAgosto() {
-            window.electronAPI.search_by_month_ago()
-            window.electronAPI.search_by_month_ago_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getAgosto()
-        //Setembro
-    } else if (m == 8) {
-         function getSetembro() {
-            window.electronAPI.search_by_month_sep()
-            window.electronAPI.search_by_month_sep_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getSetembro()
-        //Outubro
-    } else if (m == 9) {
-         function getOutubro() {
-            window.electronAPI.search_by_month_out()
-            window.electronAPI.search_by_month_out_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getOutubro()
-        //Novembro
-    } else if (m == 10) {
-         function getNovembro() {
-            window.electronAPI.search_by_month_nov()
-            window.electronAPI.search_by_month_nov_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getNovembro()
-        //Dezembro
-    } else if (m == 11) {
-         function getDezembro() {
-            window.electronAPI.search_by_month_dez()
-            window.electronAPI.search_by_month_dez_return(async (event, data) => {
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        returnDataFromMonth(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        returnDataFromDay(day)
-                    }
-                }
-            })
-        }
-        getDezembro()
+    switch (m) {
+        case 0:
+            search(array_meses[0])
+            break
+        case 1:
+            search(array_meses[1])
+            break
+        case 2:
+            search(array_meses[2])
+            break
+        case 3:
+            search(array_meses[3])
+            break
+        case 4:
+            search(array_meses[4])
+            break
+        case 5:
+            search(array_meses[5])
+            break
+        case 6:
+            search(array_meses[6])
+            break
+        case 7:
+            search(array_meses[7])
+            break
+        case 8:
+            search(array_meses[8])
+            break
+        case 9:
+            search(array_meses[9])
+            break
+        case 10:
+            search(array_meses[10])
+            break
+        case 11:
+            search(array_meses[11])
+            break
     }
-})
+
+    function search(month) {
+        window.electronAPI.search_by_month(month)
+        window.electronAPI.search_by_month_return(async (event, data) => {
+            if (data) {
+                if (dia_selecionado == "all") {
+                    returnDataFromMonth(data)
+                } else {
+                    const day = data.filter(x => {
+                        return x.day == dia_selecionado
+                    })
+                    returnDataFromDay(day)
+                }
+            }
+        })
+    }
+}) 
 
 
 
@@ -567,56 +412,6 @@ function returnDataFromMonth(data) {
 
 
 
-
-
-//STATISTIC INTERFACE variables
-const statistic_today = document.querySelector('#statistic_today')
-const statistic_month = document.querySelector('#statistic_month')
-const statistic_total = document.querySelector('#statistic_total')
-const statistic_line = document.querySelectorAll('.statistic_line')
-//================== STATISTIC INTERFACE =======================//
-
-//HTML - 'Statistics screen'
-//Filters and fetches entries of current month in the database
-//By sending to the server an object
-//that matches what i'm looking for
-
-//Loads statistics in the inicialization
-function loadStatistics() {
-    //Today entries
-    window.electronAPI.today_entries_call({ data: data_atual })
-    window.electronAPI.today_entries_return((event, data) => {
-        statistic_today.innerHTML = data.length
-    })
-
-     //Month entries
-    window.electronAPI.month_entries_call({ mes: array_meses[current_month] })
-    window.electronAPI.month_entries_return((event, data) => {
-        statistic_month.textContent = data.length
-    })
-
-    //All entries
-    window.electronAPI.all_data_call()
-    window.electronAPI.all_data_return((event, data) => {
-        statistic_total.textContent = data.length
-    }) 
-}
-loadStatistics()
-
-//Provides animation to statistic screen when succesful registration
-function reloadStatistics() {
-    for (let i = 0; i < statistic_line.length; i++) {
-        statistic_line[i].style.backgroundColor = 'green'
-        setTimeout(() => {
-            statistic_line[i].style.backgroundColor = 'transparent'
-            setTimeout(() => {
-                loadStatistics()
-            }, 500)
-        }, 1300)
-    }
-}
-
- 
 
 
 

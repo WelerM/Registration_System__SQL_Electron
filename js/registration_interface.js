@@ -3,10 +3,10 @@ const left_menu = document.querySelector('.left-menu')
 const input_nome = document.querySelector('#input-nome')
 const input_documento = document.querySelector('#input-documento')
 const input_andar = document.querySelector('#input-andar')
-const options = document.querySelectorAll('.option')
+
 const selecione_aqui = document.querySelector('.selecione_aqui')
 const cadastro_warning = document.querySelector('.cadastro-warning-hide')
- 
+
 const pagina_cadastro = document.querySelector('.pagina-cadastro')
 const btn_buscar_visitante = document.querySelector('#btn-buscar-visitante')
 const icon_buscar_visitante = document.querySelector('.icon-buscar-visitante')
@@ -19,8 +19,8 @@ const confirm_doc = document.querySelector('#confirm_doc')
 const confirm_floor = document.querySelector('#confirm_floor')
 
 
- 
- 
+
+
 
 //=============== REGISTRATION INTERFACE ================================//
 
@@ -61,29 +61,13 @@ pop_up_btn_cancel.addEventListener('click', () => {
 
 
 
-
-var visita_selecionada 
-const visit_purpose_promise = new Promise((resolve, reject) =>{
-    for (let i = 0;i< options.length; i++){
-        options[i].addEventListener('click', (e)=>{
-            visita_selecionada = e.target.value
-            resolve(visita_selecionada)
-        })
-    
-    }
-})
-
-
 //This function creates an object with guest's data and save it in the backend
 //and saves it in the database
+const select = document.querySelector('select');
 async function saveToDatabase() {
     const name = input_nome.value
     const document = input_documento.value
     const floor = input_andar.value
-
-    visit_purpose_promise.then((data) =>{
-        visita_selecionada = data
-    })
 
     //Atribui a string do mês para ser salva no banco de dados
     if (date_month == 0) {
@@ -112,15 +96,17 @@ async function saveToDatabase() {
         month = "dezembro"
     }
 
+    let visit_selected = select.options[select.selectedIndex].text;
+
     const data = {
         name: name,
         document: document,
-        andar: floor,
-        visit_type: visita_selecionada,
+        floor: floor,
+        visit_purpose: visit_selected,
         date: data_atual,
         hour: hora_atual,
-        month: month, 
-        day: date_day 
+        month: month,
+        day: date_day
     }
 
     window.electronAPI.insert_data(data)
@@ -166,4 +152,4 @@ async function reAssignGuest() {
     setTimeout(reloadStatistics, 1000)
 }
 
- 
+

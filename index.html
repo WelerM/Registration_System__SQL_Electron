@@ -22,25 +22,26 @@
     <div class="main-interface">
         <div class="registration-interface">
             <h3>register new client</h3>
-            <p>Name</p>
             <input id="input-nome" type="text" placeholder="nome" required>
-            <p>Id</p>
             <input id="input-documento" type="text" placeholder="documento">
-            <p>Floor</p>
             <input id="input-andar" type="text" placeholder="andar">
-            <p>Visit purpose</p>
 
-            <select name="" id="">
-                <option class="option">Choose</option>
-                <option class="option">scheduled</option>
-                <option class="option">random services</option>
-                <option class="option">delivery</option>
-                <option class="option">speak to employee</option>
-                <option class="option">another subject</option>
+            <select>
+                <option value="0" class="option" disabled>choose</option>
+                <option value="1" class="option">scheduled</option>
+                <option value="2" class="option">random services</option>
+                <option value="3" class="option">delivery</option>
+                <option value="4" class="option">speak to employee</option>
+                <option value="5" class="option">another subject</option>
             </select>
 
             <p class="cadastro-warning-hide">É necessário preencher todos os campos!</p>
 
+            <button id="btn_cadastrar">
+                <img src="./img/save.png" alt="">
+                <p>insert</p>
+            </button>
+          
             <div class="clean_btns_container">
                 <div id="limpar-dados">
                     <img src="./img/trash_can.png" alt="">
@@ -51,11 +52,6 @@
                     <p>clean results</p>
                 </div>
             </div>
-
-            <button id="btn_cadastrar">
-                <img src="./img/save.png" alt="">
-                <p>insert</p>
-            </button>
 
         </div>
 

@@ -16,13 +16,17 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     display: flex;
-    flex-direction: row;
     flex-direction: column;
 }
 
 :root{
     --component_background:  rgb(31, 31, 31);
     --component_border: 1px solid rgba(255, 255, 255, 0.245);
+
+    --input_background:  rgba(0, 0, 0, 0.356);
+    --input_border:1px solid rgba(255, 255, 255, 0.128);
+    --input_border-rad: 5px; 
+    --input_padding_left: 10px;
 
     --btn_background: rgba(42, 42, 42, 0.516);
     --btn_border: 1px solid rgba(255, 255, 255, 0.245);

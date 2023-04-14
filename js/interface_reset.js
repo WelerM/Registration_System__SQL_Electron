@@ -45,3 +45,57 @@ clear_inputs.addEventListener('click', () => {
     input_andar.value = ''
 
 })
+
+
+
+
+//STATISTIC INTERFACE variables
+const statistic_today = document.querySelector('#statistic_today')
+const statistic_month = document.querySelector('#statistic_month')
+const statistic_total = document.querySelector('#statistic_total')
+const statistic_line = document.querySelectorAll('.statistic_line')
+//================== STATISTIC INTERFACE =======================//
+
+//HTML - 'Statistics screen'
+//Filters and fetches entries of current month in the database
+//By sending to the server an object
+//that matches what i'm looking for
+
+//Loads statistics in the inicialization
+function loadStatistics() {
+    //Today entries
+    window.electronAPI.today_entries_call({ data: data_atual })
+    window.electronAPI.today_entries_return((event, data) => {
+        statistic_today.innerHTML = data.length
+    })
+
+    //Month entries
+    window.electronAPI.month_entries_call({ mes: array_meses[current_month] })
+    window.electronAPI.month_entries_return((event, data) => {
+        statistic_month.textContent = data.length
+    })
+
+    //All entries
+    window.electronAPI.all_data_call()
+    window.electronAPI.all_data_return((event, data) => {
+        statistic_total.textContent = data.length
+    })
+}
+loadStatistics()
+
+//Provides animation to statistic screen when succesful registration
+function reloadStatistics() {
+    for (let i = 0; i < statistic_line.length; i++) {
+        statistic_line[i].style.backgroundColor = 'green'
+        setTimeout(() => {
+            statistic_line[i].style.backgroundColor = 'transparent'
+            setTimeout(() => {
+                loadStatistics()
+            }, 500) 
+        }, 1300)
+    }
+}
+ 
+
+
+
