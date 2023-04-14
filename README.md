@@ -4,7 +4,8 @@
 A desktop application made with Electron framework and SQL. With this application you will be able to collect, save and search for visitors given information so a better control over people's flow in your place or business will be provided.
 
 
-![rhrtehrthr](https://user-images.githubusercontent.com/99507279/232140875-24416c27-0278-4a4a-9167-10ff369718db.PNG)
+![ttttt](https://user-images.githubusercontent.com/99507279/232141020-9ddc4c31-2a61-4cca-bf23-1d458386fb8a.PNG)
+
 
 
 # How this project helps in the real life
