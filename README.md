@@ -15,7 +15,7 @@ This project was then created to avoid writing all of that info by hand on a boo
 
 
 # Instalation
-Requires XAMPP server
+Requires XAMPP server <br>
 Use the sql database file 'sql_database' folder to install the database
 run: npm start
 
