@@ -120,7 +120,6 @@ async function saveToDatabase() {
 
 
 //============= REASSIGN GUEST =================================//
-
 //Registrar user again
 re_pop_up_btn_confirm.addEventListener('click', () => {
     reAssignGuest()
@@ -143,8 +142,8 @@ async function reAssignGuest() {
         hour: hora_atual,
         name: row_cols_data[2],
         document: row_cols_data[3],
-        andar: row_cols_data[4],
-        visit_type: row_cols_data[5],
+        floor: row_cols_data[4],
+        visit_purpose: row_cols_data[5],
         month: month,
         day: date_day
     }

@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
+    
     //DATA INSERT
     //New guest registration
     insert_data: (data) => ipcRenderer.send('insert_data', data),
@@ -19,8 +20,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     //Date Picker
     //Search by Month
-    search_by_month: (data) => ipcRenderer.send('teste', data),
-    search_by_month_return: (data) => ipcRenderer.on('teste_return', data),
+    search_by_month: (data) => ipcRenderer.send('search_by_month', data),
+    search_by_month_return: (data) => ipcRenderer.on('search_by_month_return', data),
    
 
     // STATISTICS

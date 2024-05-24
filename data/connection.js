@@ -1,5 +1,5 @@
 //Database 
-const db_name = 'electron_reg_sys'//Your database name
+const db_name = 'electron_registration_system'//Your database name
 const db_password = ''//Your database password
 const db_port = 'localhost:3306'//Your port
 
