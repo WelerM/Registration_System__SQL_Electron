@@ -5,6 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron ."
+
   },
   "repository": {
     "type": "git",
@@ -18,9 +19,10 @@
   "homepage": "https://github.com/WelerM/Registration-system---Desktop#readme",
   "dependencies": {
     "electron": "^22.0.1",
-    "mysql2": "^3.9.7",
-    "nedb": "^1.8.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2",
+    "sqlite3": "^5.1.7"
   },
   "description": ""
 }

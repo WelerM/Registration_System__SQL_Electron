@@ -52,33 +52,62 @@ var row_total = ''
 var row_array_filter = []
 var row_cols_data = []
 
-
-
 //=============== SEARCH INTERFACE ================================//
-//SEARCH BY NAME
-search_by_name.addEventListener('keydown', (e) => {
-    nada_encontrado.style.display = 'none'
-    if (e.key == "Backspace") {
-        text = ''
-        search_by_name.value = ''
-        limpaColunas()
-    } else {
-        text += e.key
-        limpaColunas()// cada vez que digitar letra
-        search_byName_saveData()
-        search_byName_dataReturn()
+// SEARCH BY NAME
+search_by_name.addEventListener('input', (e) => {
+    // Get the current value of the input field
+    let input_text = search_by_name.value;
+
+    nada_encontrado.style.display = 'none';
+
+
+    if (e.inputType != 'Alt' && e.inputType != 'Tab') {
+
+        if (e.inputType === "deleteContentBackward") {
+
+            // Backspace was pressed, so just use the current input_text
+            limpaColunas();
+
+        } else {
+
+            // Any other key press should use the current input_text
+            try {
+
+                let obj = { name: input_text };
+
+                window.electronAPI.search_by_name(obj);
+
+            } catch (error) {
+
+                console.log(error);
+
+            } finally {
+
+                limpaColunas(); // Clear columns each time a letter is typed
+
+                window.electronAPI.search_by_name_return((event, data) => {
+
+                    //Presents result to the user
+                    data = JSON.parse(data);
+          
+                    list_users(data)
+
+
+                })
+
+            }
+
+        }
+
     }
 
-})
-async function search_byName_saveData() {
-    let obj = { name: text }
-    window.electronAPI.search_by_name(obj)
-}
-async function search_byName_dataReturn() {
-    window.electronAPI.search_by_name_return((event, data) => {
-        search(data)
-    })
-}
+
+
+});
+
+
+
+
 
 //SEARCH BY DOC
 search_by_doc.addEventListener('keydown', (e) => {
@@ -97,11 +126,11 @@ search_by_doc.addEventListener('keydown', (e) => {
 async function search_byDoc_saveData() {
     let obj = { document: text }
     window.electronAPI.search_by_doc(obj)
- 
-}  
+
+}
 async function search_byDoc_dataReturn() {
     window.electronAPI.search_by_doc_return((event, data) => {
-        search(data)
+        list_users(data)
     })
 }
 
@@ -176,40 +205,44 @@ btn_search.addEventListener('click', () => {
             prepare_search(array_meses[11])
             break
     }
- 
+
     function prepare_search(month) {
         window.electronAPI.search_by_month(month)
         window.electronAPI.search_by_month_return(async (event, data) => {
             if (data) {
                 if (dia_selecionado == "all") {
-                   search(data)
+                    list_users(data)
                 } else {
                     const day = data.filter(x => {
                         return x.day == dia_selecionado
                     })
-                  search(day)
+                    list_users(day)
                 }
             }
         })
     }
 
-}) 
+})
 
- 
+
 //================= DATA FROM BACKEND ====================//
 //When called, creates table and inserts data within it
 //from a single day of the month
-function search(data) {
+function list_users(data) {
     limpaColunas()
+    console.log(data);
+    console.log('=============');
+    
+
     if (data.length == 0) {
         nada_encontrado.style.display = 'flex'
-    } else { 
+    } else {
         for (i of data) {
             const visitante_data = i.date
             const visitante_hora = i.hour
             const visitante_nome = i.name
-            const visitante_doc = i.document
-            const visitante_andar = i.floor
+            const visitante_doc = i.visitor_id
+            const visitante_andar = i.visiting_floor
             const tipoVisita = i.visit_purpose
             row = document.createElement('div')
             row.classList.add('row')
@@ -272,4 +305,3 @@ function search(data) {
         }
     }
 }
- 

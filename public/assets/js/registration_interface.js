@@ -100,8 +100,8 @@ async function saveToDatabase() {
 
     const data = {
         name: name,
-        document: document,
-        floor: floor,
+        visitor_id: document,
+        visiting_floor: floor,
         visit_purpose: visit_selected,
         date: data_atual,
         hour: hora_atual,
