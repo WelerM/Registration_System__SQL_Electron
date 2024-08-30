@@ -55,6 +55,7 @@ var row_cols_data = []
 //=============== SEARCH INTERFACE ================================//
 // SEARCH BY NAME
 search_by_name.addEventListener('input', (e) => {
+
     // Get the current value of the input field
     let input_text = search_by_name.value;
 
@@ -89,7 +90,7 @@ search_by_name.addEventListener('input', (e) => {
 
                     //Presents result to the user
                     data = JSON.parse(data);
-          
+
                     list_users(data)
 
 
@@ -111,28 +112,56 @@ search_by_name.addEventListener('input', (e) => {
 
 //SEARCH BY DOC
 search_by_doc.addEventListener('keydown', (e) => {
-    nada_encontrado.style.display = 'none'
-    if (e.key == "Backspace") {
-        text =
-            search_by_doc.value = ''
-        limpaColunas()
-    } else {
-        text += e.key
-        limpaColunas()// cada vez que digitar letra
-        search_byDoc_saveData()
-        search_byDoc_dataReturn()
-    }
-})
-async function search_byDoc_saveData() {
-    let obj = { document: text }
-    window.electronAPI.search_by_doc(obj)
+    // Get the current value of the input field
+    let input_number = e.key;
 
-}
-async function search_byDoc_dataReturn() {
-    window.electronAPI.search_by_doc_return((event, data) => {
-        list_users(data)
-    })
-}
+    nada_encontrado.style.display = 'none';
+
+
+    if (input_number != 'Alt' && input_number != 'Tab') {
+
+        if (e.inputType === "deleteContentBackward") {
+
+            // Backspace was pressed, so just use the current input_text
+            limpaColunas();
+
+        } else {
+
+
+
+            // Any other key press should use the current input_text
+            try {
+
+                let obj = { input_number };
+
+                window.electronAPI.search_by_doc(input_number);
+
+            } catch (error) {
+
+                console.log(error);
+
+            } finally {
+
+                limpaColunas(); // Clear columns each time a letter is typed
+
+                window.electronAPI.search_by_doc_return((event, data) => {
+
+                    //Presents result to the user
+                    data = JSON.parse(data);
+
+                    list_users(data)
+
+
+                })
+
+            }
+
+        }
+
+    }
+
+
+})
 
 
 
@@ -230,9 +259,11 @@ btn_search.addEventListener('click', () => {
 //from a single day of the month
 function list_users(data) {
     limpaColunas()
-    console.log(data);
-    console.log('=============');
-    
+
+    //Indicates some bug:
+    // console.log(data);
+    // console.log('=============');
+
 
     if (data.length == 0) {
         nada_encontrado.style.display = 'flex'

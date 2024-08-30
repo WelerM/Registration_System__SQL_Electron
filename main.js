@@ -51,13 +51,13 @@ const createWindow = () => {
 
 
   // =========== REGISTRATION INTERFACE =========//
-  
+
   //Obj coming from registration form
   ipcMain.on('insert_data', async (event, data) => {
 
-    
+
     try {
-  
+
       // Define the new user data
       const newUser = {
         name: data.name,
@@ -66,21 +66,21 @@ const createWindow = () => {
         visit_purpose: data.visit_purpose,
         date: new Date() // or any specific date string
       };
-      
+
 
       // Insert the new user into the database
       const createdUser = await Visitor.create(newUser);
-    
+
       // Log the created user data
       console.log('User created successfully:', createdUser.dataValues);
-    
+
       // return createdUser.dataValues;
-    
+
     } catch (error) {
       console.error('Error inserting new user:', error);
       return null;
     }
-    
+
   })
 
   //Reassing of guests
@@ -102,16 +102,11 @@ const createWindow = () => {
 
     let table = 'visitors'
     let column = 'name'
-    let results = await search(param, table, column)
+    let results = await search(param, column)
 
     results = JSON.stringify(results);
 
     win.webContents.send("search_by_name_return", results);
-    // console.log(results);
-    // console.log('==========');
-    
-    
-    
 
   })
 
@@ -122,12 +117,19 @@ const createWindow = () => {
   //By doc
   ipcMain.on('search_by_doc', async (event, data) => {
 
-    let param = data.document
-    let table = 'visitors'
-    let column = 'document'
-    let results = await search(param, table, column)
+    let param = data
+    param = Number(param);
 
-    win.webContents.send("search_by_doc_return", results)
+    let column = 'visitor_id'
+    let results = await search(param, column)
+
+    results = JSON.stringify(results);
+
+    console.log(results);
+    
+
+    win.webContents.send("search_by_doc_return", results);
+
   })
 
 
@@ -149,7 +151,7 @@ const createWindow = () => {
 
 
 
-  async function search(param, table, column_1, column_2 = null) {
+  async function search(param, column_1) {
 
     try {
       // Use a LIKE query to match the name partially
@@ -176,42 +178,7 @@ const createWindow = () => {
       console.error('Error searching for users:', error);
     }
 
-    // try {
 
-    //    // Retrieve a single user
-    //    const userId = 1; // Adjust this to the ID of the user you want to retrieve
-    //    const user = await Visitor.findByPk(userId);
-
-    //    if (user) {
-    //      console.log('User found:', user.toJSON());
-    //    } else {
-    //      console.log('User not found');
-    //    }
-
-    //   //Checks which SELECT query will be executed
-    //   // if (column_2 === null) {
-
-    //   //   //LIKE
-    //   //   results = await con.query(`SELECT * FROM ${table} WHERE ${column_1} LIKE ?`, [`${param}%`]);
-
-    //   // } else {
-
-
-    //   //   results = await con.query(
-    //   //     `SELECT * FROM ${table} WHERE month = ? AND year = ?`
-    //   //     , [column_1, column_2]);
-    //   // }
-
-    //   return results;
-
-
-    // } finally {
-    //   // Ensure the connection is closed
-    //   if (con && con.end) {
-    //     await con.end();
-    //     global.conexao = null; // Reset the global connection
-    //   }
-    // }
   }
 
 
