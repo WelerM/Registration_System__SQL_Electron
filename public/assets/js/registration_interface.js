@@ -12,7 +12,7 @@ const btn_buscar_visitante = document.querySelector('#btn-buscar-visitante')
 const icon_buscar_visitante = document.querySelector('.icon-buscar-visitante')
 const btn_buscar_visitante_text = document.querySelector('.btn-buscar-visitante-text')
 const pop_up_confirmation = document.querySelector('.confirm-registration-screen')
-const pop_up_btn_confirm = document.querySelector('#btn-confirmar')
+
 const pop_up_btn_cancel = document.querySelector('#btn-cancelar')
 const confirm_name = document.querySelector('#confirm_name')
 const confirm_doc = document.querySelector('#confirm_doc')
@@ -20,18 +20,20 @@ const confirm_floor = document.querySelector('#confirm_floor')
 
 
 
-
-
 //=============== REGISTRATION INTERFACE ================================//
 
 //If inputs are filled, opens up screen for registration
-btn_register.addEventListener('click', () => {
+
+document.querySelector('#btn_cadastrar').addEventListener('click', () => {
     //Validação do formulário
+    
     if (input_nome.value && input_documento.value && input_andar.value != '') {
         cadastro_warning.classList.remove('cadastro-warning-show')
+        console.log('ffsfsd');
 
         //Shows confirm registration screen
-        pop_up_confirmation.classList.remove('confirm-registration-screen')
+
+        document.querySelector('.confirm-registration-screen').click();
         pop_up_confirmation.classList.add('confirm-registration-screen-on')
 
         //Adds info to confim registration screen
@@ -44,18 +46,21 @@ btn_register.addEventListener('click', () => {
 
 })
 //Confirm btn - Triggers 'saveToDataBase' function
-pop_up_btn_confirm.addEventListener('click', () => {
-    pop_up_confirmation.classList.remove('confirm-registration-screen-on')
-    pop_up_confirmation.classList.add('confirm-registration-screen')
+document.querySelector('#btn-confirmar').addEventListener('click', () => {
+    // pop_up_confirmation.classList.remove('confirm-registration-screen-on')
+    // pop_up_confirmation.classList.add('confirm-registration-screen')
     saveToDatabase()
     reloadStatistics()
+
+    document.querySelector('.btn-close').click();
+
+    //Clean input fields
+    document.querySelector('#input-nome').value=''
+    document.querySelector('#input-documento').value=''
+    document.querySelector('#input-andar').value=''
+
 })
 
-//Cancel btn
-pop_up_btn_cancel.addEventListener('click', () => {
-    pop_up_confirmation.classList.remove('confirm-registration-screen-on')
-    pop_up_confirmation.classList.add('confirm-registration-screen')
-})
 
 
 
@@ -121,14 +126,14 @@ async function saveToDatabase() {
 
 //============= REASSIGN GUEST =================================//
 //Registrar user again
-re_pop_up_btn_confirm.addEventListener('click', () => {
-    reAssignGuest()
-})
+// re_pop_up_btn_confirm.addEventListener('click', () => {
+//     reAssignGuest()
+// })
 //Cancels re registration
-re_pop_up_btn_cancel.addEventListener('click', (e) => {
-    re_pop_up_confirmation.classList.remove('confirm-re-registration-screen-on')
-    re_pop_up_confirmation.classList.add('confirm-re-registration-screen')
-})
+// re_pop_up_btn_cancel.addEventListener('click', (e) => {
+//     re_pop_up_confirmation.classList.remove('confirm-re-registration-screen-on')
+//     re_pop_up_confirmation.classList.add('confirm-re-registration-screen')
+// })
 
 // This function register again some user choosen in
 // the table. It's useful if someone is already registered
@@ -138,11 +143,11 @@ async function reAssignGuest() {
     re_pop_up_confirmation.classList.add('confirm-re-registration-screen')
 
     const obj = {
-        date: data_atual,
-        hour: hora_atual,
+        // date: data_atual,
+        // hour: hora_atual,
         name: row_cols_data[2],
-        document: row_cols_data[3],
-        floor: row_cols_data[4],
+        visitor_id: row_cols_data[3],
+        visiting_floor: row_cols_data[4],
         visit_purpose: row_cols_data[5],
         month: month,
         day: date_day

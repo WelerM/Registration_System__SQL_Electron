@@ -18,7 +18,7 @@ const Visitor = sequelize.define('Visitor', {
   visit_purpose: {
     type: DataTypes.STRING
   },
-  date: {
+  created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   }

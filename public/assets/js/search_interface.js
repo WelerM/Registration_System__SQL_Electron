@@ -1,4 +1,3 @@
-const btn_register = document.querySelector('#btn_cadastrar')
 
 //============== MAIN INTERFACE ==================================//
 const main_interface = document.querySelector('.main-interface')
@@ -52,6 +51,11 @@ var row_total = ''
 var row_array_filter = []
 var row_cols_data = []
 
+
+
+
+
+
 //=============== SEARCH INTERFACE ================================//
 // SEARCH BY NAME
 search_by_name.addEventListener('input', (e) => {
@@ -92,8 +96,6 @@ search_by_name.addEventListener('input', (e) => {
                     data = JSON.parse(data);
 
                     list_users(data)
-
-
                 })
 
             }
@@ -105,8 +107,6 @@ search_by_name.addEventListener('input', (e) => {
 
 
 });
-
-
 
 
 
@@ -168,87 +168,108 @@ search_by_doc.addEventListener('keydown', (e) => {
 
 //DATE PICKER
 //Arrow btn previus month
-previous_month.addEventListener('click', () => {
-    if (m == 0) {
-        m = m
-        //Shows current month on date picker screen
-        dp_mes.textContent = array_meses[m]
-    } else {
-        m = m - 1
-        dp_mes.textContent = array_meses[m]
-        mes_value = m
-    }
-})
-//Arrow btn next month
-next_month.addEventListener('click', () => {
-    if (m == 11) {
-        m = m
-        //Shows current month on date picker screen
-        dp_mes.textContent = array_meses[m]
-    } else {
-        m = m + 1
-        dp_mes.textContent = array_meses[m]
-        mes_value = m
-    }
-})
+// previous_month.addEventListener('click', () => {
+//     if (m == 0) {
+//         m = m
+//         //Shows current month on date picker screen
+//         dp_mes.textContent = array_meses[m]
+//     } else {
+//         m = m - 1
+//         dp_mes.textContent = array_meses[m]
+//         mes_value = m
+//     }
+// })
+// //Arrow btn next month
+// next_month.addEventListener('click', () => {
+//     if (m == 11) {
+//         m = m
+//         //Shows current month on date picker screen
+//         dp_mes.textContent = array_meses[m]
+//     } else {
+//         m = m + 1
+//         dp_mes.textContent = array_meses[m]
+//         mes_value = m
+//     }
+// })
 //Search button
 btn_search.addEventListener('click', () => {
+
     nada_encontrado.style.display = 'none'
     switch (m) {
         case 0:
-            prepare_search(array_meses[0])
+            prepare_search(array_meses[0], dia_selecionado)
             break
         case 1:
-            prepare_search(array_meses[1])
+            prepare_search(array_meses[1], dia_selecionado)
             break
         case 2:
-            prepare_search(array_meses[2])
-            console.log('mrco');
+            prepare_search(array_meses[2], dia_selecionado)
+
             break
         case 3:
-            prepare_search(array_meses[3])
-            console.log('abril');
+            prepare_search(array_meses[3], dia_selecionado)
+
             break
         case 4:
-            prepare_search(array_meses[4])
+            prepare_search(array_meses[4], dia_selecionado)
             break
         case 5:
-            prepare_search(array_meses[5])
+            prepare_search(array_meses[5], dia_selecionado)
             break
         case 6:
-            prepare_search(array_meses[6])
+            prepare_search(array_meses[6], dia_selecionado)
             break
         case 7:
-            prepare_search(array_meses[7])
+            prepare_search(array_meses[7], dia_selecionado)
             break
         case 8:
-            prepare_search(array_meses[8])
+            prepare_search(array_meses[8], dia_selecionado)
             break
         case 9:
-            prepare_search(array_meses[9])
+            prepare_search(array_meses[9], dia_selecionado)
             break
         case 10:
-            prepare_search(array_meses[10])
+            prepare_search(array_meses[10], dia_selecionado)
             break
         case 11:
-            prepare_search(array_meses[11])
+            prepare_search(array_meses[11], dia_selecionado)
             break
     }
 
-    function prepare_search(month) {
-        window.electronAPI.search_by_month(month)
-        window.electronAPI.search_by_month_return(async (event, data) => {
-            if (data) {
-                if (dia_selecionado == "all") {
-                    list_users(data)
-                } else {
-                    const day = data.filter(x => {
-                        return x.day == dia_selecionado
-                    })
-                    list_users(day)
-                }
+    function prepare_search(month, dia_selecionado) {
+        console.log(dia_selecionado);
+
+        try {
+
+            let obj_calendar = {
+                day: dia_selecionado,
+                month: month
             }
-        })
+
+            window.electronAPI.search_by_month(obj_calendar)//Maybe rename to calendar_search
+
+        } catch (error) {
+            console.log(error);
+
+        } finally {
+
+            window.electronAPI.search_by_month_return(async (event, data) => {
+                console.log(data);
+
+                if (data) {
+                    if (dia_selecionado == "all") {
+                        list_users(data)
+                    } else {
+                        const day = data.filter(x => {
+                            return x.day == dia_selecionado
+                        })
+                        list_users(day)
+                    }
+                }
+            })
+
+        }
+
     }
 
 })
@@ -268,49 +289,105 @@ function list_users(data) {
     if (data.length == 0) {
         nada_encontrado.style.display = 'flex'
     } else {
+
+
+        // Get the table body element
+        const tableBody = document.getElementById('visitors-table-body');
+
         for (i of data) {
-            const visitante_data = i.date
-            const visitante_hora = i.hour
-            const visitante_nome = i.name
-            const visitante_doc = i.visitor_id
-            const visitante_andar = i.visiting_floor
-            const tipoVisita = i.visit_purpose
-            row = document.createElement('div')
-            row.classList.add('row')
-            data_div = document.createElement('div')
-            data_div.classList.add('row-col')
-            hora_div = document.createElement('div')
-            hora_div.classList.add('row-col')
-            nome_div = document.createElement('div')
-            nome_div.classList.add('row-col')
-            doc_div = document.createElement('div')
-            doc_div.classList.add('row-col')
-            andar_div = document.createElement('div')
-            andar_div.classList.add('row-col')
-            tipo_visita_div = document.createElement('div')
-            tipo_visita_div.classList.add('row-col')
-            tipo_visita_div.style.width = '180px'
-            cadastrar_novamente = document.createElement('div')
-            cadastrar_novamente.textContent = 'NOVO CADASTRO'
-            cadastrar_novamente.classList.add('cadastrar-novamente')
-            cadastrar_novamente.setAttribute('id', row_id)
-            data_div.textContent = visitante_data
-            hora_div.textContent = visitante_hora
-            nome_div.textContent = visitante_nome
-            doc_div.textContent = visitante_doc
-            andar_div.textContent = visitante_andar
-            tipo_visita_div.textContent = tipoVisita
-            row.appendChild(data_div)
-            row.appendChild(hora_div)
-            row.appendChild(nome_div)
-            row.appendChild(doc_div)
-            row.appendChild(andar_div)
-            row.appendChild(tipo_visita_div)
-            row.appendChild(cadastrar_novamente)
-            colunas_container.appendChild(row)
-            colunas_container.appendChild(row)
+
+
+            const row = document.createElement('tr');
+
+            // Convert the ISO date string to a Date object
+            const visitante_date = new Date(i.created_at);
+            const visitante_date_str = visitante_date.toLocaleDateString('pt-BR');
+        
+            // Extract the hour, minutes, and seconds
+            const visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
+            const visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
+            const visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
+        
+            // Combine them into HH:MM:SS format
+            const visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
+        
+            // Add cells to the row for each data field
+            row.innerHTML = `
+                <td>${i.name}</td>
+                <td>${i.visitor_id}</td>
+                <td>${i.visiting_floor}</td>
+                <td>${i.visit_purpose}</td>
+                <td>${visitante_date_str}</td>
+                <td>${visitante_time}</td>
+            `;
+        
+            // Append the row to the table body
+            tableBody.appendChild(row);
+
+
+
+
+
+
+
+
+            // let visitante_data = new Date(i.created_at);
+            // visitante_data = visitante_data.toLocaleDateString('pt-BR');
+
+            // Convert the ISO date string to a Date object
+            // let visitante_date = new Date(i.created_at);
+            // Extract the hour, minutes, and seconds
+            // let visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
+            // let visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
+            // let visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
+
+            // Combine them into HH:MM:SS format
+            // let visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
+
+            // let visitante_nome = i.name
+            // let visitante_doc = i.visitor_id
+            // let visitante_andar = i.visiting_floor
+            // let tipoVisita = i.visit_purpose
+
+
+
+            // row = document.createElement('div')
+            // row.classList.add('row')
+            // data_div = document.createElement('div')
+            // data_div.classList.add('row-col')
+            // hora_div = document.createElement('div')
+            // hora_div.classList.add('row-col')
+            // nome_div = document.createElement('div')
+            // nome_div.classList.add('row-col')
+            // doc_div = document.createElement('div')
+            // doc_div.classList.add('row-col')
+            // andar_div = document.createElement('div')
+            // andar_div.classList.add('row-col')
+            // tipo_visita_div = document.createElement('div')
+            // tipo_visita_div.classList.add('row-col')
+            // tipo_visita_div.style.width = '180px'
+            // cadastrar_novamente = document.createElement('div')
+            // cadastrar_novamente.textContent = 'NOVO CADASTRO'
+            // cadastrar_novamente.classList.add('cadastrar-novamente')
+            // cadastrar_novamente.setAttribute('id', row_id)
+            // data_div.textContent = visitante_data
+            // hora_div.textContent = visitante_time
+            // nome_div.textContent = visitante_nome
+            // doc_div.textContent = visitante_doc
+            // andar_div.textContent = visitante_andar
+            // tipo_visita_div.textContent = tipoVisita
+            // row.appendChild(data_div)
+            // row.appendChild(hora_div)
+            // row.appendChild(nome_div)
+            // row.appendChild(doc_div)
+            // row.appendChild(andar_div)
+            // row.appendChild(tipo_visita_div)
+            // row.appendChild(cadastrar_novamente)
+            // colunas_container.appendChild(row)
+            // colunas_container.appendChild(row)
             limpa_colunas_control = false
         }
+
         //Green 'new register' btn on tables for re registration
         let row_total = document.querySelectorAll('.row')
         for (let i = 0; i < row_total.length; i++) {
@@ -336,3 +413,7 @@ function list_users(data) {
         }
     }
 }
+
+
+
+
