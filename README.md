@@ -12,5 +12,4 @@ Technologies: JavaScript, Electron, Nedb, html and css.
 ![reeee](https://user-images.githubusercontent.com/99507279/236468108-0b51604c-c307-4627-87c2-190a355cd08a.PNG)
 
 
-Download here: 
-https://drive.google.com/drive/folders/1latirHZJBc28T0AzR5aXsbKPsC0Q4f6r?usp=drive_link
+
