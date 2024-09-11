@@ -69,26 +69,26 @@ const statistic_line = document.querySelectorAll('.statistic_line')
 //that matches what i'm looking for
 
 //Loads statistics in the inicialization
-function loadStatistics() {
-    //Today entries
-    window.electronAPI.today_entries_call({ date: data_atual })
-    window.electronAPI.today_entries_return((event, data) => {
-        statistic_today.innerHTML = data.length
-    })
+// function loadStatistics() {
+//     //Today entries
+//     window.electronAPI.today_entries_call({ date: data_atual })
+//     window.electronAPI.today_entries_return((event, data) => {
+//         statistic_today.innerHTML = data.length
+//     })
 
-    //Month entries
-    window.electronAPI.month_entries_call({ month: array_meses[current_month] })
-    window.electronAPI.month_entries_return((event, data) => {
-        statistic_month.textContent = data.length
-    })
+//     //Month entries
+//     window.electronAPI.month_entries_call({ month: array_meses[current_month] })
+//     window.electronAPI.month_entries_return((event, data) => {
+//         statistic_month.textContent = data.length
+//     })
 
-    //All entries
-    window.electronAPI.all_data_call()
-    window.electronAPI.all_data_return((event, data) => {
-        statistic_total.textContent = data.length
-    })
-}
-loadStatistics()
+//     //All entries
+//     window.electronAPI.all_data_call()
+//     window.electronAPI.all_data_return((event, data) => {
+//         statistic_total.textContent = data.length
+//     })
+// }
+// loadStatistics()
 
 //Provides animation to statistic screen when succesful registration
 function reloadStatistics() {
@@ -97,7 +97,7 @@ function reloadStatistics() {
         setTimeout(() => {
             statistic_line[i].style.backgroundColor = 'transparent'
             setTimeout(() => {
-                loadStatistics()
+                // loadStatistics()
             }, 500) 
         }, 1300)
     }

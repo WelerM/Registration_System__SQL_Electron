@@ -10,9 +10,10 @@
     <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script src="./assets/js/search_interface.js" defer></script>
+    <script src="./assets/js/search_interface.js" defer ></script>
     <script src="./assets/js/interface_reset.js" defer></script>
     <script src="./assets/js/registration_interface.js" defer></script>
+    <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script> 
 
 
 
@@ -115,8 +116,8 @@
 
                     <div class="container mt-3">
                         <div class="mb-3">
-                            <label for="datePicker" class="form-label">Selecione a data</label>
-                            <input type="date" id="datePicker" class="form-control">
+                            <label for="input-datepicker" class="form-label">Selecione a data</label>
+                            <input type="date" id="input-datepicker" class="form-control">
                         </div>
                     </div>
 
@@ -149,11 +150,12 @@
                         <th>Motivo da visita</th>
                         <th>Data</th>
                         <th>Hora</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="visitors-table-body">
                     <!-- Rows will be dynamically inserted here -->
-
+                    
                 </tbody>
             </table>
 
@@ -173,18 +175,19 @@
 
         <!-- Register again modal -->
         <button type="button" class="confirm-registration-screen btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#exampleModal"></button>
+            data-bs-target="#exampleModal1"></button>
 
     </div>
+
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
 
         <div class="modal-dialog">
 
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Registrar novamente</h1>
+                    <h1 class="modal-title fs-5" id="exampleModalLabel1">Registrar novamente</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 

@@ -17,12 +17,13 @@
   },
   "homepage": "https://github.com/WelerM/Registration-system---Desktop#readme",
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "electron": "^22.0.1",
     "nodemon": "^2.0.20",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
-    "sqlite3": "^5.1.7",
-    "bootstrap": "^5.3.3"
+    "sqlite3": "^5.1.7"
+
   },
   "description": ""
 }

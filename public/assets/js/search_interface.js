@@ -9,7 +9,6 @@ const search_by_doc = document.querySelector('#pesquisar-por-documento')
 const previous_month = document.querySelector('#anterior')
 const next_month = document.querySelector('#proximo')
 const dias = document.querySelectorAll('.dia')
-const btn_search = document.querySelector('#procurar')
 const nada_encontrado = document.querySelector('.nada-encontrado')
 const array_meses = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
 
@@ -92,6 +91,7 @@ search_by_name.addEventListener('input', (e) => {
 
                 window.electronAPI.search_by_name_return((event, data) => {
 
+                    
                     //Presents result to the user
                     data = JSON.parse(data);
 
@@ -107,7 +107,6 @@ search_by_name.addEventListener('input', (e) => {
 
 
 });
-
 
 
 //SEARCH BY DOC
@@ -164,120 +163,82 @@ search_by_doc.addEventListener('keydown', (e) => {
 })
 
 
-
-
-//DATE PICKER
-//Arrow btn previus month
-// previous_month.addEventListener('click', () => {
-//     if (m == 0) {
-//         m = m
-//         //Shows current month on date picker screen
-//         dp_mes.textContent = array_meses[m]
-//     } else {
-//         m = m - 1
-//         dp_mes.textContent = array_meses[m]
-//         mes_value = m
-//     }
-// })
-// //Arrow btn next month
-// next_month.addEventListener('click', () => {
-//     if (m == 11) {
-//         m = m
-//         //Shows current month on date picker screen
-//         dp_mes.textContent = array_meses[m]
-//     } else {
-//         m = m + 1
-//         dp_mes.textContent = array_meses[m]
-//         mes_value = m
-//     }
-// })
-//Search button
-btn_search.addEventListener('click', () => {
+//SEARCH BY CALENDAR
+document.querySelector('#procurar').addEventListener('click', () => {
 
     nada_encontrado.style.display = 'none'
-    switch (m) {
-        case 0:
-            prepare_search(array_meses[0], dia_selecionado)
-            break
-        case 1:
-            prepare_search(array_meses[1], dia_selecionado)
-            break
-        case 2:
-            prepare_search(array_meses[2], dia_selecionado)
 
-            break
-        case 3:
-            prepare_search(array_meses[3], dia_selecionado)
+    let input_datepicker = document.querySelector('#input-datepicker').value
+    let [year, month, day] = input_datepicker.split("-");
 
-            break
-        case 4:
-            prepare_search(array_meses[4], dia_selecionado)
-            break
-        case 5:
-            prepare_search(array_meses[5], dia_selecionado)
-            break
-        case 6:
-            prepare_search(array_meses[6], dia_selecionado)
-            break
-        case 7:
-            prepare_search(array_meses[7], dia_selecionado)
-            break
-        case 8:
-            prepare_search(array_meses[8], dia_selecionado)
-            break
-        case 9:
-            prepare_search(array_meses[9], dia_selecionado)
-            break
-        case 10:
-            prepare_search(array_meses[10], dia_selecionado)
-            break
-        case 11:
-            prepare_search(array_meses[11], dia_selecionado)
-            break
-    }
+    try {
 
-    function prepare_search(month, dia_selecionado) {
-        console.log(dia_selecionado);
-
-        try {
-
-            let obj_calendar = {
-                day: dia_selecionado,
-                month: month
-            }
-
-            window.electronAPI.search_by_month(obj_calendar)//Maybe rename to calendar_search
-
-        } catch (error) {
-            console.log(error);
-
-        } finally {
-
-            window.electronAPI.search_by_month_return(async (event, data) => {
-                console.log(data);
-
-                if (data) {
-                    if (dia_selecionado == "all") {
-                        list_users(data)
-                    } else {
-                        const day = data.filter(x => {
-                            return x.day == dia_selecionado
-                        })
-                        list_users(day)
-                    }
-                }
-            })
-
+        let obj_calendar = {
+            day: day,
+            month: month,
+            year: year,
         }
 
-    }
+        window.electronAPI.search_by_calendar(obj_calendar)//Maybe rename to calendar_search
 
+
+    } catch (error) {
+        console.log(error);
+
+    } finally {
+
+        window.electronAPI.search_by_calendar_return(async (event, data) => {
+       //Presents result to the user
+       data = JSON.parse(data);
+            list_users(data)
+
+        })
+
+    }
 })
 
 
-//================= DATA FROM BACKEND ====================//
-//When called, creates table and inserts data within it
-//from a single day of the month
+function start() {
+    // Get the current date
+    const now = new Date();
+
+    // Extract day, month, and year
+    const day = now.getDate(); // 1-31
+    const month = now.getMonth() + 1; // 0-11 (Add 1 to get 1-12)
+    const year = now.getFullYear(); // YYYY
+
+    // Format day and month with leading zeros if necessary
+    const formattedDay = day.toString().padStart(2, '0');
+    const formattedMonth = month.toString().padStart(2, '0');
+
+    // Prepare the object for searching
+    let obj_calendar = {
+        day: formattedDay,
+        month: formattedMonth,
+        year: year,
+    };
+
+
+    try {
+        // Call the search function with the current date
+        window.electronAPI.search_by_calendar(obj_calendar);
+
+    } catch (error) {
+
+    } finally {
+
+        window.electronAPI.search_by_calendar_return(async (event, data) => {
+            data = JSON.parse(data);
+            list_users(data)
+        })
+    }
+}
+
+// Execute the function
+start();
+
+
+
 function list_users(data) {
     limpaColunas()
 
@@ -294,6 +255,7 @@ function list_users(data) {
         // Get the table body element
         const tableBody = document.getElementById('visitors-table-body');
 
+        //Creates list of users within the table
         for (i of data) {
 
 
@@ -302,15 +264,15 @@ function list_users(data) {
             // Convert the ISO date string to a Date object
             const visitante_date = new Date(i.created_at);
             const visitante_date_str = visitante_date.toLocaleDateString('pt-BR');
-        
+
             // Extract the hour, minutes, and seconds
             const visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
             const visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
             const visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
-        
+
             // Combine them into HH:MM:SS format
             const visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
-        
+
             // Add cells to the row for each data field
             row.innerHTML = `
                 <td>${i.name}</td>
@@ -319,101 +281,58 @@ function list_users(data) {
                 <td>${i.visit_purpose}</td>
                 <td>${visitante_date_str}</td>
                 <td>${visitante_time}</td>
+                <td>
+             
+                    <button data-id="${i.id}" class="btn-register-again btn btn-warning border shadowm-sm btn-sm">
+                      
+                            Registrar
+
+                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                            </svg>
+
+                    </button>
+
+                </td>
             `;
-        
+
             // Append the row to the table body
-            tableBody.appendChild(row);
+            tableBody.appendChild(row)
 
-
-
-
-
-
-
-
-            // let visitante_data = new Date(i.created_at);
-            // visitante_data = visitante_data.toLocaleDateString('pt-BR');
-
-            // Convert the ISO date string to a Date object
-            // let visitante_date = new Date(i.created_at);
-            // Extract the hour, minutes, and seconds
-            // let visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
-            // let visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
-            // let visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
-
-            // Combine them into HH:MM:SS format
-            // let visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
-
-            // let visitante_nome = i.name
-            // let visitante_doc = i.visitor_id
-            // let visitante_andar = i.visiting_floor
-            // let tipoVisita = i.visit_purpose
-
-
-
-            // row = document.createElement('div')
-            // row.classList.add('row')
-            // data_div = document.createElement('div')
-            // data_div.classList.add('row-col')
-            // hora_div = document.createElement('div')
-            // hora_div.classList.add('row-col')
-            // nome_div = document.createElement('div')
-            // nome_div.classList.add('row-col')
-            // doc_div = document.createElement('div')
-            // doc_div.classList.add('row-col')
-            // andar_div = document.createElement('div')
-            // andar_div.classList.add('row-col')
-            // tipo_visita_div = document.createElement('div')
-            // tipo_visita_div.classList.add('row-col')
-            // tipo_visita_div.style.width = '180px'
-            // cadastrar_novamente = document.createElement('div')
-            // cadastrar_novamente.textContent = 'NOVO CADASTRO'
-            // cadastrar_novamente.classList.add('cadastrar-novamente')
-            // cadastrar_novamente.setAttribute('id', row_id)
-            // data_div.textContent = visitante_data
-            // hora_div.textContent = visitante_time
-            // nome_div.textContent = visitante_nome
-            // doc_div.textContent = visitante_doc
-            // andar_div.textContent = visitante_andar
-            // tipo_visita_div.textContent = tipoVisita
-            // row.appendChild(data_div)
-            // row.appendChild(hora_div)
-            // row.appendChild(nome_div)
-            // row.appendChild(doc_div)
-            // row.appendChild(andar_div)
-            // row.appendChild(tipo_visita_div)
-            // row.appendChild(cadastrar_novamente)
-            // colunas_container.appendChild(row)
-            // colunas_container.appendChild(row)
             limpa_colunas_control = false
         }
+        //--------------------------------------------------
 
-        //Green 'new register' btn on tables for re registration
-        let row_total = document.querySelectorAll('.row')
-        for (let i = 0; i < row_total.length; i++) {
-            row_total[i].addEventListener('click', () => {
+        //Adds green button on each register of the table to registar that recored again.
+        document.querySelectorAll('.btn-register-again').forEach(button => {
+            button.addEventListener('click', (e) => {
 
-                row_array_filter = []
-                row_cols_data = []
-                row_array_filter.push(row_total[i].childNodes)
-                for (data of row_array_filter[0]) {
-                    row_cols_data.push(data.innerHTML)
-                }
-                //fills re registration screen with choosen values
-                re_confirm_name.textContent = row_cols_data[2]
-                re_confirm_doc.textContent = row_cols_data[3]
-                re_confirm_floor.textContent = row_cols_data[4]
-                //Shows re registration confirm screen
-                re_pop_up_confirmation.classList.remove('confirm-re-registration-screen')
-                re_pop_up_confirmation.classList.add('confirm-re-registration-screen-on')
-                document.body.scrollTop = 0
-                document.documentElement.scrollTop = 0
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to     revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        // let user_id = e.getAttribute('data-id')
+
+                        let button_element = e.target
+                        user_id = button_element.getAttribute('data-id')
+
+                        window.electronAPI.reassign_visitor(user_id)
+
+                        //Refresh list      
+                        limpaColunas();
+
+
+                    }
+                });
 
             })
-        }
+        })
+
+
     }
 }
-
-
-
-

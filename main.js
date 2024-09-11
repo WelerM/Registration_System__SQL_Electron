@@ -38,8 +38,9 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,   
-      nodeIntegration: false        // Enable Node.js integration
+      contextIsolation: true,  // Keep this true for security
+      enableRemoteModule: false, // Keep remote module off
+      nodeIntegration: false  // Keep this false for security
     }
   })
   win.setMenu(null)
@@ -84,33 +85,46 @@ const createWindow = () => {
   })
 
   //Reassing of guests
-  ipcMain.on('reassign_guest', async (event, data) => {
+
+  //Reassing of guests
+  ipcMain.on('reassign_visitor', async (event, data) => {
+
+    data = Number(data)
 
     try {
+      // Retrieve the existing user by ID
+      const existingUser = await Visitor.findOne({
+        where: { id: data }
+      });
+
+      if (!existingUser) {
+        console.log('User not found with ID:', data.id);
+        return;
+      }
 
       // Define the new user data
       const newUser = {
-        id: data.id,
-        name: data.name,
-        visitor_id: data.visitor_id,
-        visiting_floor: data.visiting_floor,
-        visit_purpose: data.visit_purpose,
-        created_at: new Date() // or any specific date string
+        name: existingUser.name,
+        visitor_id: existingUser.visitor_id,
+        visiting_floor: existingUser.visiting_floor,
+        visit_purpose: existingUser.visit_purpose,
+        created_at: new Date() // or any specific date string if needed
       };
 
-
-      // Insert the new user into the database
+      // Create a new user record with the new data
       const createdUser = await Visitor.create(newUser);
 
       // Log the created user data
       console.log('User reassigned successfully:', createdUser.dataValues);
 
-      // return createdUser.dataValues;
+      // Optionally, you might want to return the created user data
+      // event.reply('user_reassigned', createdUser.dataValues);
 
     } catch (error) {
-      console.error('Error inserting new user:', error);
+      console.error('Error reassigning user:', error);
     }
   })
+
 
 
 
@@ -150,39 +164,68 @@ const createWindow = () => {
   })
 
   //SEARCH BY MONTH - Not working
-  ipcMain.on('search_by_month', async (event, data) => {
+  ipcMain.on('search_by_calendar', async (event, data) => {
 
     let calendar_obj = data;
+
 
     //Pode pesquisar day e month e year
     //Pode pesquisar todos do month e year = 'all'
     //pode pesuisar todos do year (criar na view)
 
-    let table = 'created_at'
     let day = calendar_obj.day;
     let month = calendar_obj.month;
-    let year = new Date().getFullYear();
+    let year = calendar_obj.year
 
 
-    let results = await search(param, table)
+    let results = await calendar_search(day, month, year)
 
 
-    // win.webContents.send('search_by_month_return', results)
+    win.webContents.send('search_by_calendar_return', results)
   })
 
 
 
+
+  // Search functions
+
+  async function calendar_search(day, month, year) {
+
+    // Build the date string (YYYY-MM-DD)
+    const date_start = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    const next_day = new Date(`${year}-${month}-${(parseInt(day, 10) + 1).toString().padStart(2, '0')}T00:00:00.000Z`);
+
+    // Set up the `where` condition for the Sequelize query
+    const whereCondition = {
+      created_at: {
+        [Sequelize.Op.gte]: date_start,
+        [Sequelize.Op.lt]: next_day
+      }
+    };
+
+    let users = await Visitor.findAll({
+      where: whereCondition
+    });
+
+    users = JSON.stringify(users);
+
+    return users;
+  }
+
+
+
   async function search(param, column_1) {
+
     try {
       let whereCondition = {};
-      
+
       if (column_1 === 'created_at') {
 
         // Determine the type of search based on the format of `param`
         const isExactDate = /^\d{4}-\d{2}-\d{2}$/.test(param);
         const isMonthYear = /^\d{4}-\d{2}$/.test(param);
         const isYear = /^\d{4}$/.test(param);
-  
+
         if (isExactDate) {
           // Exact date search
           const dateStart = `${param} 00:00:00.000 +00:00`;
@@ -209,6 +252,7 @@ const createWindow = () => {
           // Search by year
           const dateStart = `${param}-01-01 00:00:00.000 +00:00`;
           const dateEnd = `${param}-12-31 23:59:59.999 +00:00`;
+
           whereCondition = {
             [column_1]: {
               [Sequelize.Op.between]: [dateStart, dateEnd]
@@ -230,18 +274,24 @@ const createWindow = () => {
           }
         };
       }
-  
+
+
       const users = await Visitor.findAll({
         where: whereCondition
       });
-  
+
+
       if (users.length > 0) {
         let user = users.map(user => user.dataValues);
         return user;
+
       } else {
         return [];
       }
-  
+
+
+
+
     } catch (error) {
       console.error("Error during search:", error);
       throw error;
