@@ -5,90 +5,79 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'none';">
+
     <title>Registration system</title>
 
     <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="./assets/js/search_interface.js" defer ></script>
-    <script src="./assets/js/interface_reset.js" defer></script>
-    <script src="./assets/js/registration_interface.js" defer></script>
-    <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script> 
+    <script src="./assets/js/renderer.js" defer></script>
+    <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 
 
 
 </head>
 
-<body class=" p-3">
+<body>
 
     <div class="main-interface row">
 
-        <div class="registration-interface col-md-4  border-end vh-100">
-            <h3>register new client</h3>
+        <div class="registration-interface col-md-4  border-end vh-100 py-3 px-4">
 
+            <p>Registrar novo visitante</p>
 
-            <div class="mb-3">
-                <label for="input-nome" class="form-label">Nome completo</label>
+            <div class="mb-1">
+                <label for="input-nome" class="form-label"></label>
                 <input id="input-nome" type="email" class="form-control" id="exampleInputEmail1"
-                    aria-describedby="emailHelp">
+                    aria-describedby="emailHelp" placeholder="Nome completo">
             </div>
 
-            <div class="mb-3">
-                <label for="input-documento" class="form-label">Documento</label>
-                <input id="input-documento" type="text" class="form-control">
+            <div class="mb-1">
+                <label for="input-documento" class="form-label"></label>
+                <input id="input-documento" type="text" class="form-control" placeholder="CPF ou RG">
             </div>
 
-            <div class="mb-3">
-                <label for="input-andar" class="form-label">Andar</label>
-                <input id="input-andar" type="text" class="form-control">
+            <div class="mb-1">
+                <label for="input-andar" class="form-label"></label>
+                <input id="input-andar" type="text" class="form-control" placeholder="Andar">
             </div>
 
+            <div class="mb-1">
+                <label for="andar-select" class="form-label"></label>
+                <select id="andar-select" class="form-select" aria-label="Default select example">
+                    <option value="0" class="option" selected>Motivo da visita</option>
+                    <option value="1" class="option">Agendamento</option>
+                    <option value="2" class="option">Serviços gerais</option>
+                    <option value="3" class="option">Entrega no andar</option>
+                    <option value="4" class="option">Falar com funcionário</option>
+                    <option value="5" class="option">Outro</option>
+                </select>
+            </div>
 
+            <div id="alert-register-error" class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto" role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                  </svg>
 
-            <select class="form-select" aria-label="Default select example">
-                <option value="0" class="option" selected>Motivo da visita</option>
-                <option value="1" class="option">Agendamento</option>
-                <option value="2" class="option">Serviços gerais</option>
-                <option value="3" class="option">Entrega no andar</option>
-                <option value="4" class="option">Falar com funcionário</option>
-                <option value="5" class="option">Outro</option>
-            </select>
+                  É necessário preencher todos os campos!
+                
+              </div>
 
-            <p class="cadastro-warning-hide">É necessário preencher todos os campos!</p>
-
-            <button class="btn btn-success border shadow-sm d-flex gap-2" id="btn_cadastrar">
+            <button class="btn btn-success border shadow-sm d-flex gap-2 mt-3" id="btn_cadastrar">
                 Cadastrar
             </button>
-
-
-
-
-
-            <div class="clean_btns_container d-flex">
-
-                <div id="limpar-dados">
-                    <img src="./assets/img/trash_can.png" alt="">
-                    <p>clean fields</p>
-                </div>
-
-                <div id="btn_clean_columns">
-                    <img src="./assets/img/trash_can.png" alt="">
-                    <p>clean results</p>
-                </div>
-
-            </div>
 
         </div>
 
 
 
-        <div class="pagina-busca-container col-md-8">
+        <div class="pagina-busca-container col-md-8 p-0">
 
-            <div class="output-filtro-container row  border-bottom">
+            <div class="output-filtro-container row">
 
 
                 <!-- QUICK SEARCH -->
-                <div class="busca-options-left-container col-md-4 border-end">
+                <div class="busca-options-left-container col-md-4 border-end py-3 px-4">
 
                     <p>Pesquisa rápida</p>
 
@@ -101,6 +90,7 @@
 
                     <div class="m-0 mb-1">
                         <label for="pesquisar-por-documento" class="form-label"></label>
+                        
                         <input id="pesquisar-por-documento" type="text" class="form-control"
                             placeholder="Pesquisar por documento">
 
@@ -110,7 +100,7 @@
 
 
                 <!-- DATE PICKER -->
-                <div class="busca-options-right-container col-md-4 border-end">
+                <div class="busca-options-right-container col-md-4 border-end p-3">
 
                     <p>Pesquisar por data</p>
 
@@ -129,8 +119,10 @@
                 </div>
 
                 <!-- STATISTICS  -->
-                <div class="statistics-container col-md-4">
-                    <h3>statistics</h3>
+                <div class="statistics-container col-md-4 p-3">
+
+                    <p>Estatísticas</p>
+
                     <div class="statistics-inner-container">
                         <p class="statistic_line">today:<span id="statistic_today"></span></p>
                         <p class="statistic_line">this month:<span id="statistic_month"></span></p>
@@ -141,70 +133,43 @@
 
             </div>
 
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Documento</th>
-                        <th>Andar</th>
-                        <th>Motivo da visita</th>
-                        <th>Data</th>
-                        <th>Hora</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="visitors-table-body">
-                    <!-- Rows will be dynamically inserted here -->
+            <div class="bg-body-tertiary h-100 w-100 border-top ">
+
+                <table class="table table-striped  ">
+
+                    <thead >
+                        <tr >
+                            <th class="px-3">Nome</th>
+                            <th>Documento</th>
+                            <th>Andar</th>
+                            <th>Motivo da visita</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="visitors-table-body" >
+                        <!-- Rows will be dynamically inserted here -->
+                    </tbody>
+
+                </table>
+
+                <div class="nada-encontrado alert alert-danger align-items-center w-50 d-none align-items-center justify-content-center gap-3 m-auto" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                      </svg>
+
+                      Nada encontrado
                     
-                </tbody>
-            </table>
-
-            <p class="nada-encontrado" style="display: none;"> Nada encontrado</p>
-
-        </div>
-
-
-
-    </div>
-
-
-
-    <!-- Pop up Modals -->
-
-    <div class="d-none">
-
-        <!-- Register again modal -->
-        <button type="button" class="confirm-registration-screen btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#exampleModal1"></button>
-
-    </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
-
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel1">Registrar novamente</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    <p>Nome: <span id="confirm_name"></span></p>
-                    <p>Documento: <span id="confirm_doc"></span></p>
-                    <p>Andar: <span id="confirm_floor"></span></p>
-                </div>
-
-                <div class="modal-footer">
-                  
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button id="btn-confirmar" type="button" class="btn btn-primary">Confirmar</button>
-                </div>
-
+                  </div>
             </div>
+
+
         </div>
+
+
+
     </div>
 
 </body>

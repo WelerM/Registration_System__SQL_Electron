@@ -5,10 +5,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     //DATA INSERT
     //New guest registration
-    insert_data: (data) => ipcRenderer.send('insert_data', data),
+    insert_data: (data) => ipcRenderer.invoke('insert_data', data),
 
     //Reassign guest
-    reassign_visitor: (data) => ipcRenderer.send('reassign_visitor', data),
+    reassign_visitor: (data) => ipcRenderer.invoke('reassign_visitor', data),
 
 
     //Quick Search

@@ -54,7 +54,7 @@ const createWindow = () => {
   // =========== REGISTRATION INTERFACE =========//
 
   //Obj coming from registration form
-  ipcMain.on('insert_data', async (event, data) => {
+  ipcMain.handle('insert_data', async (event, data) => {
 
 
     try {
@@ -76,6 +76,7 @@ const createWindow = () => {
       console.log('User created successfully:', createdUser.dataValues);
 
       // return createdUser.dataValues;
+      return { success: true }
 
     } catch (error) {
       console.error('Error inserting new user:', error);
@@ -87,7 +88,7 @@ const createWindow = () => {
   //Reassing of guests
 
   //Reassing of guests
-  ipcMain.on('reassign_visitor', async (event, data) => {
+  ipcMain.handle('reassign_visitor', async (event, data) => {
 
     data = Number(data)
 
@@ -119,7 +120,10 @@ const createWindow = () => {
 
       // Optionally, you might want to return the created user data
       // event.reply('user_reassigned', createdUser.dataValues);
+      // return { success: true }
 
+      console.log('fdgsdg');
+      
     } catch (error) {
       console.error('Error reassigning user:', error);
     }
