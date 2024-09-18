@@ -28,15 +28,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     // STATISTICS
     //Entries today
-    today_entries_call: (data) => ipcRenderer.send('today_entries_call', data),
+    today_entries_call: (data) => ipcRenderer.invoke('today_entries_call', data),
     today_entries_return: (data) => ipcRenderer.on('today_entries_return', data),
 
     //Entries this month
-    month_entries_call: (data) => ipcRenderer.send('month_entries_call', data),
+    month_entries_call: () => ipcRenderer.invoke('month_entries_call'),
     month_entries_return: (data) => ipcRenderer.on('month_entries_return', data),
 
     //All entries
-    all_data_call: (data) => ipcRenderer.send('all_data_call', data),
+    all_data_call: () => ipcRenderer.invoke('all_data_call'),
     all_data_return: (data) => ipcRenderer.on('all_data_return', data),
 })
 

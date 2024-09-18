@@ -26,25 +26,44 @@
 
             <p>Registrar novo visitante</p>
 
-            <div class="mb-1">
-                <label for="input-nome" class="form-label"></label>
+            <div class="">
+                <label for="input-nome" class="form-label d-none"></label>
+
                 <input id="input-nome" type="email" class="form-control" id="exampleInputEmail1"
                     aria-describedby="emailHelp" placeholder="Nome completo">
             </div>
 
-            <div class="mb-1">
-                <label for="input-documento" class="form-label"></label>
+            <div class="mt-3">
+                <label for="input-documento" class="form-label d-none"></label>
                 <input id="input-documento" type="text" class="form-control" placeholder="CPF ou RG">
             </div>
 
-            <div class="mb-1">
-                <label for="input-andar" class="form-label"></label>
-                <input id="input-andar" type="text" class="form-control" placeholder="Andar">
+            <div class="mt-3">
+
+                <div class="mt-3">
+                    <label for="andar-select" class="form-label d-none"></label>
+
+                    <select id="andar-select" class="form-select" aria-label="Default select example">
+                        <option value="0" class="option" selected>Selecione o andar</option>
+                        <option value="1" class="option">1° Andar</option>
+                        <option value="2" class="option">2° Andar</option>
+                        <option value="3" class="option">3° Andar</option>
+                        <option value="4" class="option">4° Andar</option>
+                        <option value="5" class="option">5° Andar</option>
+                        <option value="6" class="option">6° Andar</option>
+                        <option value="7" class="option">7° Andar</option>
+                        <option value="8" class="option">8° Andar</option>
+                    </select>
+                </div>
+
             </div>
 
-            <div class="mb-1">
-                <label for="andar-select" class="form-label"></label>
-                <select id="andar-select" class="form-select" aria-label="Default select example">
+
+
+            <div class="mt-3">
+
+
+                <select id="motivo-visita-select" class="form-select" aria-label="Default select example">
                     <option value="0" class="option" selected>Motivo da visita</option>
                     <option value="1" class="option">Agendamento</option>
                     <option value="2" class="option">Serviços gerais</option>
@@ -52,16 +71,21 @@
                     <option value="4" class="option">Falar com funcionário</option>
                     <option value="5" class="option">Outro</option>
                 </select>
+
             </div>
 
-            <div id="alert-register-error" class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto" role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                  </svg>
+            <div id="alert-register-error"
+                class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto"
+                role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                    <path
+                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                </svg>
 
-                  É necessário preencher todos os campos!
-                
-              </div>
+                É necessário preencher todos os campos!
+
+            </div>
 
             <button class="btn btn-success border shadow-sm d-flex gap-2 mt-3" id="btn_cadastrar">
                 Cadastrar
@@ -79,18 +103,20 @@
                 <!-- QUICK SEARCH -->
                 <div class="busca-options-left-container col-md-4 border-end py-3 px-4">
 
-                    <p>Pesquisa rápida</p>
+                    <p class="">Pesquisa rápida</p>
 
-                    <div class="m-0 mb-1">
-                        <label for="pesquisar-por-nome" class="form-label"></label>
+                    <div class="m-0 p-0 ">
+
+                        <label for="pesquisar-por-nome" class="form-label d-none"></label>
 
                         <input id="pesquisar-por-nome" type="text" class="form-control"
                             placeholder="Pesquisar por nome">
                     </div>
 
-                    <div class="m-0 mb-1">
-                        <label for="pesquisar-por-documento" class="form-label"></label>
-                        
+
+                    <div class="m-0 p-0 mt-3">
+                        <label for="pesquisar-por-documento" class="form-label d-none"></label>
+
                         <input id="pesquisar-por-documento" type="text" class="form-control"
                             placeholder="Pesquisar por documento">
 
@@ -102,17 +128,17 @@
                 <!-- DATE PICKER -->
                 <div class="busca-options-right-container col-md-4 border-end p-3">
 
-                    <p>Pesquisar por data</p>
+                    <p class="">Pesquisar por data</p>
 
-                    <div class="container mt-3">
-                        <div class="mb-3">
-                            <label for="input-datepicker" class="form-label">Selecione a data</label>
-                            <input type="date" id="input-datepicker" class="form-control">
-                        </div>
+
+                    <div class="">
+                        <label for="input-datepicker" class="form-label d-none"></label>
+                        <input type="date" id="input-datepicker" class="form-control">
                     </div>
 
 
-                    <button class="btn btn-success text-light" id="procurar">
+
+                    <button class="btn btn-success text-light mt-3" id="procurar">
                         Procurar
                     </button>
 
@@ -124,9 +150,9 @@
                     <p>Estatísticas</p>
 
                     <div class="statistics-inner-container">
-                        <p class="statistic_line">today:<span id="statistic_today"></span></p>
-                        <p class="statistic_line">this month:<span id="statistic_month"></span></p>
-                        <p class="statistic_line">total:<span id="statistic_total"></span></p>
+                        <div id="statistic_today"></div>
+                        <div id="statistic_month"></div>
+                        <div id="statistic_total"></div>
                     </div>
 
                 </div>
@@ -137,8 +163,8 @@
 
                 <table class="table table-striped  ">
 
-                    <thead >
-                        <tr >
+                    <thead>
+                        <tr>
                             <th class="px-3">Nome</th>
                             <th>Documento</th>
                             <th>Andar</th>
@@ -149,20 +175,23 @@
                         </tr>
                     </thead>
 
-                    <tbody id="visitors-table-body" >
+                    <tbody id="visitors-table-body">
                         <!-- Rows will be dynamically inserted here -->
                     </tbody>
 
                 </table>
 
-                <div class="nada-encontrado alert alert-danger align-items-center w-50 d-none align-items-center justify-content-center gap-3 m-auto" role="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                      </svg>
+                <div class="nada-encontrado alert alert-danger align-items-center w-50 d-none align-items-center justify-content-center gap-3 m-auto"
+                    role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                    </svg>
 
-                      Nada encontrado
-                    
-                  </div>
+                    Nada encontrado
+
+                </div>
             </div>
 
 
