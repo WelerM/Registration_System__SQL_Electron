@@ -3,6 +3,7 @@ const path = require('path');
 
 const { Sequelize } = require('sequelize');
 const Visitor = require('./models/visitor'); // Adjust the path accordingly
+const Visit = require('./models/visits'); // Adjust the path accordingly
 
 
 // Initialize Sequelize
@@ -14,7 +15,7 @@ async function initializeDatabase() {
 
   try {
     await sequelize.authenticate();
-    console.log('Database connection has been established successfully.');
+
 
 
 
@@ -54,8 +55,7 @@ const createWindow = () => {
   // =========== REGISTRATION INTERFACE =========//
 
   //Obj coming from registration form
-  ipcMain.handle('insert_data', async (event, data) => {
-
+  ipcMain.on('insert_data', async (event, data) => {
 
     try {
 
@@ -63,20 +63,35 @@ const createWindow = () => {
       const newUser = {
         name: data.name,
         visitor_id: data.visitor_id,
-        visiting_floor: data.visiting_floor,
-        visit_purpose: data.visit_purpose,
         created_at: new Date() // or any specific date string
       };
 
 
+
+
       // Insert the new user into the database
-      const createdUser = await Visitor.create(newUser);
+      let created_user = await Visitor.create(newUser);
+      created_user = created_user.get({ plain: true });
 
-      // Log the created user data
-      console.log('User created successfully:', createdUser.dataValues);
+      let nearly_created_user_id = created_user.id
+      //---------------------------------------------
 
-      // return createdUser.dataValues;
-      return { success: true }
+
+
+      // Now insert the new record for the "visits" table
+      const newVisit = {
+        user_id: nearly_created_user_id,  // Use the newly created user ID
+        visiting_floor: data.visiting_floor, // Assuming you're passing this in 'data'
+        visit_purpose: data.visit_purpose, // Also assuming this is passed in 'data'
+        created_at: new Date() // Optional: set a specific timestamp, or use the default
+      };
+
+      // Insert the new visit into the database
+      let created_visit = await Visit.create(newVisit);
+      created_visit = created_visit.get({ plain: true });
+
+      // Return success
+      return { success: true, created_user, created_visit };
 
     } catch (error) {
       console.error('Error inserting new user:', error);
@@ -88,9 +103,10 @@ const createWindow = () => {
   //Reassing of guests
 
   //Reassing of guests
-  ipcMain.handle('reassign_visitor', async (event, data) => {
+  ipcMain.on('reassign_visitor', async (event, data) => {
 
     data = Number(data)
+
 
     try {
       // Retrieve the existing user by ID
@@ -98,31 +114,38 @@ const createWindow = () => {
         where: { id: data }
       });
 
-      if (!existingUser) {
-        console.log('User not found with ID:', data.id);
+      let existingVisit = await Visit.findOne({
+        where: { user_id: data }
+      });
+
+
+      let retrieved_visit = existingVisit.dataValues
+
+      if (!existingUser || !existingVisit) {
         return;
       }
 
-      // Define the new user data
-      const newUser = {
-        name: existingUser.name,
-        visitor_id: existingUser.visitor_id,
-        visiting_floor: existingUser.visiting_floor,
-        visit_purpose: existingUser.visit_purpose,
-        created_at: new Date() // or any specific date string if needed
+      let nearly_created_user_id = existingUser.dataValues.id;
+
+      // Now insert the new record for the "visits" table
+      const new_visit = {
+        user_id: nearly_created_user_id,  // Use the newly created user ID
+        visiting_floor: retrieved_visit.visiting_floor, // Assuming you're passing this in 'data'
+        visit_purpose: retrieved_visit.visit_purpose, // Also assuming this is passed in 'data'
+        created_at: new Date() // Optional: set a specific timestamp, or use the default
       };
 
-      // Create a new user record with the new data
-      const createdUser = await Visitor.create(newUser);
 
-      // Log the created user data
-      console.log('User reassigned successfully:', createdUser.dataValues);
 
-      // Optionally, you might want to return the created user data
-      // event.reply('user_reassigned', createdUser.dataValues);
-      // return { success: true }
 
-      console.log('fdgsdg');
+      // Insert the new visit into the database
+      let created_visit = await Visit.create(new_visit);
+      created_visit = created_visit.get({ plain: true });
+
+      // Return success
+      // return { success: true, created_user, created_visit };
+
+
 
     } catch (error) {
       console.error('Error reassigning user:', error);
@@ -136,7 +159,7 @@ const createWindow = () => {
   //QUICK SEARCH
 
   //By name
-  ipcMain.on('search_by_name', async (event, data) => {
+  ipcMain.handle('search_by_name', async (event, data) => {
 
 
     let name = data.name
@@ -145,15 +168,15 @@ const createWindow = () => {
     let column = 'name'
     let results = await search(name, column)
 
-    results = JSON.stringify(results);
+    return JSON.stringify(results);
 
-    win.webContents.send("search_by_name_return", results);
+    // win.webContents.send("search_by_name_return", results);
 
 
   })
 
   //By doc
-  ipcMain.on('search_by_doc', async (event, data) => {
+  ipcMain.handle('search_by_doc', async (event, data) => {
 
     let param = data
     param = Number(param);
@@ -161,14 +184,14 @@ const createWindow = () => {
     let column = 'visitor_id'
     let results = await search(param, column)
 
-    results = JSON.stringify(results);
+    return JSON.stringify(results);
 
-    win.webContents.send("search_by_doc_return", results);
+    // win.webContents.send("search_by_doc_return", results);
 
   })
 
   //SEARCH BY MONTH - 
-  ipcMain.on('search_by_calendar', async (event, data) => {
+  ipcMain.handle('search_by_calendar', async (event, data) => {
 
     let calendar_obj = data;
 
@@ -182,171 +205,88 @@ const createWindow = () => {
     let year = calendar_obj.year;
 
 
-    (async function () {
 
-      // Build the date string (YYYY-MM-DD)
-      const date_start = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-      const next_day = new Date(`${year}-${month}-${(parseInt(day, 10) + 1).toString().padStart(2, '0')}T00:00:00.000Z`);
+    // Build the date string (YYYY-MM-DD)
+    const date_start = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    const next_day = new Date(`${year}-${month}-${(parseInt(day, 10) + 1).toString().padStart(2, '0')}T00:00:00.000Z`);
 
-      // Set up the `where` condition for the Sequelize query
-      const whereCondition = {
-        created_at: {
-          [Sequelize.Op.gte]: date_start,
-          [Sequelize.Op.lt]: next_day
-        }
-      };
+    // Set up the `where` condition for the Sequelize query
+    const whereCondition = {
+      created_at: {
+        [Sequelize.Op.gte]: date_start,
+        [Sequelize.Op.lt]: next_day
+      }
+    };
 
-      let users = await Visitor.findAll({
-        where: whereCondition,
-        order: [['created_at', 'DESC']]
-      });
+    let users = await Visitor.findAll({
+      where: whereCondition,
+      order: [['created_at', 'DESC']]
+    });
 
-      users = JSON.stringify(users);
+    users = users.map(user => user.dataValues);
 
 
-      win.webContents.send('search_by_calendar_return', users)
-
-    })();
+    return JSON.stringify(users);
   })
 
+  ipcMain.handle('find_one', async (event, data) => {
 
-
-
-
-
-
-  async function search(param, column_1) {
-
-    try {
-      let whereCondition = {};
-
-      if (column_1 === 'created_at') {
-
-        // Determine the type of search based on the format of `param`
-        const isExactDate = /^\d{4}-\d{2}-\d{2}$/.test(param);
-        const isMonthYear = /^\d{4}-\d{2}$/.test(param);
-        const isYear = /^\d{4}$/.test(param);
-
-        if (isExactDate) {
-          // Exact date search
-          const dateStart = `${param} 00:00:00.000 +00:00`;
-          const dateEnd = `${param} 23:59:59.999 +00:00`;
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.between]: [dateStart, dateEnd]
-            }
-          }
-
-        } else if (isMonthYear) {
-          // Search by month and year
-          const [year, month] = param.split('-');
-          const dateStart = `${year}-${month}-01 00:00:00.000 +00:00`;
-          const nextMonth = (parseInt(month, 10) % 12) + 1;
-          const nextYear = nextMonth === 1 ? parseInt(year, 10) + 1 : year;
-          const nextMonthStr = nextMonth.toString().padStart(2, '0');
-          const dateEnd = `${nextYear}-${nextMonthStr}-01 00:00:00.000 +00:00`;
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.between]: [dateStart, dateEnd]
-            }
-          };
-        } else if (isYear) {
-          // Search by year
-          const dateStart = `${param}-01-01 00:00:00.000 +00:00`;
-          const dateEnd = `${param}-12-31 23:59:59.999 +00:00`;
-
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.between]: [dateStart, dateEnd]
-            }
-          };
-        } else {
-          // Fallback: If the parameter does not match any date format, use a LIKE search
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.like]: `%${param}%`
-            }
-          };
-        }
-      } else {
-        // For other columns
-        whereCondition = {
-          [column_1]: {
-            [Sequelize.Op.like]: `%${param}%`
-          }
-        };
-      }
-
-
-      const users = await Visitor.findAll({
-        where: whereCondition,
-        order: [['created_at', 'DESC']]
-
-      });
-
-
-      if (users.length > 0) {
-        let user = users.map(user => user.dataValues);
-        return user;
-
-      } else {
-        return [];
-      }
-
-
-
-
-    } catch (error) {
-      console.error("Error during search:", error);
-      throw error;
+    if (!Number.isInteger(data)) {
+      return JSON.stringify({ error: "Invalid ID: must be an integer." });
     }
+    let column = 'id';
+
+    let results = await search(data, column);
+
+    return JSON.stringify(results);
 
 
-  }
-
-
+  })
 
 
   // ========= STATISTICS =============//
 
   //Today entries not owrking
 
-ipcMain.handle('today_entries_call', async () => {
-  const today = new Date();
-  const date = today.toISOString().split('T')[0];
-  const formatted_date = date.split('-');
-  const day = formatted_date[2];
-  const month = formatted_date[1];
-  const year = formatted_date[0];
+  ipcMain.handle('today_entries_call', async () => {
+    const today = new Date();
+    const date = today.toISOString().split('T')[0];
+    const formatted_date = date.split('-');
+    const day = formatted_date[2];
+    const month = formatted_date[1];
+    const year = formatted_date[0];
 
-  // Build the date string (YYYY-MM-DD)
-  const date_start = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-  const next_day = new Date(`${year}-${month}-${(parseInt(day, 10) + 1).toString().padStart(2, '0')}T00:00:00.000Z`);
+    // Build the date string (YYYY-MM-DD)
+    const date_start = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    const next_day = new Date(`${year}-${month}-${(parseInt(day, 10) + 1).toString().padStart(2, '0')}T00:00:00.000Z`);
 
-  // Set up the `where` condition for the Sequelize query
-  const whereCondition = {
-    created_at: {
-      [Sequelize.Op.gte]: date_start,
-      [Sequelize.Op.lt]: next_day,
-    },
-  };
+    // Set up the `where` condition for the Sequelize query
+    const whereCondition = {
+      created_at: {
+        [Sequelize.Op.gte]: date_start,
+        [Sequelize.Op.lt]: next_day,
+      },
+    };
 
-  try {
-    let users = await Visitor.findAll({
-      where: whereCondition,
-      order: [['created_at', 'DESC']],
-    });
+    try {
+      let users = await Visitor.findAll({
+        where: whereCondition,
+        order: [['created_at', 'DESC']],
+      });
 
-    return users; // Return the data directly
-  } catch (error) {
-    console.error("Error fetching today's entries:", error);
-    return []; // Return an empty array or handle the error appropriately
-  }
-});
+      users = users.map(user => user.dataValues);
+
+      return JSON.stringify(users);
+
+    } catch (error) {
+      console.error("Error fetching today's entries:", error);
+      return []; // Return an empty array or handle the error appropriately
+    }
+  });
 
 
   //Month entries
-  ipcMain.handle('month_entries_call', () => {
+  ipcMain.handle('month_entries_call', async () => {
 
     const today = new Date();
     const year = today.getFullYear();
@@ -364,47 +304,128 @@ ipcMain.handle('today_entries_call', async () => {
       }
     };
 
-    (async function () {
 
-      try {
-        let users = await Visitor.findAll({
-          where: whereCondition,
-          order: [['created_at', 'DESC']]
-        });
+    try {
+      let users = await Visitor.findAll({
+        where: whereCondition,
+        order: [['created_at', 'DESC']]
+      });
 
-        users = JSON.stringify(users);
+      users = users.map(user => user.dataValues);
 
-        win.webContents.send('month_entries_return', users);
+      return JSON.stringify(users);
 
-      } catch (error) {
-        console.log(error);
-      }
 
-    })();
+    } catch (error) {
+
+    }
+
   });
 
 
-  //All entries not working
-  ipcMain.handle('all_data_call', () => {
-    (async function () {
+  //total entries not working
+  ipcMain.handle('all_data_call', async () => {
 
-      try {
-        let users = await Visitor.findAll({
-          order: [['created_at', 'DESC']] // Optionally, you can keep this to order the results by creation date
-        });
 
-        users = JSON.stringify(users);
+    try {
 
-        win.webContents.send('all_data_return', users);
+      let users = await Visitor.findAll({
+        order: [['created_at', 'DESC']] // Optionally, you can keep this to order the results by creation date
+      });
 
-      } catch (error) {
-        console.log(error);
-      }
 
-    })();
+      users = users.map(user => user.dataValues);
+
+      return JSON.stringify(users);
+
+    } catch (error) {
+
+    }
 
   })
   //===========================================//
+
+  async function search(param, column_1) {
+    try {
+      let whereCondition = {};
+
+      if (column_1 === 'user_id') {
+        // Use exact match for user_id
+        whereCondition = {
+          [column_1]: param
+        };
+      } else if (column_1 === 'created_at') {
+        // Date-based search logic (same as before)
+        const isExactDate = /^\d{4}-\d{2}-\d{2}$/.test(param);
+        const isMonthYear = /^\d{4}-\d{2}$/.test(param);
+        const isYear = /^\d{4}$/.test(param);
+
+        if (isExactDate) {
+          const dateStart = `${param} 00:00:00.000 +00:00`;
+          const dateEnd = `${param} 23:59:59.999 +00:00`;
+          whereCondition = {
+            [column_1]: {
+              [Sequelize.Op.between]: [dateStart, dateEnd]
+            }
+          };
+        } else if (isMonthYear) {
+          const [year, month] = param.split('-');
+          const dateStart = `${year}-${month}-01 00:00:00.000 +00:00`;
+          const nextMonth = (parseInt(month, 10) % 12) + 1;
+          const nextYear = nextMonth === 1 ? parseInt(year, 10) + 1 : year;
+          const nextMonthStr = nextMonth.toString().padStart(2, '0');
+          const dateEnd = `${nextYear}-${nextMonthStr}-01 00:00:00.000 +00:00`;
+          whereCondition = {
+            [column_1]: {
+              [Sequelize.Op.between]: [dateStart, dateEnd]
+            }
+          };
+        } else if (isYear) {
+          const dateStart = `${param}-01-01 00:00:00.000 +00:00`;
+          const dateEnd = `${param}-12-31 23:59:59.999 +00:00`;
+          whereCondition = {
+            [column_1]: {
+              [Sequelize.Op.between]: [dateStart, dateEnd]
+            }
+          };
+        } else {
+          whereCondition = {
+            [column_1]: {
+              [Sequelize.Op.like]: `%${param}%`
+            }
+          };
+        }
+      } else {
+        // Fallback for other columns
+        whereCondition = {
+          [column_1]: {
+            [Sequelize.Op.like]: `%${param}%`
+          }
+        };
+      }
+
+      // Perform the search
+      const users = await Visitor.findAll({
+        where: whereCondition,
+        order: [['created_at', 'DESC']],
+        logging: console.log // This logs the raw SQL query
+      });
+
+
+      // Return results
+      if (users.length > 0) {
+        return users.map(user => user.dataValues);
+      } else {
+        return [];
+      }
+
+    } catch (error) {
+      console.error("Error during search:", error);
+      throw error;
+    }
+  }
+
+
 
 
   win.loadFile('public/index.html')

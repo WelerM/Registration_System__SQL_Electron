@@ -11,13 +11,6 @@ const Visitor = sequelize.define('Visitor', {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  visiting_floor: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  visit_purpose: {
-    type: DataTypes.STRING
-  },
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW

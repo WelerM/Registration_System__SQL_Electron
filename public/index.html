@@ -75,7 +75,7 @@
             </div>
 
             <div id="alert-register-error"
-                class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto"
+                class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto mt-3"
                 role="alert">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
@@ -201,6 +201,63 @@
 
     </div>
 
+
+    <!-- Button trigger modal -->
+    <button id="btn-launch-modal" type="button" class="btn btn-primary d-none" data-bs-toggle="modal"
+        data-bs-target="#exampleModal">
+        Launch modal modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+
+                    <h5 class="modal-title fs-5" id="exampleModalLabel">Informações do usuário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div id="modal-visitor-perfil" class="d-flex flex-column">
+                        <h5>Detalhes de usuário</h5>
+                    </div>
+                 
+                    <div id="modal-registrar-novamente" class="d-none flex-column">
+                        <h5>Registrar usuário novamente</h5>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <div class="btns-container-perfil">
+                        <button id="btn-new-register" type="button" class="btn btn-success">Registrar novamente</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+
+                    <div id="btns-container-registrar-novamente" class=" d-none">
+                        <button  type="button" class="btn btn-success">Registrar novamente</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </body>
+
+
+
 
 </html>

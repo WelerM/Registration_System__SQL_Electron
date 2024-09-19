@@ -1,6 +1,5 @@
 const statistic_line = document.querySelectorAll('.statistic_line')
 
-//=============== SEARCH INTERFACE ================================//
 // SEARCH BY NAME
 document.querySelector('#pesquisar-por-nome').addEventListener('input', (e) => {
 
@@ -13,52 +12,52 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', (e) => {
     document.querySelector('.nada-encontrado').classList.add('d-none');
 
 
-    if (e.inputType != 'Alt' && e.inputType != 'Tab') {
+    if (e.inputType === 'Alt' && e.inputType === 'Tab') {
+        return;
+    }
 
-        if (e.inputType === "deleteContentBackward" && e.input_text === '') {
+    if (e.inputType === "deleteContentBackward" && e.input_text === '') {
+        // Backspace was pressed, so just use the current input_text
+        limpaColunas();
+        return;
+    }
 
-            // Backspace was pressed, so just use the current input_text
-            limpaColunas();
 
-            return
-        }
-
+    (async () => {
         // Any other key press should use the current input_text
         try {
 
             let obj = { name: input_text };
 
-            window.electronAPI.search_by_name(obj);
+            let data = await window.electronAPI.search_by_name(obj);
+
+
+            limpaColunas(); // Clear columns each time a letter is type
+
+            //Presents result to the user
+            data = JSON.parse(data);
+
+            if (data.length === 0) {
+
+                document.querySelector('.nada-encontrado').classList.remove('d-none');
+                document.querySelector('.nada-encontrado').classList.add('d-flex');
+                return;
+            }
+
+
+            list_users(data);
 
         } catch (error) {
 
             console.log(error);
 
-        } finally {
-
-            limpaColunas(); // Clear columns each time a letter is typed
-
-            window.electronAPI.search_by_name_return((event, data) => {
-
-
-                //Presents result to the user
-                data = JSON.parse(data);
-
-                list_users(data)
-            })
-
         }
 
-
-
-    }
-
-
-
+    })();
 });
 
 
-//SEARCH BY DOC
+//SEARCH BY DOC - not working
 document.querySelector('#pesquisar-por-documento').addEventListener('keydown', (e) => {
     // Get the current value of the input field
     let input_number = e.key;
@@ -67,48 +66,38 @@ document.querySelector('#pesquisar-por-documento').addEventListener('keydown', (
     document.querySelector('.nada-encontrado').classList.remove('d-flex');
     document.querySelector('.nada-encontrado').classList.add('d-none');
 
-    if (input_number != 'Alt' && input_number != 'Tab') {
+    if (e.inputType === 'Alt' && e.inputType === 'Tab') {
+        return;
+    }
 
-        if (e.inputType === "deleteContentBackward") {
+    if (e.inputType === "deleteContentBackward" && e.input_text === '') {
 
-            // Backspace was pressed, so just use the current input_text
-            limpaColunas();
-
-        } else {
-
-
-
-            // Any other key press should use the current input_text
-            try {
-
-                window.electronAPI.search_by_doc(input_number);
-
-            } catch (error) {
-
-                console.log(error);
-
-            } finally {
-
-                limpaColunas(); // Clear columns each time a letter is typed
-
-                window.electronAPI.search_by_doc_return((event, data) => {
-
-                    //Presents result to the user
-                    data = JSON.parse(data);
-
-                    list_users(data)
-
-
-                })
-
-            }
-
-        }
+        // Backspace was pressed, so just use the current input_text
+        limpaColunas();
 
     }
 
+    (async () => {
 
-})
+        // Any other key press should use the current input_text
+        try {
+
+            let data = await window.electronAPI.search_by_doc(input_number);
+
+            //Presents result to the user
+            data = JSON.parse(data);
+
+            list_users(data)
+
+        } catch (error) {
+
+            console.log(error);
+
+        }
+    })();
+
+}
+)
 
 
 //SEARCH BY CALENDAR
@@ -121,30 +110,39 @@ document.querySelector('#procurar').addEventListener('click', () => {
     let input_datepicker = document.querySelector('#input-datepicker').value
     let [year, month, day] = input_datepicker.split("-");
 
-    try {
+    (async () => {
 
-        let obj_calendar = {
-            day: day,
-            month: month,
-            year: year,
+        try {
+
+            let obj_calendar = {
+                day: day,
+                month: month,
+                year: year,
+            }
+
+
+            let data = await window.electronAPI.search_by_calendar(obj_calendar)//Maybe rename to calendar_search
+
+            data = JSON.parse(data);
+
+            if (data.length === 0) {
+                limpaColunas();
+                document.querySelector('.nada-encontrado').classList.remove('d-none');
+                document.querySelector('.nada-encontrado').classList.add('d-flex');
+                return;
+            }
+            document.querySelector('.nada-encontrado').classList.remove('d-flex');
+            document.querySelector('.nada-encontrado').classList.add('d-none');
+            list_users(data);
+
+
+        } catch (error) {
+            console.log(error);
+
         }
 
-        window.electronAPI.search_by_calendar(obj_calendar)//Maybe rename to calendar_search
+    })();
 
-
-    } catch (error) {
-        console.log(error);
-
-    } finally {
-
-        window.electronAPI.search_by_calendar_return(async (event, data) => {
-            //Presents result to the user
-            data = JSON.parse(data);
-            list_users(data)
-
-        })
-
-    }
 })
 
 
@@ -270,9 +268,9 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
                 let andar_select = document.querySelector('#andar-select');
                 // let motivo_visita_select = document.querySelector('#motivo-visita-select');
 
-                try {
+                (async function () {
+                    try {
 
-                    (async function () {
                         const data = {
                             name: input_nome.value,
                             visitor_id: input_documento.value,
@@ -283,17 +281,15 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
                         // Await the asynchronous insert_data call
                         await window.electronAPI.insert_data(data);
 
-                    })();
 
-                } catch (error) {
-                    console.log(error);
+                    } catch (error) {
+                        console.log(error);
 
-                } finally {
-                    list_todays_visitors();
-                    // Reload statistics after data is saved
-                    setTimeout(reloadStatistics, 1000);
-                }
+                    } finally {
+                        start();
+                    }
 
+                })();
 
                 //Cleans up inputs
                 document.querySelector('#input-nome').value = ''
@@ -326,7 +322,9 @@ function start() {
     console.log('app initiated');
 
     list_todays_visitors();
-    reloadStatistics();
+
+    // setTimeout(reloadStatistics, 1000);
+
 
     //Set currente date to the calendar input
     const today = new Date();
@@ -342,8 +340,9 @@ function list_users(data) {
 
     if (data.length == 0) {
 
-        document.querySelector('.nada-encontrado').classList.remove('d-none');
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        // document.querySelector('.nada-encontrado').classList.remove('d-none');
+        // document.querySelector('.nada-encontrado').classList.add('d-flex');
+
     } else {
 
 
@@ -369,6 +368,7 @@ function list_users(data) {
             const visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
 
             // Add cells to the row for each data field
+            row.setAttribute('data-id', i.id)
             row.innerHTML = `
                 <td class="px-3">${i.name}</td>
                 <td>${i.visitor_id}</td>
@@ -378,9 +378,9 @@ function list_users(data) {
                 <td>${visitante_time}</td>
                 <td>
              
-                    <button data-id="${i.id}" class="btn-register-again btn btn-warning border shadowm-sm btn-sm">
+                    <button  class="btn-register-again btn btn-success border shadowm-sm btn-sm">
                       
-                            Registrar
+                            Ver
 
                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
@@ -395,41 +395,119 @@ function list_users(data) {
             tableBody.appendChild(row)
 
             limpa_colunas_control = false
+            //---------------------------------------------------------------------------
+
+
+
+            row.addEventListener('click', (e) => {
+
+                let user_id = Number(row.getAttribute('data-id'));
+
+                (async () => {
+
+                    //Search database to retrieve user's information
+                    let user_information = await window.electronAPI.find_one(user_id);
+                    user_information = JSON.parse(user_information);
+                    user_information = user_information
+                    console.log(user_information);
+
+
+                    user_perfil.innerHTML = `
+                        
+                        <div class="d-flex">
+
+                            <p class="w-25">imagem</p>
+                        
+                            <table class="table table-striped w-75 ">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Documento</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="visitors-table-body">
+                                    <tr>
+                                        <th scope="row">${user_information.name}</th>
+                                        <td>${user_information.visitor_id}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+
+                        <h5>Visitas</h5>
+                        
+                          
+                    `
+                })();
+
+
+
+                //Abrir modal user perfil
+                document.querySelector('#btn-launch-modal').click();
+
+                //Shows user perfil div inside the modal
+                let user_perfil = document.querySelector('#modal-visitor-perfil')
+                user_perfil.classList.add('d-flex')
+                user_perfil.classList.remove('d-none')
+
+
+
+
+                document.querySelector('#btn-new-register')
+                    .addEventListener('click', () => {
+
+                        //Opnes up bootstrap modal to edit new register
+                        let modal_visitante_perfil = document.querySelector('#modal-visitor-perfil')
+                        modal_visitante_perfil.classList.remove('d-flex')
+                        modal_visitante_perfil.classList.add('d-none')
+
+                        let btns_container_perfil = document.querySelector('#btns-container-perfil')
+                        btns_container_perfil.classList.remove('d-flex')
+                        btns_container_perfil.classList.add('d-none')
+
+                        return
+
+                        Swal.fire({
+                            title: 'Registrar novamente o usuário?',
+                            text: "Nome: ",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Cadastrar',
+                            cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+
+                            if (result.isConfirmed) {
+
+                                (async function () {
+
+                                    await window.electronAPI.reassign_visitor(i.id)
+
+                                    list_todays_visitors();
+
+                                    document.querySelector('.btn-close').click();
+
+                                })();
+                            }
+                        });
+                    })
+
+            })
         }
         //--------------------------------------------------
 
 
         //Hnadles warning button ( Registrar ) on each register 
-        document.querySelectorAll('.btn-register-again').forEach(button => {
+        // document.querySelectorAll('.btn-register-again').forEach(button => {
 
-            button.addEventListener('click', (e) => {
+        //     button.addEventListener('click', (e) => {
 
-                Swal.fire({
-                    title: 'Registrar novamente o usuário?',
-                    text: "Nome: ",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Cadastrar',
-                    cancelButtonText: 'Cancelar',
-                }).then((result) => {
 
-                    if (result.isConfirmed) {
-
-                        (async function () {
-
-                            let button_element = e.target
-                            user_id = button_element.getAttribute('data-id')
-
-                            await window.electronAPI.reassign_visitor(user_id)
-
-                            list_todays_visitors();
-
-                        })();
-                    }
-                });
-
-            })
-        })
+        //     })
+        // })
 
 
     }
@@ -458,37 +536,31 @@ function list_todays_visitors() {
     };
 
 
-    try {
+    (async function () {
 
-        (async function () {
+        try {
 
             // Call the search function with the current date
-            await window.electronAPI.search_by_calendar(obj_calendar);
+            let data = await window.electronAPI.search_by_calendar(obj_calendar);
 
-        })();
+            data = JSON.parse(data);
 
-
-    } catch (error) {
-
-    } finally {
-
-        window.electronAPI.search_by_calendar_return(async (event, data) => {
-            if (!data) {
+            if (data.length === 0) {
 
                 document.querySelector('.nada-encontrado').classList.remove('d-none');
                 document.querySelector('.nada-encontrado').classList.add('d-flex');
-                return
+                return;
             }
 
+            list_users(data);
 
-            document.querySelector('.nada-encontrado').classList.remove('d-flex');
-            document.querySelector('.nada-encontrado').classList.add('d-none');
 
-            data = JSON.parse(data);
-            list_users(data)
+        } catch (error) {
+            console.log(error);
 
-        })
-    }
+
+        }
+    })();
 }
 
 
@@ -529,15 +601,21 @@ function reloadStatistics() {
 
 
 
+    //Today ENTRIES 
     (async function () {
         try {
             // Invoke the main process function and get the result directly
             let today_entries = await window.electronAPI.today_entries_call();
 
-            // Update the DOM with the number of entries
-            document.querySelector('#statistic_today').innerHTML = `
-            Hoje:  <span class="badge bg-success p-1">${today_entries.length}</span>
-          `;
+            if (today_entries != undefined) {
+
+                // today_entries = JSON.parse(today_entries);
+
+                // Update the DOM with the number of entries
+                document.querySelector('#statistic_today').innerHTML = `
+                Hoje:  <span class="badge bg-success p-1">${today_entries.length}</span>
+              `;
+            }
         } catch (error) {
             console.error("Error processing today_entries_call:", error);
         }
@@ -554,7 +632,18 @@ function reloadStatistics() {
 
         (async function () {
 
-            await window.electronAPI.month_entries_call();
+            let month_entries = await window.electronAPI.month_entries_call();
+
+            if (month_entries != undefined) {
+
+
+                month_entries = JSON.parse(month_entries);
+
+                document.querySelector('#statistic_month').innerHTML = `
+                Mês:  <span class="badge  bg-success p-1">${month_entries.length}</span>
+                `;
+            }
+
 
         })();
 
@@ -562,18 +651,6 @@ function reloadStatistics() {
     } catch (error) {
         console.log(error);
 
-    } finally {
-
-        window.electronAPI.month_entries_return(async (event, data) => {
-            let month_entries = await data;
-
-            month_entries = JSON.parse(month_entries);
-
-            document.querySelector('#statistic_month').innerHTML = `
-            Mês:  <span class="badge  bg-success p-1">${month_entries.length}</span>
-            `;
-
-        });
     }
     //--------------------------------------------
 
@@ -585,7 +662,19 @@ function reloadStatistics() {
 
         (async function () {
 
-            await window.electronAPI.all_data_call();
+
+            let total_entries = await window.electronAPI.all_data_call();
+            console.log(total_entries);
+            
+            // total_entries = JSON.parse(total_entries);
+
+            if (total_entries != undefined) {
+                
+                document.querySelector('#statistic_total').innerHTML = `
+                Total:  <span class="badge  bg-success p-1">${total_entries.length}</span>
+                `;
+            }
+
 
         })();
 
@@ -593,18 +682,6 @@ function reloadStatistics() {
     } catch (error) {
         console.log(error);
 
-    } finally {
-
-        window.electronAPI.all_data_return(async (event, data) => {
-            let total_entries = await data;
-
-            total_entries = JSON.parse(total_entries);
-
-            document.querySelector('#statistic_total').innerHTML = `
-            Total:  <span class="badge  bg-success p-1">${total_entries.length}</span>
-            `;
-
-        });
     }
     //--------------------------------------------
 

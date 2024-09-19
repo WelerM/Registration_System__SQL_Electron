@@ -5,38 +5,32 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
     //DATA INSERT
     //New guest registration
-    insert_data: (data) => ipcRenderer.invoke('insert_data', data),
+    insert_data: (data) => ipcRenderer.send('insert_data', data),
 
     //Reassign guest
-    reassign_visitor: (data) => ipcRenderer.invoke('reassign_visitor', data),
-
+    reassign_visitor: (data) => ipcRenderer.send('reassign_visitor', data),
 
     //Quick Search
     //By name
-    search_by_name: (data) => ipcRenderer.send('search_by_name', data),
-    search_by_name_return: (data) => ipcRenderer.on("search_by_name_return", data).setMaxListeners(100),
+    search_by_name: (data) => ipcRenderer.invoke('search_by_name', data),
     //By doc
-    search_by_doc: (data) => ipcRenderer.send('search_by_doc', data),
-    search_by_doc_return: (data) => ipcRenderer.on('search_by_doc_return', data).setMaxListeners(100),
+    search_by_doc: (data) => ipcRenderer.invoke('search_by_doc', data),
 
     //Date Picker
-    //Search by Month
-    search_by_calendar: (data) => ipcRenderer.send('search_by_calendar', data),
-    search_by_calendar_return: (data) => ipcRenderer.on('search_by_calendar_return', data),
+    search_by_calendar: (data) => ipcRenderer.invoke('search_by_calendar', data),
+
+    find_one: (id) => ipcRenderer.invoke('find_one', id),
 
 
 
     // STATISTICS
     //Entries today
-    today_entries_call: (data) => ipcRenderer.invoke('today_entries_call', data),
-    today_entries_return: (data) => ipcRenderer.on('today_entries_return', data),
+    today_entries_call: () => ipcRenderer.invoke('today_entries_call'),
 
     //Entries this month
-    month_entries_call: () => ipcRenderer.invoke('month_entries_call'),
-    month_entries_return: (data) => ipcRenderer.on('month_entries_return', data),
+    month_entries_call: (data) => ipcRenderer.invoke('month_entries_call', data),
 
     //All entries
-    all_data_call: () => ipcRenderer.invoke('all_data_call'),
-    all_data_return: (data) => ipcRenderer.on('all_data_return', data),
+    all_data_call: (data) => ipcRenderer.invoke('all_data_call', data),
 })
 
