@@ -1,37 +1,33 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-
 const { Sequelize } = require('sequelize');
 const Visitor = require('./models/visitor'); // Adjust the path accordingly
 const Visit = require('./models/visits'); // Adjust the path accordingly
-
 
 // Initialize Sequelize
 const sequelize = new Sequelize({
   dialect: 'sqlite',
   storage: './database/registration_system.sqlite'
 });
-async function initializeDatabase() {
 
+// Define associations
+Visitor.hasMany(Visit, { foreignKey: 'user_id' }); // One Visitor has many Visits
+Visit.belongsTo(Visitor, { foreignKey: 'user_id' }); // Each Visit belongs to one Visitor
+
+//=======================================================================
+
+async function initializeDatabase() {
   try {
     await sequelize.authenticate();
+    console.log('Connection to the database has been established successfully.');
 
-
-
-
+    // Sync models with the database (optional)
+    await sequelize.sync();
+    console.log('Database & tables created!');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
 }
-
-//=======================================================================
-
-
-
-
-
-
-
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -50,6 +46,13 @@ const createWindow = () => {
   win.webContents.once('did-finish-load', () => {
     win.webContents.openDevTools();
   });
+
+
+
+
+
+
+
 
 
   // =========== REGISTRATION INTERFACE =========//
@@ -160,35 +163,103 @@ const createWindow = () => {
 
   //By name
   ipcMain.handle('search_by_name', async (event, data) => {
+    let name = data.name.toLowerCase();
+    let column = 'name'; // The column you're searching in
+  
+    try {
+      // Modify the search to match names that start with the input
+      let whereCondition = {
+        [column]: {
+          [Sequelize.Op.like]: `${name}%`  // Search for names starting with the input
+        }
+      };
+  
+      // Perform the search with join to include visits
+      const users = await Visitor.findAll({
+        where: whereCondition,
+        include: [{
+          model: Visit,
+          required: false // Set to true if you want only visitors with visits
+        }],
+        order: [['name', 'DESC']],
+        logging: console.log // This logs the raw SQL query
+      });
+  
+      // Return results
+      if (users.length > 0) {
+        let result = users.map(user => {
+          return {
+            id: user.id,
+            name: user.name,
+            visitor_id: user.visitor_id,
+            created_at: user.created_at,
+            visits: user.Visits.map(visit => {
+              return {
+                visiting_floor: visit.visiting_floor,
+                visit_purpose: visit.visit_purpose,
+                created_at: visit.created_at // Include this if needed
+              };
+            }) // Map each visit to extract relevant fields
+          };
+        });
+  
+        console.log(JSON.stringify(result, null, 2)); // Log formatted output for debugging
+        return result; // Return the result as an object, JSON.stringify will be handled by Electron
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.error("Error during search:", error);
+      throw error;
+    }
+  });
+  
 
 
-    let name = data.name
-    name = name.toLowerCase();
-
-    let column = 'name'
-    let results = await search(name, column)
-
-    return JSON.stringify(results);
-
-    // win.webContents.send("search_by_name_return", results);
-
-
-  })
-
-  //By doc
+  // By doc (visitor ID)
   ipcMain.handle('search_by_doc', async (event, data) => {
+    let param = data.visitor_id;
 
-    let param = data
+    // Convert the input to a number if it's not already
     param = Number(param);
 
-    let column = 'visitor_id'
-    let results = await search(param, column)
+    
+    // Ensure param is a valid number before proceeding with the search
+    if (isNaN(param)) {
+      return []; // Return an empty array if the input is not a valid number
+    }
 
-    return JSON.stringify(results);
+    let column = 'visitor_id'; // The column you're searching in
 
-    // win.webContents.send("search_by_doc_return", results);
+    try {
+      // Create the where condition for an exact match on the visitor_id
+      let whereCondition = {
+        [column]: {
+          [Sequelize.Op.like]: `${param}%`  // Search for names starting with the input
+        }
+      };
 
-  })
+      // Perform the search for the given visitor_id
+      const visitors = await Visitor.findAll({
+        where: whereCondition,
+        order: [['visitor_id', 'DESC']],
+        logging: false// Logs the raw SQL query for debugging purposes
+      });
+
+      // Return results
+      if (visitors.length > 0) {
+        let result = visitors.map(visitor => visitor.dataValues);
+        result = JSON.stringify(result);
+        return result;
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.error("Error during document search:", error);
+      throw error;
+    }
+  });
+
 
   //SEARCH BY MONTH - 
   ipcMain.handle('search_by_calendar', async (event, data) => {

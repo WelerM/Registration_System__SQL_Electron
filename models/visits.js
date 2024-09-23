@@ -4,6 +4,12 @@ const sequelize = require('../database/sequelize'); // Adjust the path according
 const Visitor = require('./visitor'); // Import Visitor model to set up the foreign key
 
 const Visit = sequelize.define('Visit', {
+  id: { // Adding the primary key
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+    allowNull: false
+  },
   user_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -34,4 +40,5 @@ const Visit = sequelize.define('Visit', {
   timestamps: false
 });
 
+// Export the model
 module.exports = Visit;

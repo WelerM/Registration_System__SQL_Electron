@@ -1,103 +1,172 @@
 const statistic_line = document.querySelectorAll('.statistic_line')
 
 // SEARCH BY NAME
-document.querySelector('#pesquisar-por-nome').addEventListener('input', (e) => {
-
+// SEARCH BY NAME
+document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e) => {
 
     // Get the current value of the input field
-    let input_text = document.querySelector('#pesquisar-por-nome').value
+    let inputText = e.target.value.trim();
 
-    //Hides bootstrap alert "Nada encontrado"
-    document.querySelector('.nada-encontrado').classList.remove('d-flex');
-    document.querySelector('.nada-encontrado').classList.add('d-none');
+    //Blocks input if user types number
+    if (Number(inputText)) {
+        e.target.value = ''
+        return
+    }
 
-
-    if (e.inputType === 'Alt' && e.inputType === 'Tab') {
+    // If the input is empty, hide any previous error messages and return early
+    if (inputText === '') {
+        limpaColunas();  // Clear the result columns
+        document.querySelector('.nada-encontrado').classList.add('d-none');
+        document.querySelector('.nada-encontrado').classList.remove('d-flex');
         return;
     }
 
-    if (e.inputType === "deleteContentBackward" && e.input_text === '') {
-        // Backspace was pressed, so just use the current input_text
+    // Skip handling for non-textual keys like Alt, Tab, Shift, etc.
+    if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete')) {
+        // Handle delete and backspace operations
+        limpaColunas();
+        document.querySelector('.nada-encontrado').classList.add('d-none');
+        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+    }
+
+    // Skip input if the user entered a number (not applicable for name search)
+    if (!isNaN(inputText)) {
         limpaColunas();
         return;
     }
 
+    // Proceed with search if valid text input
+    try {
+        let obj = { name: inputText };
 
-    (async () => {
-        // Any other key press should use the current input_text
-        try {
-
-            let obj = { name: input_text };
-
-            let data = await window.electronAPI.search_by_name(obj);
+        // Call the search API with the user input
+        let data = await window.electronAPI.search_by_name(obj);
 
 
-            limpaColunas(); // Clear columns each time a letter is type
-
-            //Presents result to the user
-            data = JSON.parse(data);
-
-            if (data.length === 0) {
-
-                document.querySelector('.nada-encontrado').classList.remove('d-none');
-                document.querySelector('.nada-encontrado').classList.add('d-flex');
-                return;
-            }
-
-
-            list_users(data);
-
-        } catch (error) {
-
-            console.log(error);
-
+        if (Array.isArray(data)) {
+            limpaColunas();
+            document.querySelector('.nada-encontrado').classList.remove('d-none');
+            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            return;
         }
 
-    })();
+        // Clear previous results before showing new ones
+        limpaColunas();
+
+        // Parse the data returned from the API
+        data = JSON.parse(data);
+
+        // Check if any results were found
+        if (data.length === 0) {
+            limpaColunas();
+            // Show "nothing found" message
+            document.querySelector('.nada-encontrado').classList.remove('d-none');
+            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            return;
+        }
+
+        // Call function to list users if results are found
+        list_users(data);
+
+    } catch (error) {
+        limpaColunas();
+        console.error('Error fetching search results:', error);
+
+        // Optionally show a user-friendly message for errors
+        document.querySelector('.nada-encontrado').classList.remove('d-none');
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+    }
 });
 
 
-//SEARCH BY DOC - not working
-document.querySelector('#pesquisar-por-documento').addEventListener('keydown', (e) => {
+// SEARCH BY DOCUMENT
+document.querySelector('#pesquisar-por-documento').addEventListener('input', async (e) => {
+
     // Get the current value of the input field
-    let input_number = e.key;
+    let inputNumber = e.target.value.trim();
+    
 
+    // Blocks input if user doesn't type number
+    if (!Number(inputNumber)) {
+        limpaColunas();
+        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+        document.querySelector('.nada-encontrado').classList.add('d-none');
+        e.target.value = ''
+        return
+    }
 
-    document.querySelector('.nada-encontrado').classList.remove('d-flex');
-    document.querySelector('.nada-encontrado').classList.add('d-none');
-
-    if (e.inputType === 'Alt' && e.inputType === 'Tab') {
+    // If the input is empty, hide any previous error messages and return early
+    if (inputNumber === '') {
+        limpaColunas();  // Clear the result columns
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nada-encontrado').classList.remove('d-none');
         return;
     }
 
-    if (e.inputType === "deleteContentBackward" && e.input_text === '') {
+    // Skip handling for non-textual keys like Alt, Tab, Shift, etc.
+    if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete')) {
+        // Handle delete and backspace operations
+        limpaColunas();  // Clear the result columns
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nada-encontrado').classList.remove('d-remove');
+    }
 
-        // Backspace was pressed, so just use the current input_text
-        limpaColunas();
+    // Ensure input is a valid number
+    if (isNaN(inputNumber)) {
+        limpaColunas();  // Clear the result columns
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nada-encontrado').classList.remove('d-none');
+        return;
 
     }
 
-    (async () => {
+    // Proceed with search if valid numeric input
+    try {
 
-        // Any other key press should use the current input_text
-        try {
+        inputNumber = Number(inputNumber);
 
-            let data = await window.electronAPI.search_by_doc(input_number);
 
-            //Presents result to the user
-            data = JSON.parse(data);
+        let obj = { visitor_id: inputNumber };
 
-            list_users(data)
+        // Call the search API with the document number input
+        let data = await window.electronAPI.search_by_doc(obj);
 
-        } catch (error) {
-
-            console.log(error);
-
+        if (Array.isArray(data)) {
+            // If data is an array, no results were found, show the error message
+            limpaColunas();
+            document.querySelector('.nada-encontrado').classList.remove('d-flex');
+            document.querySelector('.nada-encontrado').classList.add('d-none');
+            return;
         }
-    })();
 
-}
-)
+        // Clear previous results before showing new ones
+        limpaColunas();
+
+        // Parse the data returned from the API
+        data = JSON.parse(data);
+
+
+        // Check if any results were found
+        if (data.length === 0) {
+            // Show "nothing found" message
+            limpaColunas();
+            document.querySelector('.nada-encontrado').classList.remove('d-flex');
+            document.querySelector('.nada-encontrado').classList.add('d-none');
+            return;
+        }
+
+        // Call function to list users if results are found
+        list_users(data);
+
+    } catch (error) {
+        console.error('Error fetching search results:', error);
+        limpaColunas();
+        // Optionally show a user-friendly message for errors
+        document.querySelector('.nada-encontrado').classList.remove('d-none');
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+    }
+});
+
 
 
 //SEARCH BY CALENDAR
@@ -320,8 +389,10 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
 
 function start() {
     console.log('app initiated');
+    document.querySelector('.nada-encontrado').classList.add('d-none');
+    document.querySelector('.nada-encontrado').classList.remove('d-flex');
 
-    list_todays_visitors();
+    list_today_users_initial_load();
 
     // setTimeout(reloadStatistics, 1000);
 
@@ -336,40 +407,41 @@ start();
 
 
 function list_users(data) {
-    limpaColunas()
+    limpaColunas();
 
     if (data.length == 0) {
-
+        limpaColunas();
         // document.querySelector('.nada-encontrado').classList.remove('d-none');
         // document.querySelector('.nada-encontrado').classList.add('d-flex');
-
-    } else {
-
-
-        // Get the table body element
-        const tableBody = document.getElementById('visitors-table-body');
-
-        //Creates list of users within the table
-        for (i of data) {
+        return;
+    }
 
 
-            const row = document.createElement('tr');
 
-            // Convert the ISO date string to a Date object
-            const visitante_date = new Date(i.created_at);
-            const visitante_date_str = visitante_date.toLocaleDateString('pt-BR');
+    // Get the table body element
+    const tableBody = document.getElementById('visitors-table-body');
 
-            // Extract the hour, minutes, and seconds
-            const visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
-            const visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
-            const visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
+    //Creates list of users within the table
+    for (i of data) {
 
-            // Combine them into HH:MM:SS format
-            const visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
 
-            // Add cells to the row for each data field
-            row.setAttribute('data-id', i.id)
-            row.innerHTML = `
+        const row = document.createElement('tr');
+
+        // Convert the ISO date string to a Date object
+        const visitante_date = new Date(i.created_at);
+        const visitante_date_str = visitante_date.toLocaleDateString('pt-BR');
+
+        // Extract the hour, minutes, and seconds
+        const visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
+        const visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
+        const visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
+
+        // Combine them into HH:MM:SS format
+        const visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
+
+        // Add cells to the row for each data field
+        row.setAttribute('data-id', i.id)
+        row.innerHTML = `
                 <td class="px-3">${i.name}</td>
                 <td>${i.visitor_id}</td>
                 <td>${i.visiting_floor}°</td>
@@ -391,28 +463,28 @@ function list_users(data) {
                 </td>
             `;
 
-            // Append the row to the table body
-            tableBody.appendChild(row)
+        // Append the row to the table body
+        tableBody.appendChild(row)
 
-            limpa_colunas_control = false
-            //---------------------------------------------------------------------------
-
-
-
-            row.addEventListener('click', (e) => {
-
-                let user_id = Number(row.getAttribute('data-id'));
-
-                (async () => {
-
-                    //Search database to retrieve user's information
-                    let user_information = await window.electronAPI.find_one(user_id);
-                    user_information = JSON.parse(user_information);
-                    user_information = user_information
-                    console.log(user_information);
+        limpa_colunas_control = false
+        //---------------------------------------------------------------------------
 
 
-                    user_perfil.innerHTML = `
+
+        row.addEventListener('click', (e) => {
+
+            let user_id = Number(row.getAttribute('data-id'));
+
+            (async () => {
+
+                //Search database to retrieve user's information
+                let user_information = await window.electronAPI.find_one(user_id);
+                user_information = JSON.parse(user_information);
+                user_information = user_information
+                console.log(user_information);
+
+
+                user_perfil.innerHTML = `
                         
                         <div class="d-flex">
 
@@ -442,79 +514,76 @@ function list_users(data) {
                         
                           
                     `
-                })();
+            })();
 
 
 
-                //Abrir modal user perfil
-                document.querySelector('#btn-launch-modal').click();
+            //Abrir modal user perfil
+            document.querySelector('#btn-launch-modal').click();
 
-                //Shows user perfil div inside the modal
-                let user_perfil = document.querySelector('#modal-visitor-perfil')
-                user_perfil.classList.add('d-flex')
-                user_perfil.classList.remove('d-none')
-
-
+            //Shows user perfil div inside the modal
+            let user_perfil = document.querySelector('#modal-visitor-perfil')
+            user_perfil.classList.add('d-flex')
+            user_perfil.classList.remove('d-none')
 
 
-                document.querySelector('#btn-new-register')
-                    .addEventListener('click', () => {
-
-                        //Opnes up bootstrap modal to edit new register
-                        let modal_visitante_perfil = document.querySelector('#modal-visitor-perfil')
-                        modal_visitante_perfil.classList.remove('d-flex')
-                        modal_visitante_perfil.classList.add('d-none')
-
-                        let btns_container_perfil = document.querySelector('#btns-container-perfil')
-                        btns_container_perfil.classList.remove('d-flex')
-                        btns_container_perfil.classList.add('d-none')
-
-                        return
-
-                        Swal.fire({
-                            title: 'Registrar novamente o usuário?',
-                            text: "Nome: ",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonText: 'Cadastrar',
-                            cancelButtonText: 'Cancelar',
-                        }).then((result) => {
-
-                            if (result.isConfirmed) {
-
-                                (async function () {
-
-                                    await window.electronAPI.reassign_visitor(i.id)
-
-                                    list_todays_visitors();
-
-                                    document.querySelector('.btn-close').click();
-
-                                })();
-                            }
-                        });
-                    })
-
-            })
-        }
-        //--------------------------------------------------
 
 
-        //Hnadles warning button ( Registrar ) on each register 
-        // document.querySelectorAll('.btn-register-again').forEach(button => {
+            document.querySelector('#btn-new-register')
+                .addEventListener('click', () => {
 
-        //     button.addEventListener('click', (e) => {
+                    //Opnes up bootstrap modal to edit new register
+                    let modal_visitante_perfil = document.querySelector('#modal-visitor-perfil')
+                    modal_visitante_perfil.classList.remove('d-flex')
+                    modal_visitante_perfil.classList.add('d-none')
 
+                    let btns_container_perfil = document.querySelector('#btns-container-perfil')
+                    btns_container_perfil.classList.remove('d-flex')
+                    btns_container_perfil.classList.add('d-none')
 
-        //     })
-        // })
+                    return
 
+                    Swal.fire({
+                        title: 'Registrar novamente o usuário?',
+                        text: "Nome: ",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Cadastrar',
+                        cancelButtonText: 'Cancelar',
+                    }).then((result) => {
 
+                        if (result.isConfirmed) {
+
+                            (async function () {
+
+                                await window.electronAPI.reassign_visitor(i.id)
+
+                                list_todays_visitors();
+
+                                document.querySelector('.btn-close').click();
+
+                            })();
+                        }
+                    });
+                })
+
+        })
     }
+    //--------------------------------------------------
+
+
+    //Hnadles warning button ( Registrar ) on each register 
+    // document.querySelectorAll('.btn-register-again').forEach(button => {
+
+    //     button.addEventListener('click', (e) => {
+
+
+    //     })
+    // })
 }
 
 
-function list_todays_visitors() {
+async function list_todays_visitors() {
 
     // Get the current date
     const now = new Date();
@@ -536,34 +605,77 @@ function list_todays_visitors() {
     };
 
 
-    (async function () {
 
-        try {
+    try {
 
-            // Call the search function with the current date
-            let data = await window.electronAPI.search_by_calendar(obj_calendar);
+        // Call the search function with the current date
+        let data = await window.electronAPI.search_by_calendar(obj_calendar);
 
-            data = JSON.parse(data);
+        data = JSON.parse(data);
 
-            if (data.length === 0) {
+        if (data.length === 0) {
 
-                document.querySelector('.nada-encontrado').classList.remove('d-none');
-                document.querySelector('.nada-encontrado').classList.add('d-flex');
-                return;
-            }
-
-            list_users(data);
-
-
-        } catch (error) {
-            console.log(error);
-
-
+            document.querySelector('.nada-encontrado').classList.remove('d-none');
+            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            return;
         }
-    })();
+
+        list_users(data);
+
+
+    } catch (error) {
+        console.log(error);
+
+
+    }
+
 }
 
 
+
+async function list_today_users_initial_load() {
+
+
+
+
+    // Get the current date
+    const now = new Date();
+
+    // Extract day, month, and year
+    const day = now.getDate(); // 1-31
+    const month = now.getMonth() + 1; // 0-11 (Add 1 to get 1-12)
+    const year = now.getFullYear(); // YYYY
+
+    // Format day and month with leading zeros if necessary
+    const formattedDay = day.toString().padStart(2, '0');
+    const formattedMonth = month.toString().padStart(2, '0');
+
+    // Prepare the object for searching
+    let obj_calendar = {
+        day: formattedDay,
+        month: formattedMonth,
+        year: year,
+    };
+
+
+
+    try {
+
+        // Call the search function with the current date
+        let data = await window.electronAPI.search_by_calendar(obj_calendar);
+
+        data = JSON.parse(data);
+
+        list_users(data);
+
+
+    } catch (error) {
+        console.log(error);
+
+
+    }
+
+}
 
 
 
@@ -665,11 +777,11 @@ function reloadStatistics() {
 
             let total_entries = await window.electronAPI.all_data_call();
             console.log(total_entries);
-            
+
             // total_entries = JSON.parse(total_entries);
 
             if (total_entries != undefined) {
-                
+
                 document.querySelector('#statistic_total').innerHTML = `
                 Total:  <span class="badge  bg-success p-1">${total_entries.length}</span>
                 `;
