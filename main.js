@@ -66,10 +66,8 @@ const createWindow = () => {
       const newUser = {
         name: data.name,
         visitor_id: data.visitor_id,
-        created_at: new Date() // or any specific date string
+        // created_at: new Date() // or any specific date string
       };
-
-
 
 
       // Insert the new user into the database
@@ -85,8 +83,7 @@ const createWindow = () => {
       const newVisit = {
         user_id: nearly_created_user_id,  // Use the newly created user ID
         visiting_floor: data.visiting_floor, // Assuming you're passing this in 'data'
-        visit_purpose: data.visit_purpose, // Also assuming this is passed in 'data'
-        created_at: new Date() // Optional: set a specific timestamp, or use the default
+        visit_purpose: data.visit_purpose
       };
 
       // Insert the new visit into the database
@@ -108,21 +105,19 @@ const createWindow = () => {
   //Reassing of guests
   ipcMain.on('reassign_visitor', async (event, data) => {
 
-    data = Number(data)
-
+    // { user_id: 24, visiting_floor: 1, visit_purpose: 1 }
 
     try {
+
       // Retrieve the existing user by ID
       const existingUser = await Visitor.findOne({
-        where: { id: data }
+        where: { id: data.user_id }
       });
 
       let existingVisit = await Visit.findOne({
-        where: { user_id: data }
+        where: { user_id: data.user_id }
       });
 
-
-      let retrieved_visit = existingVisit.dataValues
 
       if (!existingUser || !existingVisit) {
         return;
@@ -130,14 +125,27 @@ const createWindow = () => {
 
       let nearly_created_user_id = existingUser.dataValues.id;
 
+      //Checks which visit purpose the user has chosen
+      let visit_purpose = null;
+
+      if (data.visit_purpose === 1) {
+        visit_purpose = 'Agendamento';
+      }else if (data.visit_purpose === 2) {
+        visit_purpose = 'Serviços gerais';
+      }else if (data.visit_purpose === 3) {
+          visit_purpose = 'Entrega no andar';
+      }else if (data.visit_purpose === 4) {
+          visit_purpose = 'Falar com funcionário';
+      }else if (data.visit_purpose === 5) {
+          visit_purpose = 'Outro';
+      }
+      
       // Now insert the new record for the "visits" table
       const new_visit = {
         user_id: nearly_created_user_id,  // Use the newly created user ID
-        visiting_floor: retrieved_visit.visiting_floor, // Assuming you're passing this in 'data'
-        visit_purpose: retrieved_visit.visit_purpose, // Also assuming this is passed in 'data'
-        created_at: new Date() // Optional: set a specific timestamp, or use the default
+        visiting_floor: data.visiting_floor, // Assuming you're passing this in 'data'
+        visit_purpose: visit_purpose
       };
-
 
 
 
@@ -146,7 +154,7 @@ const createWindow = () => {
       created_visit = created_visit.get({ plain: true });
 
       // Return success
-      // return { success: true, created_user, created_visit };
+      return { success: true };
 
 
 
@@ -162,97 +170,105 @@ const createWindow = () => {
   //QUICK SEARCH
 
   //By name
+  // By name
   ipcMain.handle('search_by_name', async (event, data) => {
     let name = data.name.toLowerCase();
-    let column = 'name'; // The column you're searching in
-  
+
     try {
       // Modify the search to match names that start with the input
       let whereCondition = {
-        [column]: {
-          [Sequelize.Op.like]: `${name}%`  // Search for names starting with the input
+        '$Visitor.name$': {
+          [Sequelize.Op.like]: `${name}%`  // Search for visitor names starting with the input
         }
       };
-  
-      // Perform the search with join to include visits
-      const users = await Visitor.findAll({
+
+      const visits = await Visit.findAll({
         where: whereCondition,
         include: [{
-          model: Visit,
-          required: false // Set to true if you want only visitors with visits
+          model: Visitor,
+          required: true, // Ensure we only get visits with associated visitors
+          attributes: ['id', 'name', 'visitor_id', 'created_at'], // Specify the visitor attributes to include
+          where: { name: { [Sequelize.Op.like]: `${name}%` } } // Add condition for visitor names
         }],
-        order: [['name', 'DESC']],
+        order: [['created_at', 'DESC']], // Order by visit date
         logging: console.log // This logs the raw SQL query
       });
-  
+
       // Return results
-      if (users.length > 0) {
-        let result = users.map(user => {
+      if (visits.length > 0) {
+        let result = visits.map(visit => {
+          // Map visit data along with associated visitor data
           return {
-            id: user.id,
-            name: user.name,
-            visitor_id: user.visitor_id,
-            created_at: user.created_at,
-            visits: user.Visits.map(visit => {
-              return {
-                visiting_floor: visit.visiting_floor,
-                visit_purpose: visit.visit_purpose,
-                created_at: visit.created_at // Include this if needed
-              };
-            }) // Map each visit to extract relevant fields
+            id: visit.id, // Visit ID
+            visiting_floor: visit.visiting_floor, // Visit details
+            visit_purpose: visit.visit_purpose, // Visit details
+            created_at: visit.created_at, // Visit created date
+            visitor: { // Nested visitor object
+              id: visit.Visitor.id,
+              name: visit.Visitor.name,
+              visitor_id: visit.Visitor.visitor_id,
+              created_at: visit.Visitor.created_at,
+            }
           };
         });
-  
-        console.log(JSON.stringify(result, null, 2)); // Log formatted output for debugging
-        return result; // Return the result as an object, JSON.stringify will be handled by Electron
+
+
+        return result;
       } else {
         return [];
       }
+
     } catch (error) {
       console.error("Error during search:", error);
       throw error;
     }
   });
-  
+
 
 
   // By doc (visitor ID)
   ipcMain.handle('search_by_doc', async (event, data) => {
-    let param = data.visitor_id;
+    // Get visitor_id from input and convert it to a string for LIKE comparison
+    let visitor_id = String(data.visitor_id).trim(); // Trim any whitespace
 
-    // Convert the input to a number if it's not already
-    param = Number(param);
-
-    
-    // Ensure param is a valid number before proceeding with the search
-    if (isNaN(param)) {
-      return []; // Return an empty array if the input is not a valid number
+    // Ensure visitor_id is not empty before proceeding with the search
+    if (!visitor_id) {
+      return []; // Return an empty array if the input is empty
     }
 
-    let column = 'visitor_id'; // The column you're searching in
-
     try {
-      // Create the where condition for an exact match on the visitor_id
-      let whereCondition = {
-        [column]: {
-          [Sequelize.Op.like]: `${param}%`  // Search for names starting with the input
-        }
-      };
-
-      // Perform the search for the given visitor_id
-      const visitors = await Visitor.findAll({
-        where: whereCondition,
-        order: [['visitor_id', 'DESC']],
-        logging: false// Logs the raw SQL query for debugging purposes
+      // Perform the search for visits where the associated visitor matches the specified visitor_id using LIKE
+      const visits = await Visit.findAll({
+        include: [{
+          model: Visitor,
+          required: true, // Ensure we only get visits with associated visitors
+          attributes: ['id', 'name', 'visitor_id', 'created_at'], // Specify visitor attributes to include
+          where: { visitor_id: { [Sequelize.Op.like]: `${visitor_id}%` } } // Use LIKE operator for visitor_id
+        }],
+        order: [['created_at', 'DESC']], // Order by visit date
+        logging: console.log // Log the raw SQL query for debugging purposes
       });
 
       // Return results
-      if (visitors.length > 0) {
-        let result = visitors.map(visitor => visitor.dataValues);
-        result = JSON.stringify(result);
+      if (visits.length > 0) {
+        let result = visits.map(visit => {
+          return {
+            id: visit.id, // Visit ID
+            visiting_floor: visit.visiting_floor, // Visit details
+            visit_purpose: visit.visit_purpose, // Visit details
+            created_at: visit.created_at, // Visit created date
+            visitor: { // Nested visitor object
+              id: visit.Visitor.id,
+              name: visit.Visitor.name,
+              visitor_id: visit.Visitor.visitor_id,
+              created_at: visit.Visitor.created_at,
+            }
+          };
+        });
+
         return result;
       } else {
-        return [];
+        return []; // Return an empty array if no visits are found
       }
     } catch (error) {
       console.error("Error during document search:", error);
@@ -266,16 +282,9 @@ const createWindow = () => {
 
     let calendar_obj = data;
 
-
-    //Pode pesquisar day e month e year
-    //Pode pesquisar todos do month e year = 'all'
-    //pode pesuisar todos do year (criar na view)
-
     let day = calendar_obj.day;
     let month = calendar_obj.month;
     let year = calendar_obj.year;
-
-
 
     // Build the date string (YYYY-MM-DD)
     const date_start = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
@@ -289,30 +298,87 @@ const createWindow = () => {
       }
     };
 
-    let users = await Visitor.findAll({
+    // Query the Visit table and include the associated Visitor records
+    let visits = await Visit.findAll({
       where: whereCondition,
-      order: [['created_at', 'DESC']]
+      order: [['created_at', 'DESC']],
+      include: [ // Include visitor information in the result
+        {
+          model: Visitor, // Assuming `Visitor` is the related model
+          as: 'Visitor' // Adjust alias if needed
+        }
+      ]
     });
 
-    users = users.map(user => user.dataValues);
+    // Map over visits to format the result
+    let result = visits.map(visit => {
+      return {
+        visiting_floor: visit.visiting_floor,
+        visit_purpose: visit.visit_purpose,
+        created_at: visit.created_at, // Visit created_at
+        visitor: { // Visitor info
+          id: visit.Visitor.id,
+          name: visit.Visitor.name,
+          visitor_id: visit.Visitor.visitor_id,
+          created_at: visit.Visitor.created_at // Visitor created_at
+        }
+      };
+    });
 
+    // Return the formatted result
 
-    return JSON.stringify(users);
-  })
+    return result;
+
+  });
 
   ipcMain.handle('find_one', async (event, data) => {
-
+    // Validate the incoming ID to ensure it's an integer
     if (!Number.isInteger(data)) {
       return JSON.stringify({ error: "Invalid ID: must be an integer." });
     }
-    let column = 'id';
 
-    let results = await search(data, column);
+    try {
+      // Find the visitor based on their ID
+      const visitor = await Visitor.findOne({
+        where: { id: data }, // Match the visitor by their ID
+        attributes: ['id', 'name', 'visitor_id', 'created_at'], // Select visitor's fields
+        include: [{
+          model: Visit,
+          as: 'Visits', // Correct alias here (capital 'V' as per your model)
+          attributes: ['id', 'visiting_floor', 'visit_purpose', 'created_at'], // Specify visit attributes
+          order: [['created_at', 'DESC']] // Order visits by date
+        }],
+        logging: console.log // Log SQL query for debugging
+      });
 
-    return JSON.stringify(results);
+      // If no visitor is found, return an error
+      if (!visitor) {
+        return JSON.stringify({ error: "Visitor not found." });
+      }
 
+      // Create a response object with the visitor's information and their related visits
+      let result = {
+        id: visitor.id,
+        name: visitor.name,
+        visitor_id: visitor.visitor_id,
+        created_at: visitor.created_at,
+        visits: visitor.Visits.map(visit => ({
+          // id: visit.id,
+          visiting_floor: visit.visiting_floor,
+          visit_purpose: visit.visit_purpose,
+          created_at: visit.created_at
+        }))
+      };
 
-  })
+      // Return the result as a JSON object
+      return JSON.stringify(result);
+
+    } catch (error) {
+      console.error("Error during find_one:", error);
+      return JSON.stringify({ error: "An error occurred while fetching the data." });
+    }
+  });
+
 
 
   // ========= STATISTICS =============//

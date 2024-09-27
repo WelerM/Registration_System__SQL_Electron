@@ -1,8 +1,8 @@
-const statistic_line = document.querySelectorAll('.statistic_line')
-
-// SEARCH BY NAME
 // SEARCH BY NAME
 document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e) => {
+
+    //Erases "search by document" input
+    document.querySelector('#pesquisar-por-documento').value = '';
 
     // Get the current value of the input field
     let inputText = e.target.value.trim();
@@ -15,7 +15,7 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
 
     // If the input is empty, hide any previous error messages and return early
     if (inputText === '') {
-        limpaColunas();  // Clear the result columns
+        // Clear the result columns
         document.querySelector('.nada-encontrado').classList.add('d-none');
         document.querySelector('.nada-encontrado').classList.remove('d-flex');
         return;
@@ -24,14 +24,16 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
     // Skip handling for non-textual keys like Alt, Tab, Shift, etc.
     if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete')) {
         // Handle delete and backspace operations
-        limpaColunas();
+
         document.querySelector('.nada-encontrado').classList.add('d-none');
         document.querySelector('.nada-encontrado').classList.remove('d-flex');
     }
 
+
+
     // Skip input if the user entered a number (not applicable for name search)
     if (!isNaN(inputText)) {
-        limpaColunas();
+
         return;
     }
 
@@ -42,23 +44,16 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
         // Call the search API with the user input
         let data = await window.electronAPI.search_by_name(obj);
 
+        if (typeof data != 'object' && data === null) {
 
-        if (Array.isArray(data)) {
-            limpaColunas();
             document.querySelector('.nada-encontrado').classList.remove('d-none');
             document.querySelector('.nada-encontrado').classList.add('d-flex');
             return;
         }
 
-        // Clear previous results before showing new ones
-        limpaColunas();
-
-        // Parse the data returned from the API
-        data = JSON.parse(data);
 
         // Check if any results were found
         if (data.length === 0) {
-            limpaColunas();
             // Show "nothing found" message
             document.querySelector('.nada-encontrado').classList.remove('d-none');
             document.querySelector('.nada-encontrado').classList.add('d-flex');
@@ -67,6 +62,7 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
 
         // Call function to list users if results are found
         list_users(data);
+
 
     } catch (error) {
         limpaColunas();
@@ -82,13 +78,15 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
 // SEARCH BY DOCUMENT
 document.querySelector('#pesquisar-por-documento').addEventListener('input', async (e) => {
 
+    //Erases "search by name" input
+    document.querySelector('#pesquisar-por-nome').value = ''
+
     // Get the current value of the input field
-    let inputNumber = e.target.value.trim();
-    
+    let input_number = e.target.value.trim();
+
 
     // Blocks input if user doesn't type number
-    if (!Number(inputNumber)) {
-        limpaColunas();
+    if (!Number(input_number)) {
         document.querySelector('.nada-encontrado').classList.remove('d-flex');
         document.querySelector('.nada-encontrado').classList.add('d-none');
         e.target.value = ''
@@ -96,8 +94,8 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
     }
 
     // If the input is empty, hide any previous error messages and return early
-    if (inputNumber === '') {
-        limpaColunas();  // Clear the result columns
+    if (input_number === '') {
+
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-none');
         return;
@@ -106,14 +104,14 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
     // Skip handling for non-textual keys like Alt, Tab, Shift, etc.
     if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete')) {
         // Handle delete and backspace operations
-        limpaColunas();  // Clear the result columns
+
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-remove');
     }
 
     // Ensure input is a valid number
-    if (isNaN(inputNumber)) {
-        limpaColunas();  // Clear the result columns
+    if (isNaN(input_number)) {
+
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-none');
         return;
@@ -123,33 +121,26 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
     // Proceed with search if valid numeric input
     try {
 
-        inputNumber = Number(inputNumber);
+
+        input_number = Number(input_number);
 
 
-        let obj = { visitor_id: inputNumber };
+        let obj = { visitor_id: input_number };
 
         // Call the search API with the document number input
         let data = await window.electronAPI.search_by_doc(obj);
 
-        if (Array.isArray(data)) {
+
+        if (typeof data != 'object' && data === null) {
             // If data is an array, no results were found, show the error message
-            limpaColunas();
             document.querySelector('.nada-encontrado').classList.remove('d-flex');
             document.querySelector('.nada-encontrado').classList.add('d-none');
             return;
         }
 
-        // Clear previous results before showing new ones
-        limpaColunas();
-
-        // Parse the data returned from the API
-        data = JSON.parse(data);
-
 
         // Check if any results were found
         if (data.length === 0) {
-            // Show "nothing found" message
-            limpaColunas();
             document.querySelector('.nada-encontrado').classList.remove('d-flex');
             document.querySelector('.nada-encontrado').classList.add('d-none');
             return;
@@ -170,7 +161,7 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
 
 
 //SEARCH BY CALENDAR
-document.querySelector('#procurar').addEventListener('click', () => {
+document.querySelector('#procurar').addEventListener('click', async () => {
 
 
     document.querySelector('.nada-encontrado').classList.remove('d-flex');
@@ -179,64 +170,53 @@ document.querySelector('#procurar').addEventListener('click', () => {
     let input_datepicker = document.querySelector('#input-datepicker').value
     let [year, month, day] = input_datepicker.split("-");
 
-    (async () => {
+    try {
 
-        try {
-
-            let obj_calendar = {
-                day: day,
-                month: month,
-                year: year,
-            }
-
-
-            let data = await window.electronAPI.search_by_calendar(obj_calendar)//Maybe rename to calendar_search
-
-            data = JSON.parse(data);
-
-            if (data.length === 0) {
-                limpaColunas();
-                document.querySelector('.nada-encontrado').classList.remove('d-none');
-                document.querySelector('.nada-encontrado').classList.add('d-flex');
-                return;
-            }
-            document.querySelector('.nada-encontrado').classList.remove('d-flex');
-            document.querySelector('.nada-encontrado').classList.add('d-none');
-            list_users(data);
-
-
-        } catch (error) {
-            console.log(error);
-
+        let obj_calendar = {
+            day: day,
+            month: month,
+            year: year,
         }
 
-    })();
+
+        let data = await window.electronAPI.search_by_calendar(obj_calendar)//Maybe rename to calendar_search
+
+
+        if (data.length === 0) {
+            document.querySelector('.nada-encontrado').classList.remove('d-none');
+            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            return;
+        }
+
+        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+        document.querySelector('.nada-encontrado').classList.add('d-none');
+        list_users(data);
+
+
+    } catch (error) {
+        console.log(error);
+    }
+
 
 })
 
 
 //=============== REGISTRATION INTERFACE ================================//
-document.querySelector('#btn_cadastrar').addEventListener('click', () => {
-    //Validação do formulário
+document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
+    e.preventDefault();
 
+    //Validação do formulário
     let input_nome = document.querySelector('#input-nome')
     let input_documento = document.querySelector('#input-documento')
     let andar_select = document.querySelector('#andar-select')
     let motivo_visita_select = document.querySelector('#motivo-visita-select')
 
 
-    let hasError = false;
-
-    let alertError = document.querySelector('#alert-register-error')
-    alertError.classList.add('d-none');
-    alertError.innerHTML = '';
-
-
     // Validação do Nome
     if (input_nome) {
 
         if (input_nome.value.trim() === '') {
-            hasError = true;
+            // hasError = true;
             showError(input_nome, 'Por favor, insira o nome completo.');
         } else {
             removeError(input_nome);
@@ -246,7 +226,7 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
     if (input_documento) {
 
         if (input_documento.value.trim() === '') {
-            hasError = true;
+            // hasError = true;
             showError(input_documento, 'Por favor, insira o documento.');
         } else {
             removeError(input_documento);
@@ -257,7 +237,7 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
     // Validação do Andar
     if (andar_select) {
         if (andar_select.value === "0") {
-            hasError = true;
+            // hasError = true;
             showError(andar_select, 'Por favor, selecione um andar.');
         } else {
             removeError(andar_select);
@@ -267,7 +247,7 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
     // Validação do motivo da visita select
     if (motivo_visita_select) {
         if (motivo_visita_select.value === "0") {
-            hasError = true;
+            // hasError = true;
             showError(motivo_visita_select, 'Por favor, selecione um motivo válido.');
         } else {
             removeError(motivo_visita_select);
@@ -275,48 +255,8 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
     }
 
 
-    if (hasError) {
-
-        alertError.classList.remove('d-none');
-        alertError.innerHTML = 'Por favor, corrija os erros antes de continuar.';
-    }
-
-
-
-    function showError(input, message) {
-
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'invalid-feedback';
-        errorDiv.innerHTML = message;
-
-        input.classList.add('is-invalid');
-
-        if (input.nextElementSibling) {
-            input.nextElementSibling.remove();
-        }
-
-        input.insertAdjacentElement('afterend', errorDiv);
-    }
-
-    function removeError(input) {
-        input.classList.remove('is-invalid');
-
-        if (input.nextElementSibling) {
-            input.nextElementSibling.remove();
-        }
-    }
-
-
-
-
-
-
-
     if (input_nome.value && input_documento.value != '' && andar_select.selectedIndex && motivo_visita_select.selectedIndex != 0) {
 
-
-        //Shows confirm registration modal screen
-        // document.querySelector('.confirm-registration-screen').click();
 
         //Opens swal
 
@@ -327,7 +267,7 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
             showCancelButton: true,
             confirmButtonText: 'Cadastrar'
 
-        }).then((result) => {
+        }).then(async (result) => {
 
             if (result.isConfirmed) {
 
@@ -335,30 +275,28 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
                 //This function creates an object with guest's data and save it in the backend
                 //and saves it in the database
                 let andar_select = document.querySelector('#andar-select');
-                // let motivo_visita_select = document.querySelector('#motivo-visita-select');
 
-                (async function () {
-                    try {
+                try {
 
-                        const data = {
-                            name: input_nome.value,
-                            visitor_id: input_documento.value,
-                            visiting_floor: andar_select.options[andar_select.selectedIndex].value,
-                            visit_purpose: motivo_visita_select.options[motivo_visita_select.selectedIndex].text
-                        }
-
-                        // Await the asynchronous insert_data call
-                        await window.electronAPI.insert_data(data);
-
-
-                    } catch (error) {
-                        console.log(error);
-
-                    } finally {
-                        start();
+                    const data = {
+                        name: input_nome.value,
+                        visitor_id: input_documento.value,
+                        visiting_floor: andar_select.options[andar_select.selectedIndex].value,
+                        visit_purpose: motivo_visita_select.options[motivo_visita_select.selectedIndex].text
                     }
 
-                })();
+                    // Await the asynchronous insert_data call
+                    await window.electronAPI.insert_data(data);
+
+
+                } catch (error) {
+                    console.log(error);
+
+                } finally {
+                    start();
+                }
+
+
 
                 //Cleans up inputs
                 document.querySelector('#input-nome').value = ''
@@ -387,14 +325,43 @@ document.querySelector('#btn_cadastrar').addEventListener('click', () => {
 
 
 
+
+
+
+
+function showError(input, message) {
+
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback';
+    errorDiv.innerHTML = message;
+
+    input.classList.add('is-invalid');
+
+    if (input.nextElementSibling) {
+        input.nextElementSibling.remove();
+    }
+
+    input.insertAdjacentElement('afterend', errorDiv);
+}
+
+function removeError(input) {
+
+
+    input.classList.remove('is-invalid');
+
+    if (input.nextElementSibling) {
+        input.nextElementSibling.remove();
+    }
+}
+
+
+
 function start() {
     console.log('app initiated');
     document.querySelector('.nada-encontrado').classList.add('d-none');
     document.querySelector('.nada-encontrado').classList.remove('d-flex');
 
     list_today_users_initial_load();
-
-    // setTimeout(reloadStatistics, 1000);
 
 
     //Set currente date to the calendar input
@@ -406,48 +373,53 @@ function start() {
 start();
 
 
+
+
 function list_users(data) {
+
+
     limpaColunas();
 
     if (data.length == 0) {
         limpaColunas();
-        // document.querySelector('.nada-encontrado').classList.remove('d-none');
-        // document.querySelector('.nada-encontrado').classList.add('d-flex');
         return;
     }
 
 
 
     // Get the table body element
-    const tableBody = document.getElementById('visitors-table-body');
+    const table_body = document.getElementById('visitors-table-body');
 
     //Creates list of users within the table
     for (i of data) {
 
 
         const row = document.createElement('tr');
-
         // Convert the ISO date string to a Date object
         const visitante_date = new Date(i.created_at);
-        const visitante_date_str = visitante_date.toLocaleDateString('pt-BR');
 
-        // Extract the hour, minutes, and seconds
-        const visitante_hour = visitante_date.getHours().toString().padStart(2, '0');
-        const visitante_minute = visitante_date.getMinutes().toString().padStart(2, '0');
-        const visitante_second = visitante_date.getSeconds().toString().padStart(2, '0');
 
-        // Combine them into HH:MM:SS format
-        const visitante_time = `${visitante_hour}:${visitante_minute}:${visitante_second}`;
+        // Format the date in pt-BR format
+        const visitante_date_str = visitante_date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+
+        // Format the time in HH:MM:SS format in UTC
+        const visitante_time = visitante_date.toLocaleTimeString('pt-BR', { hour12: false, timeZone: 'UTC' });
+
 
         // Add cells to the row for each data field
-        row.setAttribute('data-id', i.id)
+        let visitor_id = i.visitor.id
+        row.setAttribute('data-id', visitor_id)
+
         row.innerHTML = `
-                <td class="px-3">${i.name}</td>
-                <td>${i.visitor_id}</td>
+                <td class="px-3">${i.visitor.name}</td>
+                <td>${i.visitor.visitor_id}</td>
+
                 <td>${i.visiting_floor}°</td>
                 <td>${i.visit_purpose}</td>
+
                 <td>${visitante_date_str}</td>
                 <td>${visitante_time}</td>
+                
                 <td>
              
                     <button  class="btn-register-again btn btn-success border shadowm-sm btn-sm">
@@ -464,122 +436,191 @@ function list_users(data) {
             `;
 
         // Append the row to the table body
-        tableBody.appendChild(row)
+        table_body.appendChild(row)
 
         limpa_colunas_control = false
         //---------------------------------------------------------------------------
 
 
 
-        row.addEventListener('click', (e) => {
+        row.addEventListener('click', async (e) => {
+
+
+            document.querySelector('#btn-new-register').classList.remove('d-none')
 
             let user_id = Number(row.getAttribute('data-id'));
 
-            (async () => {
 
-                //Search database to retrieve user's information
-                let user_information = await window.electronAPI.find_one(user_id);
-                user_information = JSON.parse(user_information);
-                user_information = user_information
-                console.log(user_information);
+            //Search database to retrieve user's information
+            let user_information = await window.electronAPI.find_one(user_id);
+            user_information = JSON.parse(user_information);
 
+            let visits_table = document.querySelector('#visits-table')
+            visits_table.classList.add('d-flex');
+            visits_table.classList.remove('d-none');
 
-                user_perfil.innerHTML = `
-                        
-                        <div class="d-flex">
-
-                            <p class="w-25">imagem</p>
-                        
-                            <table class="table table-striped w-75 ">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Documento</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody id="visitors-table-body">
-                                    <tr>
-                                        <th scope="row">${user_information.name}</th>
-                                        <td>${user_information.visitor_id}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
+            let container_form_new_register = document.querySelector('#container-form-new-register')
+            container_form_new_register.classList.add('d-none');
+            container_form_new_register.classList.remove('d-flex');
 
 
+            document.querySelector('#td-visitor-name').innerHTML = user_information.name
+            document.querySelector('#td-visitor-id').innerHTML = user_information.visitor_id
 
-                        <h5>Visitas</h5>
-                        
-                          
-                    `
-            })();
 
+            let visits_table_body = document.querySelector('#visits-table-body')
+            visits_table_body.innerHTML = ''
+            //------------------------------------
+
+
+            let user_visits = user_information.visits;
+            user_visits.reverse();
+
+            user_visits.map(visit => {
+
+                let visits_tr = document.createElement('tr')
+                visits_tr.setAttribute('style', 'max-height: 400px; overflow-y: scroll; ')
+                visits_tr.classList.add('bg-success')
+
+                let valuesArray = Object.values(visit);
+                valuesArray = valuesArray.reverse();
+
+                for (let i = 0; i < 3; i++) {
+
+                    if (i === 0) {
+                        valuesArray[i] = new Date(valuesArray[i])
+                            .toLocaleString('pt-BR', { timeZone: 'UTC' })
+                            .replace(' ', ' às ');
+                    }
+
+                    if (i === 2) {
+                        valuesArray[i] = `${valuesArray[i]}°`
+                    }
+
+                    let td = document.createElement('td');
+
+                    td.textContent = valuesArray[i]
+                    visits_tr.appendChild(td);
+                }
+
+                visits_table_body.appendChild(visits_tr);
+
+
+            })
 
 
             //Abrir modal user perfil
             document.querySelector('#btn-launch-modal').click();
 
-            //Shows user perfil div inside the modal
-            let user_perfil = document.querySelector('#modal-visitor-perfil')
-            user_perfil.classList.add('d-flex')
-            user_perfil.classList.remove('d-none')
 
-
-
-
+            //Fake button for new register
             document.querySelector('#btn-new-register')
-                .addEventListener('click', () => {
+                .addEventListener('click', (e) => {
 
-                    //Opnes up bootstrap modal to edit new register
-                    let modal_visitante_perfil = document.querySelector('#modal-visitor-perfil')
-                    modal_visitante_perfil.classList.remove('d-flex')
-                    modal_visitante_perfil.classList.add('d-none')
+                    e.target.classList.add('d-none');
 
-                    let btns_container_perfil = document.querySelector('#btns-container-perfil')
-                    btns_container_perfil.classList.remove('d-flex')
-                    btns_container_perfil.classList.add('d-none')
 
-                    return
+                    //Fills in input name for new register
+                    document.querySelector('#input-name-new-register').value = user_information.name
+                    document.querySelector('#input-document-new-register').value = user_information.visitor_id;
 
-                    Swal.fire({
-                        title: 'Registrar novamente o usuário?',
-                        text: "Nome: ",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Cadastrar',
-                        cancelButtonText: 'Cancelar',
-                    }).then((result) => {
+                    //Hides user information from the modal, allowing for a new register
+                    let visits_table = document.querySelector('#visits-table')
+                    visits_table.classList.add('d-none');
+                    visits_table.classList.remove('d-flex');
 
-                        if (result.isConfirmed) {
+                    //Shows new register form within the same modal
+                    let container_form_new_register = document.querySelector('#container-form-new-register')
+                    container_form_new_register.classList.add('d-flex');
+                    container_form_new_register.classList.remove('d-none');
 
-                            (async function () {
+                    //Actual button for submitting a new register
+                    document.querySelector('#btn-new-register-submit').addEventListener('click', (e) => {
+                        e.preventDefault();
 
-                                await window.electronAPI.reassign_visitor(i.id)
 
-                                list_todays_visitors();
+                        //Checks if user has selected "floor" and "visit purpose" for new register
+                        let select_floor_new_register = document.querySelector('#select-floor-new-register');
+                        let select_visit_purpose_new_register = document.querySelector('#select-visit-purpose-new-register');
 
-                                document.querySelector('.btn-close').click();
-
-                            })();
+                        if (select_floor_new_register) {
+                            if (select_floor_new_register.value === "0") {
+                                // hasError = true;
+                                showError(select_floor_new_register, 'Por favor, selecione um andar.');
+                            } else {
+                                removeError(select_floor_new_register);
+                            }
                         }
-                    });
-                })
 
+                        if (select_visit_purpose_new_register) {
+                            if (select_visit_purpose_new_register.value === "0") {
+                                // hasError = true;
+                                showError(select_visit_purpose_new_register, 'Por favor, selecione um motivo da visita.');
+                            } else {
+                                removeError(select_visit_purpose_new_register);
+                            }
+                        }
+                        //---------------------------------------------------------------------------
+
+
+                        if (select_visit_purpose_new_register.value != 0 && select_floor_new_register.value != 0) {
+
+                            Swal.fire({
+                                title: 'Registrar novamente o usuário?',
+                                text: "Nome: ",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Cadastrar',
+                                cancelButtonText: 'Cancelar',
+                            }).then(async (result) => {
+
+                                if (result.isConfirmed) {
+
+                                    console.log(user_id);
+
+                                    let new_register = {
+                                        user_id: user_id,
+                                        visiting_floor: Number(select_floor_new_register.value),
+                                        visit_purpose: Number(select_visit_purpose_new_register.value)
+                                    };
+
+
+                                    try {
+                                        await window.electronAPI.reassign_visitor(new_register)
+
+                                    } catch (error) {
+                                        console.log(error);
+
+                                    } finally {
+                                        start();
+
+                                        document.querySelector('.btn-close').click();
+                                    }
+
+                                }
+                            });
+
+                        }
+
+
+
+                        // When the "new register" modal is closed, removes any error the user 
+                        // might have had in the in the selects
+                        document.getElementById('modal').addEventListener('hidden.bs.modal', () => {
+                            removeError(select_visit_purpose_new_register);
+                            removeError(select_floor_new_register);
+
+                            select_floor_new_register.value = 0;
+                            select_visit_purpose_new_register.value = 0;
+                        });
+                        //----------------------------------------------------------------------------
+
+                    })
+
+                })
         })
     }
-    //--------------------------------------------------
 
-
-    //Hnadles warning button ( Registrar ) on each register 
-    // document.querySelectorAll('.btn-register-again').forEach(button => {
-
-    //     button.addEventListener('click', (e) => {
-
-
-    //     })
-    // })
 }
 
 
@@ -604,14 +645,15 @@ async function list_todays_visitors() {
         year: year,
     };
 
-
+    console.log(obj_calendar);
 
     try {
 
         // Call the search function with the current date
         let data = await window.electronAPI.search_by_calendar(obj_calendar);
+        console.log(data);
 
-        data = JSON.parse(data);
+        // data = JSON.parse(data);
 
         if (data.length === 0) {
 
@@ -664,10 +706,7 @@ async function list_today_users_initial_load() {
         // Call the search function with the current date
         let data = await window.electronAPI.search_by_calendar(obj_calendar);
 
-        data = JSON.parse(data);
-
         list_users(data);
-
 
     } catch (error) {
         console.log(error);
@@ -680,11 +719,14 @@ async function list_today_users_initial_load() {
 
 
 
+
+
 //================== CLEAN/RESET INTERFACES =================//
 //When called, clears cols data so a new search can be done
 var limpa_colunas_control = true
 function limpaColunas() {
     let colunas_container = document.querySelector('#visitors-table-body')
+
 
     if (limpa_colunas_control != true) {
         colunas_container.innerHTML = ''
@@ -694,12 +736,10 @@ function limpaColunas() {
 
 
 
-
-
-
 //================== STATISTIC INTERFACE =======================//
 
-function reloadStatistics() {
+async function reloadStatistics() {
+    let statistic_line = document.querySelectorAll('.statistic_line')
 
     //Provides animation to statistic screen when succesful registration
     for (let i = 0; i < statistic_line.length; i++) {
@@ -711,54 +751,40 @@ function reloadStatistics() {
     }
     //----------------------------------------------------------------
 
-
-
     //Today ENTRIES 
-    (async function () {
-        try {
-            // Invoke the main process function and get the result directly
-            let today_entries = await window.electronAPI.today_entries_call();
 
-            if (today_entries != undefined) {
+    try {
+        // Invoke the main process function and get the result directly
+        let today_entries = await window.electronAPI.today_entries_call();
 
-                // today_entries = JSON.parse(today_entries);
+        if (today_entries != undefined) {
 
-                // Update the DOM with the number of entries
-                document.querySelector('#statistic_today').innerHTML = `
+            // Update the DOM with the number of entries
+            document.querySelector('#statistic_today').innerHTML = `
                 Hoje:  <span class="badge bg-success p-1">${today_entries.length}</span>
               `;
-            }
-        } catch (error) {
-            console.error("Error processing today_entries_call:", error);
         }
-    })();
+    } catch (error) {
+        console.error("Error processing today_entries_call:", error);
+    }
 
     //-------------------------------------------------
-
-
 
 
 
     //Month ENTRIES 
     try {
 
-        (async function () {
+        let month_entries = await window.electronAPI.month_entries_call();
 
-            let month_entries = await window.electronAPI.month_entries_call();
+        if (month_entries != undefined) {
 
-            if (month_entries != undefined) {
+            month_entries = JSON.parse(month_entries);
 
-
-                month_entries = JSON.parse(month_entries);
-
-                document.querySelector('#statistic_month').innerHTML = `
+            document.querySelector('#statistic_month').innerHTML = `
                 Mês:  <span class="badge  bg-success p-1">${month_entries.length}</span>
                 `;
-            }
-
-
-        })();
-
+        }
 
     } catch (error) {
         console.log(error);
@@ -772,23 +798,17 @@ function reloadStatistics() {
     //Total ENTRIES
     try {
 
-        (async function () {
+        let total_entries = await window.electronAPI.all_data_call();
+        console.log(total_entries);
 
+        // total_entries = JSON.parse(total_entries);
 
-            let total_entries = await window.electronAPI.all_data_call();
-            console.log(total_entries);
+        if (total_entries != undefined) {
 
-            // total_entries = JSON.parse(total_entries);
-
-            if (total_entries != undefined) {
-
-                document.querySelector('#statistic_total').innerHTML = `
+            document.querySelector('#statistic_total').innerHTML = `
                 Total:  <span class="badge  bg-success p-1">${total_entries.length}</span>
                 `;
-            }
-
-
-        })();
+        }
 
 
     } catch (error) {

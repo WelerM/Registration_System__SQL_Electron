@@ -12,6 +12,7 @@ DOING:
     Criando funcionalidade do modal para o reassign visitor
 
 TODO:
+    #Fazer tratamento de input por nome e documento
 
     #bug na pesquisa por documento, operador LIKE está retornando resultados mesmo com uma pesquisar maior em N/ e caracteres
 

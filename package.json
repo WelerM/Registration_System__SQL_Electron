@@ -1,5 +1,5 @@
 {
-  "name": "registration system",
+  "name": "registration-system",
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
@@ -8,22 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WelerM/Registration-system---Desktop.git"
+    "url": "git+https://github.com/WelerM/Registration_System__SQL_Electron.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/WelerM/Registration-system---Desktop/issues"
+    "url": "https://github.com/WelerM/Registration_System__SQL_Electron/issues"
   },
-  "homepage": "https://github.com/WelerM/Registration-system---Desktop#readme",
+  "homepage": "https://github.com/WelerM/Registration_System__SQL_Electronp#readme",
   "dependencies": {
     "bootstrap": "^5.3.3",
     "electron": "^22.0.1",
     "nodemon": "^2.0.20",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",
-    "sqlite3": "^5.1.7"
-
+    "sqlite3": "^5.1.7",
+    "sweetalert2": "^11.14.1"
   },
   "description": ""
 }

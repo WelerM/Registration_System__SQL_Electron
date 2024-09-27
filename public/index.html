@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@
 
     <div class="main-interface row">
 
-        <div class="registration-interface col-md-4  border-end vh-100 py-3 px-4">
+        <form class="registration-interface col-md-4  border-end vh-100 py-3 px-4">
 
             <p>Registrar novo visitante</p>
 
@@ -74,24 +74,12 @@
 
             </div>
 
-            <div id="alert-register-error"
-                class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto mt-3"
-                role="alert">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                    <path
-                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                </svg>
-
-                É necessário preencher todos os campos!
-
-            </div>
 
             <button class="btn btn-success border shadow-sm d-flex gap-2 mt-3" id="btn_cadastrar">
                 Cadastrar
             </button>
 
-        </div>
+        </form>
 
 
 
@@ -204,12 +192,12 @@
 
     <!-- Button trigger modal -->
     <button id="btn-launch-modal" type="button" class="btn btn-primary d-none" data-bs-toggle="modal"
-        data-bs-target="#exampleModal">
+        data-bs-target="#modal">
         Launch modal modal
     </button>
 
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modal-label" aria-hidden="true">
 
         <div class="modal-dialog">
 
@@ -218,16 +206,151 @@
                 <div class="modal-header">
 
 
-                    <h5 class="modal-title fs-5" id="exampleModalLabel">Informações do usuário</h5>
+                    <h5 class="modal-title fs-5" id="modal-label">Informações do usuário</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
 
                     <div id="modal-visitor-perfil" class="d-flex flex-column">
-                        <h5>Detalhes de usuário</h5>
+
+
+
+
+                        <!-- User visits table -->
+                        <div id="visits-table" class="d-flex flex-column" >
+
+                            <!-- User info table -->
+                            <table class="table ">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Documento</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="visitors-table-body">
+                                    <tr>
+                                        <td id="td-visitor-name"></td>
+                                        <td id="td-visitor-id"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            <h5 class="mt=5">Visitas</h5>
+
+                            <table class="table table-striped bg-success p-5" style="max-height: 400px; overflow-y: scroll;">
+
+
+                                <thead>
+                                    <tr>
+                                        <th>Data e hora</th>
+                                        <th>Motivo da visita</th>
+                                        <th>Andar</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="visits-table-body" class="bg-transparent p-5" style="max-height: 400px; overflow-y: scroll;">
+
+                                </tbody>
+
+                            </table>
+                        </div>
+
+
+                        <!-- Form new register -->
+                        <div id="container-form-new-register" class="d-none d-flex flex-column">
+
+                            <h5>Novo registro</h5>
+
+                            <form action="">
+
+                                <!-- Input name -->
+                                <div class="mb-2">
+                                    <label for="input-name-new-register" class="form-label m-0">Nome</label>
+
+                                    <input disabled id="input-name-new-register" type="email" class="form-control"
+                                        aria-describedby="emailHelp">
+                                </div>
+
+                                <!-- Input document (id) -->
+                                <div class="mb-2">
+                                    <label for="input-document-new-register" class="form-label m-0">Documento</label>
+
+                                    <input disabled id="input-document-new-register" type="email" class="form-control"
+                                        aria-describedby="emailHelp">
+                                </div>
+
+                                <!-- Input date -->
+                                <div class="mb-2">
+                                    <label for="input-date-new-register" class="form-label m-0">Data</label>
+
+                                    <input disabled id="input-date-new-register" value="Data: 19/09/23" type="email"
+                                        class="form-control" aria-describedby="emailHelp">
+                                </div>
+
+                                <!-- Floor select -->
+                                <div class="mb-2">
+                                    <label for="select-floor-new-register" class="form-label m-0">Andar</label>
+
+                                    <select id="select-floor-new-register" class="form-select" name="">
+                                        <option value="0" class="option" selected>Selecione o andar</option>
+                                        <option value="1" class="option">1° Andar</option>
+                                        <option value="2" class="option">2° Andar</option>
+                                        <option value="3" class="option">3° Andar</option>
+                                        <option value="4" class="option">4° Andar</option>
+                                        <option value="5" class="option">5° Andar</option>
+                                        <option value="6" class="option">6° Andar</option>
+                                        <option value="7" class="option">7° Andar</option>
+                                        <option value="8" class="option">8° Andar</option>
+                                    </select>
+                                </div>
+
+
+                                <!-- Visit purpose select -->
+                                <div class="mb-2">
+                                    <label for="select-visit-purpose-new-register" class="form-label m-0">Motivo da
+                                        visita</label>
+
+                                    <select id="select-visit-purpose-new-register" class="form-select"
+                                        aria-label="Default select example">
+                                        <option value="0" class="option" selected>Motivo da visita</option>
+                                        <option value="1" class="option">Agendamento</option>
+                                        <option value="2" class="option">Serviços gerais</option>
+                                        <option value="3" class="option">Entrega no andar</option>
+                                        <option value="4" class="option">Falar com funcionário</option>
+                                        <option value="5" class="option">Outro</option>
+                                    </select>
+
+                                </div>
+
+
+                                <div id="alert-new-register-error"
+                                    class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto mt-3"
+                                    role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                                    </svg>
+
+                                    É necessário preencher todos os campos!
+
+                                </div>
+
+
+                                <button id="btn-new-register-submit" class="btn btn-success btn-sm">Confirmar</button>
+
+                            </form>
+                        </div>
+
+
+
                     </div>
-                 
+
+
+
                     <div id="modal-registrar-novamente" class="d-none flex-column">
                         <h5>Registrar usuário novamente</h5>
                     </div>
@@ -242,7 +365,7 @@
                     </div>
 
                     <div id="btns-container-registrar-novamente" class=" d-none">
-                        <button  type="button" class="btn btn-success">Registrar novamente</button>
+                        <button type="button" class="btn btn-success">Registrar novamente</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     </div>
 

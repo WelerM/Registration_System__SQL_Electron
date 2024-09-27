@@ -32,7 +32,19 @@ const Visit = sequelize.define('Visit', {
   },
   created_at: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+    defaultValue: () => {
+      // Get the current date and time in local (PT-BR) timezone
+      const localDate = new Date();
+      
+      // Adjust for Brazilian time zone (UTC-3 for standard time)
+      const brazilTimeOffset = -3; // Set offset for PT-BR timezone
+
+      // Create a new date object to avoid mutating the original
+      const adjustedDate = new Date(localDate.getTime() + (brazilTimeOffset * 60 * 60 * 1000));
+        console.log(adjustedDate);
+        
+      return adjustedDate;
+    },
     allowNull: false
   }
 }, {
