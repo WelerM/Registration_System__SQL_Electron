@@ -2,35 +2,34 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
     
-
-    //DATA INSERT
-    //New guest registration
+    //First visit
     insert_data: (data) => ipcRenderer.send('insert_data', data),
 
-    //Reassign guest
-    reassign_visitor: (data) => ipcRenderer.send('reassign_visitor', data),
+    //New visit
+    new_visit: (data) => ipcRenderer.send('new_visit', data),
 
-    //Quick Search
-    //By name
+    //Search by name input
     search_by_name: (data) => ipcRenderer.invoke('search_by_name', data),
-    //By doc
+    
+    //Search by document input
     search_by_doc: (data) => ipcRenderer.invoke('search_by_doc', data),
 
-    //Date Picker
+    //Date picker input
     search_by_calendar: (data) => ipcRenderer.invoke('search_by_calendar', data),
 
+    //Find one visit
     find_one: (id) => ipcRenderer.invoke('find_one', id),
 
 
 
     // STATISTICS
-    //Entries today
-    today_entries_call: () => ipcRenderer.invoke('today_entries_call'),
+    //Visits today
+    today_visits: () => ipcRenderer.invoke('today_visits'),
 
-    //Entries this month
-    month_entries_call: (data) => ipcRenderer.invoke('month_entries_call', data),
+    //Visits this month
+    month_visits: (data) => ipcRenderer.invoke('month_visits', data),
 
-    //All entries
-    all_data_call: (data) => ipcRenderer.invoke('all_data_call', data),
+    //All visits
+    all_visits: (data) => ipcRenderer.invoke('all_visits', data),
 })
 

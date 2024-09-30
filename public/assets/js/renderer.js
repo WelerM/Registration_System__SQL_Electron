@@ -1,8 +1,7 @@
-// SEARCH BY NAME
-document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e) => {
-
+// INPUT SEARCH BY NAME
+document.querySelector('#search-by-name').addEventListener('input', async (e) => {
     //Erases "search by document" input
-    document.querySelector('#pesquisar-por-documento').value = '';
+    document.querySelector('#search-by-document').value = '';
 
     // Get the current value of the input field
     let inputText = e.target.value.trim();
@@ -13,11 +12,16 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
         return
     }
 
+
+    clear_results(false);
+
     // If the input is empty, hide any previous error messages and return early
     if (inputText === '') {
+
         // Clear the result columns
-        document.querySelector('.nada-encontrado').classList.add('d-none');
-        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+        list_todays_visitors();
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nada-encontrado').classList.remove('d-none');
         return;
     }
 
@@ -54,6 +58,7 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
 
         // Check if any results were found
         if (data.length === 0) {
+            clear_results(true);
             // Show "nothing found" message
             document.querySelector('.nada-encontrado').classList.remove('d-none');
             document.querySelector('.nada-encontrado').classList.add('d-flex');
@@ -65,7 +70,7 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
 
 
     } catch (error) {
-        limpaColunas();
+        clear_results();
         console.error('Error fetching search results:', error);
 
         // Optionally show a user-friendly message for errors
@@ -75,11 +80,10 @@ document.querySelector('#pesquisar-por-nome').addEventListener('input', async (e
 });
 
 
-// SEARCH BY DOCUMENT
-document.querySelector('#pesquisar-por-documento').addEventListener('input', async (e) => {
-
+//INPUT SEARCH BY DOCUMENT
+document.querySelector('#search-by-document').addEventListener('input', async (e) => {
     //Erases "search by name" input
-    document.querySelector('#pesquisar-por-nome').value = ''
+    document.querySelector('#search-by-name').value = ''
 
     // Get the current value of the input field
     let input_number = e.target.value.trim();
@@ -87,14 +91,19 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
 
     // Blocks input if user doesn't type number
     if (!Number(input_number)) {
+
         document.querySelector('.nada-encontrado').classList.remove('d-flex');
         document.querySelector('.nada-encontrado').classList.add('d-none');
+
         e.target.value = ''
-        return
     }
+
+    // clear_results(false);
 
     // If the input is empty, hide any previous error messages and return early
     if (input_number === '') {
+
+        list_todays_visitors();
 
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-none');
@@ -114,6 +123,7 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
 
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-none');
+
         return;
 
     }
@@ -141,8 +151,9 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
 
         // Check if any results were found
         if (data.length === 0) {
-            document.querySelector('.nada-encontrado').classList.remove('d-flex');
-            document.querySelector('.nada-encontrado').classList.add('d-none');
+            clear_results(true);
+            document.querySelector('.nada-encontrado').classList.remove('d-none');
+            document.querySelector('.nada-encontrado').classList.add('d-flex');
             return;
         }
 
@@ -151,7 +162,7 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
 
     } catch (error) {
         console.error('Error fetching search results:', error);
-        limpaColunas();
+        clear_results();
         // Optionally show a user-friendly message for errors
         document.querySelector('.nada-encontrado').classList.remove('d-none');
         document.querySelector('.nada-encontrado').classList.add('d-flex');
@@ -160,8 +171,8 @@ document.querySelector('#pesquisar-por-documento').addEventListener('input', asy
 
 
 
-//SEARCH BY CALENDAR
-document.querySelector('#procurar').addEventListener('click', async () => {
+//INPUT SEARCH BY CALENDAR (DATEPICKER)
+document.querySelector('#search').addEventListener('click', async () => {
 
 
     document.querySelector('.nada-encontrado').classList.remove('d-flex');
@@ -183,6 +194,7 @@ document.querySelector('#procurar').addEventListener('click', async () => {
 
 
         if (data.length === 0) {
+            clear_results(true);
             document.querySelector('.nada-encontrado').classList.remove('d-none');
             document.querySelector('.nada-encontrado').classList.add('d-flex');
             return;
@@ -202,7 +214,7 @@ document.querySelector('#procurar').addEventListener('click', async () => {
 
 
 //=============== REGISTRATION INTERFACE ================================//
-document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
+document.querySelector('#btn-register').addEventListener('click', (e) => {
     e.preventDefault();
 
     //Validação do formulário
@@ -217,9 +229,9 @@ document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
 
         if (input_nome.value.trim() === '') {
             // hasError = true;
-            showError(input_nome, 'Por favor, insira o nome completo.');
+            show_error(input_nome, 'Por favor, insira o nome completo.');
         } else {
-            removeError(input_nome);
+            remove_error(input_nome);
         }
     }
     // Validação do Documento
@@ -227,9 +239,9 @@ document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
 
         if (input_documento.value.trim() === '') {
             // hasError = true;
-            showError(input_documento, 'Por favor, insira o documento.');
+            show_error(input_documento, 'Por favor, insira o documento.');
         } else {
-            removeError(input_documento);
+            remove_error(input_documento);
         }
 
     }
@@ -238,9 +250,9 @@ document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
     if (andar_select) {
         if (andar_select.value === "0") {
             // hasError = true;
-            showError(andar_select, 'Por favor, selecione um andar.');
+            show_error(andar_select, 'Por favor, selecione um andar.');
         } else {
-            removeError(andar_select);
+            remove_error(andar_select);
         }
     }
 
@@ -248,9 +260,9 @@ document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
     if (motivo_visita_select) {
         if (motivo_visita_select.value === "0") {
             // hasError = true;
-            showError(motivo_visita_select, 'Por favor, selecione um motivo válido.');
+            show_error(motivo_visita_select, 'Por favor, selecione um motivo válido.');
         } else {
-            removeError(motivo_visita_select);
+            remove_error(motivo_visita_select);
         }
     }
 
@@ -329,7 +341,7 @@ document.querySelector('#btn_cadastrar').addEventListener('click', (e) => {
 
 
 
-function showError(input, message) {
+function show_error(input, message) {
 
     const errorDiv = document.createElement('div');
     errorDiv.className = 'invalid-feedback';
@@ -344,7 +356,7 @@ function showError(input, message) {
     input.insertAdjacentElement('afterend', errorDiv);
 }
 
-function removeError(input) {
+function remove_error(input) {
 
 
     input.classList.remove('is-invalid');
@@ -362,7 +374,7 @@ function start() {
     document.querySelector('.nada-encontrado').classList.remove('d-flex');
 
     list_today_users_initial_load();
-
+    reloadStatistics();
 
     //Set currente date to the calendar input
     const today = new Date();
@@ -378,10 +390,11 @@ start();
 function list_users(data) {
 
 
-    limpaColunas();
+    clear_results(false);
 
     if (data.length == 0) {
-        limpaColunas();
+        clear_results(true);
+
         return;
     }
 
@@ -392,7 +405,6 @@ function list_users(data) {
 
     //Creates list of users within the table
     for (i of data) {
-
 
         const row = document.createElement('tr');
         // Convert the ISO date string to a Date object
@@ -438,7 +450,6 @@ function list_users(data) {
         // Append the row to the table body
         table_body.appendChild(row)
 
-        limpa_colunas_control = false
         //---------------------------------------------------------------------------
 
 
@@ -546,18 +557,18 @@ function list_users(data) {
                         if (select_floor_new_register) {
                             if (select_floor_new_register.value === "0") {
                                 // hasError = true;
-                                showError(select_floor_new_register, 'Por favor, selecione um andar.');
+                                show_error(select_floor_new_register, 'Por favor, selecione um andar.');
                             } else {
-                                removeError(select_floor_new_register);
+                                remove_error(select_floor_new_register);
                             }
                         }
 
                         if (select_visit_purpose_new_register) {
                             if (select_visit_purpose_new_register.value === "0") {
                                 // hasError = true;
-                                showError(select_visit_purpose_new_register, 'Por favor, selecione um motivo da visita.');
+                                show_error(select_visit_purpose_new_register, 'Por favor, selecione um motivo da visita.');
                             } else {
-                                removeError(select_visit_purpose_new_register);
+                                remove_error(select_visit_purpose_new_register);
                             }
                         }
                         //---------------------------------------------------------------------------
@@ -576,8 +587,6 @@ function list_users(data) {
 
                                 if (result.isConfirmed) {
 
-                                    console.log(user_id);
-
                                     let new_register = {
                                         user_id: user_id,
                                         visiting_floor: Number(select_floor_new_register.value),
@@ -586,7 +595,7 @@ function list_users(data) {
 
 
                                     try {
-                                        await window.electronAPI.reassign_visitor(new_register)
+                                        await window.electronAPI.new_visit(new_register)
 
                                     } catch (error) {
                                         console.log(error);
@@ -607,8 +616,8 @@ function list_users(data) {
                         // When the "new register" modal is closed, removes any error the user 
                         // might have had in the in the selects
                         document.getElementById('modal').addEventListener('hidden.bs.modal', () => {
-                            removeError(select_visit_purpose_new_register);
-                            removeError(select_floor_new_register);
+                            remove_error(select_visit_purpose_new_register);
+                            remove_error(select_floor_new_register);
 
                             select_floor_new_register.value = 0;
                             select_visit_purpose_new_register.value = 0;
@@ -645,20 +654,16 @@ async function list_todays_visitors() {
         year: year,
     };
 
-    console.log(obj_calendar);
 
     try {
 
         // Call the search function with the current date
         let data = await window.electronAPI.search_by_calendar(obj_calendar);
-        console.log(data);
 
         // data = JSON.parse(data);
 
         if (data.length === 0) {
-
-            document.querySelector('.nada-encontrado').classList.remove('d-none');
-            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            clear_results(true);
             return;
         }
 
@@ -723,13 +728,25 @@ async function list_today_users_initial_load() {
 
 //================== CLEAN/RESET INTERFACES =================//
 //When called, clears cols data so a new search can be done
-var limpa_colunas_control = true
-function limpaColunas() {
-    let colunas_container = document.querySelector('#visitors-table-body')
+
+function clear_results(error = null) {
+
+    //Removes old results
+    [...document.querySelector('#visitors-table-body').children].map(td => { td.remove() });
 
 
-    if (limpa_colunas_control != true) {
-        colunas_container.innerHTML = ''
+
+    if (error) {//Shows alert "nothing found"
+
+        document.querySelector('#visitors-table-body').innerHTML = ''
+
+
+        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nada-encontrado').classList.remove('d-remove');
+
+    } else {
+        document.querySelector('.nada-encontrado').classList.add('d-none');
+        document.querySelector('.nada-encontrado').classList.remove('d-flex');
     }
 }
 
@@ -755,7 +772,9 @@ async function reloadStatistics() {
 
     try {
         // Invoke the main process function and get the result directly
-        let today_entries = await window.electronAPI.today_entries_call();
+        let today_entries = await window.electronAPI.today_visits();
+
+        today_entries = JSON.parse(today_entries);
 
         if (today_entries != undefined) {
 
@@ -775,11 +794,11 @@ async function reloadStatistics() {
     //Month ENTRIES 
     try {
 
-        let month_entries = await window.electronAPI.month_entries_call();
+        let month_entries = await window.electronAPI.month_visits();
+        // month_entries = JSON.parse(month_entries);
 
         if (month_entries != undefined) {
 
-            month_entries = JSON.parse(month_entries);
 
             document.querySelector('#statistic_month').innerHTML = `
                 Mês:  <span class="badge  bg-success p-1">${month_entries.length}</span>
@@ -798,10 +817,10 @@ async function reloadStatistics() {
     //Total ENTRIES
     try {
 
-        let total_entries = await window.electronAPI.all_data_call();
-        console.log(total_entries);
+        let total_entries = await window.electronAPI.all_visits();
 
-        // total_entries = JSON.parse(total_entries);
+        total_entries = JSON.parse(total_entries);
+
 
         if (total_entries != undefined) {
 

@@ -100,10 +100,9 @@ const createWindow = () => {
 
   })
 
-  //Reassing of guests
-
-  //Reassing of guests
-  ipcMain.on('reassign_visitor', async (event, data) => {
+ 
+  //New register
+  ipcMain.on('new_visit', async (event, data) => {
 
     // { user_id: 24, visiting_floor: 1, visit_purpose: 1 }
 
@@ -130,16 +129,16 @@ const createWindow = () => {
 
       if (data.visit_purpose === 1) {
         visit_purpose = 'Agendamento';
-      }else if (data.visit_purpose === 2) {
+      } else if (data.visit_purpose === 2) {
         visit_purpose = 'Serviços gerais';
-      }else if (data.visit_purpose === 3) {
-          visit_purpose = 'Entrega no andar';
-      }else if (data.visit_purpose === 4) {
-          visit_purpose = 'Falar com funcionário';
-      }else if (data.visit_purpose === 5) {
-          visit_purpose = 'Outro';
+      } else if (data.visit_purpose === 3) {
+        visit_purpose = 'Entrega no andar';
+      } else if (data.visit_purpose === 4) {
+        visit_purpose = 'Falar com funcionário';
+      } else if (data.visit_purpose === 5) {
+        visit_purpose = 'Outro';
       }
-      
+
       // Now insert the new record for the "visits" table
       const new_visit = {
         user_id: nearly_created_user_id,  // Use the newly created user ID
@@ -167,10 +166,8 @@ const createWindow = () => {
 
 
   // ============ SEARCH INTERFACE =============//
-  //QUICK SEARCH
 
-  //By name
-  // By name
+  // Search by name input
   ipcMain.handle('search_by_name', async (event, data) => {
     let name = data.name.toLowerCase();
 
@@ -226,7 +223,7 @@ const createWindow = () => {
 
 
 
-  // By doc (visitor ID)
+  // Search by document input
   ipcMain.handle('search_by_doc', async (event, data) => {
     // Get visitor_id from input and convert it to a string for LIKE comparison
     let visitor_id = String(data.visitor_id).trim(); // Trim any whitespace
@@ -385,7 +382,7 @@ const createWindow = () => {
 
   //Today entries not owrking
 
-  ipcMain.handle('today_entries_call', async () => {
+  ipcMain.handle('today_visits', async () => {
     const today = new Date();
     const date = today.toISOString().split('T')[0];
     const formatted_date = date.split('-');
@@ -406,7 +403,7 @@ const createWindow = () => {
     };
 
     try {
-      let users = await Visitor.findAll({
+      let users = await Visit.findAll({
         where: whereCondition,
         order: [['created_at', 'DESC']],
       });
@@ -423,7 +420,7 @@ const createWindow = () => {
 
 
   //Month entries
-  ipcMain.handle('month_entries_call', async () => {
+  ipcMain.handle('month_visits', async () => {
 
     const today = new Date();
     const year = today.getFullYear();
@@ -443,12 +440,13 @@ const createWindow = () => {
 
 
     try {
-      let users = await Visitor.findAll({
+      let users = await Visit.findAll({
         where: whereCondition,
         order: [['created_at', 'DESC']]
       });
 
       users = users.map(user => user.dataValues);
+      return users;
 
       return JSON.stringify(users);
 
@@ -461,12 +459,12 @@ const createWindow = () => {
 
 
   //total entries not working
-  ipcMain.handle('all_data_call', async () => {
+  ipcMain.handle('all_visits', async () => {
 
 
     try {
 
-      let users = await Visitor.findAll({
+      let users = await Visit.findAll({
         order: [['created_at', 'DESC']] // Optionally, you can keep this to order the results by creation date
       });
 
@@ -482,85 +480,6 @@ const createWindow = () => {
   })
   //===========================================//
 
-  async function search(param, column_1) {
-    try {
-      let whereCondition = {};
-
-      if (column_1 === 'user_id') {
-        // Use exact match for user_id
-        whereCondition = {
-          [column_1]: param
-        };
-      } else if (column_1 === 'created_at') {
-        // Date-based search logic (same as before)
-        const isExactDate = /^\d{4}-\d{2}-\d{2}$/.test(param);
-        const isMonthYear = /^\d{4}-\d{2}$/.test(param);
-        const isYear = /^\d{4}$/.test(param);
-
-        if (isExactDate) {
-          const dateStart = `${param} 00:00:00.000 +00:00`;
-          const dateEnd = `${param} 23:59:59.999 +00:00`;
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.between]: [dateStart, dateEnd]
-            }
-          };
-        } else if (isMonthYear) {
-          const [year, month] = param.split('-');
-          const dateStart = `${year}-${month}-01 00:00:00.000 +00:00`;
-          const nextMonth = (parseInt(month, 10) % 12) + 1;
-          const nextYear = nextMonth === 1 ? parseInt(year, 10) + 1 : year;
-          const nextMonthStr = nextMonth.toString().padStart(2, '0');
-          const dateEnd = `${nextYear}-${nextMonthStr}-01 00:00:00.000 +00:00`;
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.between]: [dateStart, dateEnd]
-            }
-          };
-        } else if (isYear) {
-          const dateStart = `${param}-01-01 00:00:00.000 +00:00`;
-          const dateEnd = `${param}-12-31 23:59:59.999 +00:00`;
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.between]: [dateStart, dateEnd]
-            }
-          };
-        } else {
-          whereCondition = {
-            [column_1]: {
-              [Sequelize.Op.like]: `%${param}%`
-            }
-          };
-        }
-      } else {
-        // Fallback for other columns
-        whereCondition = {
-          [column_1]: {
-            [Sequelize.Op.like]: `%${param}%`
-          }
-        };
-      }
-
-      // Perform the search
-      const users = await Visitor.findAll({
-        where: whereCondition,
-        order: [['created_at', 'DESC']],
-        logging: console.log // This logs the raw SQL query
-      });
-
-
-      // Return results
-      if (users.length > 0) {
-        return users.map(user => user.dataValues);
-      } else {
-        return [];
-      }
-
-    } catch (error) {
-      console.error("Error during search:", error);
-      throw error;
-    }
-  }
 
 
 
