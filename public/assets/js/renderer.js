@@ -1,3 +1,24 @@
+
+//INputs error handling
+
+document.querySelector('#input-nome').addEventListener('input', (e) => {
+
+    // Get the current value of the input field
+    let value = e.target.value;
+    // Allow only alphabetic characters (A-Z and a-z)
+    e.target.value = value.replace(/[^a-zA-Z]/g, '');
+
+})
+
+document.querySelector('#input-documento').addEventListener('input', (e) => {
+    let value = e.target.value;
+    // Allow only numeric characters (0-9)
+    e.target.value = value.replace(/[^0-9]/g, '');
+})
+
+
+
+
 // INPUT SEARCH BY NAME
 document.querySelector('#search-by-name').addEventListener('input', async (e) => {
     //Erases "search by document" input
@@ -7,7 +28,7 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
     let inputText = e.target.value.trim();
 
     //Blocks input if user types number
-    if (Number(inputText)) {
+    if (Number(inputText) && e.inputType != 'deleteContentBackward') {
         e.target.value = ''
         return
     }
@@ -19,9 +40,8 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
     if (inputText === '') {
 
         // Clear the result columns
-        list_todays_visitors();
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
-        document.querySelector('.nada-encontrado').classList.remove('d-none');
+        list_users(null);
+        // clear_results(true);
         return;
     }
 
@@ -79,9 +99,9 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
     }
 });
 
-
 //INPUT SEARCH BY DOCUMENT
 document.querySelector('#search-by-document').addEventListener('input', async (e) => {
+
     //Erases "search by name" input
     document.querySelector('#search-by-name').value = ''
 
@@ -90,33 +110,27 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
 
 
     // Blocks input if user doesn't type number
-    if (!Number(input_number)) {
-
-        document.querySelector('.nada-encontrado').classList.remove('d-flex');
-        document.querySelector('.nada-encontrado').classList.add('d-none');
+    if (!Number(input_number) && e.inputType != 'deleteContentBackward') {
 
         e.target.value = ''
+        return
     }
 
-    // clear_results(false);
+
 
     // If the input is empty, hide any previous error messages and return early
     if (input_number === '') {
-
-        list_todays_visitors();
-
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
-        document.querySelector('.nada-encontrado').classList.remove('d-none');
+        clear_results(false);
+        list_users(null);
         return;
     }
 
     // Skip handling for non-textual keys like Alt, Tab, Shift, etc.
-    if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete')) {
-        // Handle delete and backspace operations
-
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
-        document.querySelector('.nada-encontrado').classList.remove('d-remove');
+    if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete') && e.inputText != '') {
+        clear_results(false);
+        list_users(null);
     }
+
 
     // Ensure input is a valid number
     if (isNaN(input_number)) {
@@ -171,6 +185,11 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
 
 
 
+//=====================================================================================
+
+
+
+
 //INPUT SEARCH BY CALENDAR (DATEPICKER)
 document.querySelector('#search').addEventListener('click', async () => {
 
@@ -180,6 +199,7 @@ document.querySelector('#search').addEventListener('click', async () => {
 
     let input_datepicker = document.querySelector('#input-datepicker').value
     let [year, month, day] = input_datepicker.split("-");
+
 
     try {
 
@@ -341,39 +361,15 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
 
 
 
-function show_error(input, message) {
-
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'invalid-feedback';
-    errorDiv.innerHTML = message;
-
-    input.classList.add('is-invalid');
-
-    if (input.nextElementSibling) {
-        input.nextElementSibling.remove();
-    }
-
-    input.insertAdjacentElement('afterend', errorDiv);
-}
-
-function remove_error(input) {
-
-
-    input.classList.remove('is-invalid');
-
-    if (input.nextElementSibling) {
-        input.nextElementSibling.remove();
-    }
-}
-
 
 
 function start() {
+
     console.log('app initiated');
     document.querySelector('.nada-encontrado').classList.add('d-none');
     document.querySelector('.nada-encontrado').classList.remove('d-flex');
 
-    list_today_users_initial_load();
+    list_users(null);
     reloadStatistics();
 
     //Set currente date to the calendar input
@@ -386,25 +382,50 @@ start();
 
 
 
+async function list_users(data) {
 
-function list_users(data) {
-
+    let results = data;
 
     clear_results(false);
 
-    if (data.length == 0) {
-        clear_results(true);
+    //List today's visits
+    if (results === null) {
 
-        return;
+        // Get the current date
+        const now = new Date();
+
+        // Extract day, month, and year
+        const day = now.getDate(); // 1-31
+        const month = now.getMonth() + 1; // 0-11 (Add 1 to get 1-12)
+        const year = now.getFullYear(); // YYYY
+
+        // Format day and month with leading zeros if necessary
+        const formattedDay = day.toString().padStart(2, '0');
+        const formattedMonth = month.toString().padStart(2, '0');
+
+        // Prepare the object for searching
+        let obj_calendar = {
+            day: formattedDay,
+            month: formattedMonth,
+            year: year,
+        };
+
+        try {
+
+            // Call the search function with the current date
+            results = await window.electronAPI.search_by_calendar(obj_calendar);
+
+        } catch (error) {
+            console.log(error);
+
+        }
     }
-
-
 
     // Get the table body element
     const table_body = document.getElementById('visitors-table-body');
 
     //Creates list of users within the table
-    for (i of data) {
+    for (i of results) {
 
         const row = document.createElement('tr');
         // Convert the ISO date string to a Date object
@@ -633,101 +654,35 @@ function list_users(data) {
 }
 
 
-async function list_todays_visitors() {
-
-    // Get the current date
-    const now = new Date();
-
-    // Extract day, month, and year
-    const day = now.getDate(); // 1-31
-    const month = now.getMonth() + 1; // 0-11 (Add 1 to get 1-12)
-    const year = now.getFullYear(); // YYYY
-
-    // Format day and month with leading zeros if necessary
-    const formattedDay = day.toString().padStart(2, '0');
-    const formattedMonth = month.toString().padStart(2, '0');
-
-    // Prepare the object for searching
-    let obj_calendar = {
-        day: formattedDay,
-        month: formattedMonth,
-        year: year,
-    };
 
 
-    try {
 
-        // Call the search function with the current date
-        let data = await window.electronAPI.search_by_calendar(obj_calendar);
+function show_error(input, message) {
 
-        // data = JSON.parse(data);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback';
+    errorDiv.innerHTML = message;
 
-        if (data.length === 0) {
-            clear_results(true);
-            return;
-        }
+    input.classList.add('is-invalid');
 
-        list_users(data);
-
-
-    } catch (error) {
-        console.log(error);
-
-
+    if (input.nextElementSibling) {
+        input.nextElementSibling.remove();
     }
 
+    input.insertAdjacentElement('afterend', errorDiv);
+}
+
+function remove_error(input) {
+
+
+    input.classList.remove('is-invalid');
+
+    if (input.nextElementSibling) {
+        input.nextElementSibling.remove();
+    }
 }
 
 
-
-async function list_today_users_initial_load() {
-
-
-
-
-    // Get the current date
-    const now = new Date();
-
-    // Extract day, month, and year
-    const day = now.getDate(); // 1-31
-    const month = now.getMonth() + 1; // 0-11 (Add 1 to get 1-12)
-    const year = now.getFullYear(); // YYYY
-
-    // Format day and month with leading zeros if necessary
-    const formattedDay = day.toString().padStart(2, '0');
-    const formattedMonth = month.toString().padStart(2, '0');
-
-    // Prepare the object for searching
-    let obj_calendar = {
-        day: formattedDay,
-        month: formattedMonth,
-        year: year,
-    };
-
-
-
-    try {
-
-        // Call the search function with the current date
-        let data = await window.electronAPI.search_by_calendar(obj_calendar);
-
-        list_users(data);
-
-    } catch (error) {
-        console.log(error);
-
-
-    }
-
-}
-
-
-
-
-
-
-//================== CLEAN/RESET INTERFACES =================//
-//When called, clears cols data so a new search can be done
 
 function clear_results(error = null) {
 
@@ -744,16 +699,12 @@ function clear_results(error = null) {
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-remove');
 
-    } else {
+    } else {//Removes alert "nothing found"
         document.querySelector('.nada-encontrado').classList.add('d-none');
         document.querySelector('.nada-encontrado').classList.remove('d-flex');
     }
 }
 
-
-
-
-//================== STATISTIC INTERFACE =======================//
 
 async function reloadStatistics() {
     let statistic_line = document.querySelectorAll('.statistic_line')
@@ -779,9 +730,7 @@ async function reloadStatistics() {
         if (today_entries != undefined) {
 
             // Update the DOM with the number of entries
-            document.querySelector('#statistic_today').innerHTML = `
-                Hoje:  <span class="badge bg-success p-1">${today_entries.length}</span>
-              `;
+            document.querySelector('#statistic_today').value = `Hoje:  ${today_entries.length}`;
         }
     } catch (error) {
         console.error("Error processing today_entries_call:", error);
@@ -800,9 +749,7 @@ async function reloadStatistics() {
         if (month_entries != undefined) {
 
 
-            document.querySelector('#statistic_month').innerHTML = `
-                Mês:  <span class="badge  bg-success p-1">${month_entries.length}</span>
-                `;
+            document.querySelector('#statistic_month').value = `Mês: ${month_entries.length}`;
         }
 
     } catch (error) {
@@ -824,9 +771,7 @@ async function reloadStatistics() {
 
         if (total_entries != undefined) {
 
-            document.querySelector('#statistic_total').innerHTML = `
-                Total:  <span class="badge  bg-success p-1">${total_entries.length}</span>
-                `;
+            document.querySelector('#statistic_total').value = `Total: ${total_entries.length}`;
         }
 
 

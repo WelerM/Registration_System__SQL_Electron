@@ -20,174 +20,195 @@
 
 <body>
 
-    <div class="main-interface row">
+    <div class=" d-flex">
 
-        <form class="registration-interface col-md-4  border-end vh-100 py-3 px-4">
+        <!-- Inputs for registration -->
+        <div class="py-1 px-2 border-end ">
 
             <p>Registrar novo visitante</p>
 
-            <div class="">
-                <label for="input-nome" class="form-label d-none"></label>
+            <form>
 
-                <input id="input-nome" type="email" class="form-control" id="exampleInputEmail1"
-                    aria-describedby="emailHelp" placeholder="Nome completo">
-            </div>
+                <div class="d-flex gap-2">
+                    <!-- Inputs -->
+                    <div>
 
-            <div class="mt-3">
-                <label for="input-documento" class="form-label d-none"></label>
-                <input id="input-documento" type="text" class="form-control" placeholder="CPF ou RG">
-            </div>
+                        <!-- Input name -->
+                        <div class="">
+                            <label for="input-nome" class="form-label d-none"></label>
 
-            <div class="mt-3">
+                            <input id="input-nome" type="email" class="form-control" id="exampleInputEmail1"
+                                aria-describedby="emailHelp" placeholder="Nome completo">
+                        </div>
 
-                <div class="mt-3">
-                    <label for="andar-select" class="form-label d-none"></label>
+                        <!-- Input document ( id ) -->
+                        <div class="mt-3">
+                            <label for="input-documento" class="form-label d-none"></label>
+                            <input id="input-documento" type="text" class="form-control"
+                                placeholder="Documento ( apenas N° )">
+                        </div>
 
-                    <select id="andar-select" class="form-select" aria-label="Default select example">
-                        <option value="0" class="option" selected>Selecione o andar</option>
-                        <option value="1" class="option">1° Andar</option>
-                        <option value="2" class="option">2° Andar</option>
-                        <option value="3" class="option">3° Andar</option>
-                        <option value="4" class="option">4° Andar</option>
-                        <option value="5" class="option">5° Andar</option>
-                        <option value="6" class="option">6° Andar</option>
-                        <option value="7" class="option">7° Andar</option>
-                        <option value="8" class="option">8° Andar</option>
-                    </select>
-                </div>
-
-            </div>
-
-
-
-            <div class="mt-3">
-
-
-                <select id="motivo-visita-select" class="form-select" aria-label="Default select example">
-                    <option value="0" class="option" selected>Motivo da visita</option>
-                    <option value="1" class="option">Agendamento</option>
-                    <option value="2" class="option">Serviços gerais</option>
-                    <option value="3" class="option">Entrega no andar</option>
-                    <option value="4" class="option">Falar com funcionário</option>
-                    <option value="5" class="option">Outro</option>
-                </select>
-
-            </div>
-
-
-            <button class="btn btn-success border shadow-sm d-flex gap-2 mt-3" id="btn-register">
-                Cadastrar
-            </button>
-
-        </form>
-
-
-
-        <div class="pagina-busca-container col-md-8 p-0">
-
-            <div class="output-filtro-container row">
-
-
-                <!-- QUICK SEARCH -->
-                <div class="busca-options-left-container col-md-4 border-end py-3 px-4">
-
-                    <p class="">Pesquisa rápida</p>
-
-                    <div class="m-0 p-0 ">
-
-                        <label for="search-by-name" class="form-label d-none"></label>
-
-                        <input id="search-by-name" type="text" class="form-control"
-                            placeholder="Pesquisar por nome">
                     </div>
 
+                    <div>
+                        <!-- Select visit floor -->
+                        <div class="">
 
-                    <div class="m-0 p-0 mt-3">
-                        <label for="search-by-document" class="form-label d-none"></label>
+                            <div class="">
+                                <label for="andar-select" class="form-label d-none"></label>
 
-                        <input id="search-by-document" type="text" class="form-control"
-                            placeholder="Pesquisar por documento">
+                                <select id="andar-select" class="form-select" aria-label="Default select example">
+                                    <option value="0" class="option" selected>Selecione o andar</option>
+                                    <option value="1" class="option">1° Andar</option>
+                                    <option value="2" class="option">2° Andar</option>
+                                    <option value="3" class="option">3° Andar</option>
+                                    <option value="4" class="option">4° Andar</option>
+                                    <option value="5" class="option">5° Andar</option>
+                                    <option value="6" class="option">6° Andar</option>
+                                    <option value="7" class="option">7° Andar</option>
+                                    <option value="8" class="option">8° Andar</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <!-- Select visit purpose -->
+                        <div class="mt-3">
+
+
+                            <select id="motivo-visita-select" class="form-select" aria-label="Default select example">
+                                <option value="0" class="option" selected>Motivo da visita</option>
+                                <option value="1" class="option">Agendamento</option>
+                                <option value="2" class="option">Serviços gerais</option>
+                                <option value="3" class="option">Entrega no andar</option>
+                                <option value="4" class="option">Falar com funcionário</option>
+                                <option value="5" class="option">Outro</option>
+                            </select>
+
+                        </div>
 
                     </div>
 
                 </div>
 
-
-                <!-- DATE PICKER -->
-                <div class="busca-options-right-container col-md-4 border-end p-3">
-
-                    <p class="">Pesquisar por data</p>
-
-
-                    <div class="">
-                        <label for="input-datepicker" class="form-label d-none"></label>
-                        <input type="date" id="input-datepicker" class="form-control">
-                    </div>
-
-
-
-                    <button class="btn btn-success text-light mt-3" id="search">
-                        Procurar
-                    </button>
-
-                </div>
-
-                <!-- STATISTICS  -->
-                <div class="statistics-container col-md-4 p-3">
-
-                    <p>Estatísticas</p>
-
-                    <div class="statistics-inner-container">
-                        <div id="statistic_today"></div>
-                        <div id="statistic_month"></div>
-                        <div id="statistic_total"></div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="bg-body-tertiary h-100 w-100 border-top ">
-
-                <table class="table table-striped  ">
-
-                    <thead>
-                        <tr>
-                            <th class="px-3">Nome</th>
-                            <th>Documento</th>
-                            <th>Andar</th>
-                            <th>Motivo da visita</th>
-                            <th>Data</th>
-                            <th>Hora</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="visitors-table-body">
-                        <!-- Rows will be dynamically inserted here -->
-                    </tbody>
-
-                </table>
-
-                <div class="nada-encontrado alert alert-danger align-items-center w-50 d-none align-items-center justify-content-center gap-3 m-auto"
-                    role="alert">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                        <path
-                            d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                    </svg>
-
-                    Nada encontrado
-
-                </div>
-            </div>
-
+                <button id="btn-register" class="btn btn-success btn-sm border shadow-sm d-flex gap-2 mt-2">
+                    Cadastrar
+                </button>
+            </form>
 
         </div>
 
 
+        <!-- QUICK SEARCH -->
+        <div class="py-1 px-2 border-end ">
+
+            <p class="">Pesquisa rápida</p>
+
+            <div class="m-0 p-0 ">
+
+                <label for="search-by-name" class="form-label d-none"></label>
+
+                <input id="search-by-name" type="text" class="form-control" placeholder="Pesquisar por nome">
+            </div>
+
+
+            <div class="m-0 p-0 mt-3">
+                <label for="search-by-document" class="form-label d-none"></label>
+
+                <input id="search-by-document" type="text" class="form-control" placeholder="Pesquisar por documento">
+
+            </div>
+
+        </div>
+
+
+        <!-- DATE PICKER -->
+        <div class="py-1 px-2 border-end">
+
+            <p class="">Pesquisar por data</p>
+
+
+            <div class="">
+                <label for="input-datepicker" class="form-label d-none"></label>
+                <input type="date" id="input-datepicker" class="form-control">
+            </div>
+
+
+
+            <button id="search" class="btn btn-success btn-sm text-light mt-3">
+                Procurar
+            </button>
+
+        </div>
+
+        <!-- STATISTICS  -->
+        <div class="py-1 px-2">
+
+            <p>Estatísticas</p>
+
+            <div class="statistics-inner-container">
+
+                <div class="mt-3">
+                    <label for="statistic_today" class="form-label d-none"></label>
+                    <input disabled id="statistic_today" type="text" class="form-control">
+                </div>
+
+
+                <div class="mt-1">
+                    <label for="statistic_month" class="form-label d-none"></label>
+                    <input disabled id="statistic_month" type="text" class="form-control">
+                </div>
+
+                <div class="mt-1">
+                    <label for="statistic_total" class="form-label d-none"></label>
+                    <input disabled id="statistic_total" type="text" class="form-control">
+                </div>
+
+
+
+            </div>
+
+        </div>
 
     </div>
+
+    <div class="bg-body-tertiary vh-100 w-100 border-top " style="overflow-y: hidden;">
+
+        <table class="table table-striped  ">
+
+            <thead>
+                <tr>
+                    <th class="px-3">Nome</th>
+                    <th>Documento</th>
+                    <th>Andar</th>
+                    <th>Motivo da visita</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody id="visitors-table-body">
+                <!-- Rows will be dynamically inserted here -->
+            </tbody>
+
+        </table>
+
+        <div class="nada-encontrado alert alert-danger align-items-center w-25 d-none align-items-center justify-content-center gap-3 m-auto"
+            role="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                <path
+                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+            </svg>
+
+            Nada encontrado
+
+        </div>
+    </div>
+
+
+
 
 
     <!-- Button trigger modal -->
@@ -218,7 +239,7 @@
 
 
                         <!-- User visits table -->
-                        <div id="visits-table" class="d-flex flex-column" >
+                        <div id="visits-table" class="d-flex flex-column">
 
                             <!-- User info table -->
                             <table class="table ">
@@ -240,7 +261,8 @@
 
                             <h5 class="mt=5">Visitas</h5>
 
-                            <table class="table table-striped bg-success p-5" style="max-height: 400px; overflow-y: scroll;">
+                            <table class="table table-striped bg-success p-5"
+                                style="max-height: 400px; overflow-y: scroll;">
 
 
                                 <thead>
@@ -251,7 +273,8 @@
                                     </tr>
                                 </thead>
 
-                                <tbody id="visits-table-body" class="bg-transparent p-5" style="max-height: 400px; overflow-y: scroll;">
+                                <tbody id="visits-table-body" class="bg-transparent p-5"
+                                    style="max-height: 400px; overflow-y: scroll;">
 
                                 </tbody>
 
