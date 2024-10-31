@@ -19,6 +19,7 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "electron": "^22.0.1",
+    "flatpickr": "^4.6.13",
     "nodemon": "^2.0.20",
     "sequelize": "^6.37.3",
     "sequelize-cli": "^6.6.2",

@@ -11,8 +11,15 @@
 
     <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./assets/js/renderer.js" defer></script>
     <script src="../node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
+    <link href="../node_modules/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="../node_modules/flatpickr/dist/flatpickr.min.js"></script>
+    <script src="../node_modules/flatpickr/dist/l10n/pt.js"></script>
+
+    <script src="./assets/js/renderer.js" defer></script>
+
+
 
 
 
@@ -20,81 +27,66 @@
 
 <body>
 
+    <!-- REGISTER & SEARCH INTERFACE -->
     <div class=" d-flex">
 
         <!-- Inputs for registration -->
         <div class="py-1 px-2 border-end ">
 
-            <p>Registrar novo visitante</p>
+            <p>Registrar novo(a) visitante</p>
 
-            <form>
+            <!-- Inputs -->
+            <form class="d-flex gap-2 p-0">
 
-                <div class="d-flex gap-2">
-                    <!-- Inputs -->
-                    <div>
-
-                        <!-- Input name -->
-                        <div class="">
-                            <label for="input-nome" class="form-label d-none"></label>
-
-                            <input id="input-nome" type="email" class="form-control" id="exampleInputEmail1"
-                                aria-describedby="emailHelp" placeholder="Nome completo">
-                        </div>
-
-                        <!-- Input document ( id ) -->
-                        <div class="mt-3">
-                            <label for="input-documento" class="form-label d-none"></label>
-                            <input id="input-documento" type="text" class="form-control"
-                                placeholder="Documento ( apenas N° )">
-                        </div>
-
-                    </div>
-
-                    <div>
-                        <!-- Select visit floor -->
-                        <div class="">
-
-                            <div class="">
-                                <label for="andar-select" class="form-label d-none"></label>
-
-                                <select id="andar-select" class="form-select" aria-label="Default select example">
-                                    <option value="0" class="option" selected>Selecione o andar</option>
-                                    <option value="1" class="option">1° Andar</option>
-                                    <option value="2" class="option">2° Andar</option>
-                                    <option value="3" class="option">3° Andar</option>
-                                    <option value="4" class="option">4° Andar</option>
-                                    <option value="5" class="option">5° Andar</option>
-                                    <option value="6" class="option">6° Andar</option>
-                                    <option value="7" class="option">7° Andar</option>
-                                    <option value="8" class="option">8° Andar</option>
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <!-- Select visit purpose -->
-                        <div class="mt-3">
+                <!-- INPUTS -->
+                <div>
+                    <!-- Input name -->
+                    <label for="input-name" class="d-none"></label>
+                    <input id="input-name" type="email" class="form-control " id="exampleInputEmail1"
+                        aria-describedby="emailHelp" placeholder="Nome completo">
 
 
-                            <select id="motivo-visita-select" class="form-select" aria-label="Default select example">
-                                <option value="0" class="option" selected>Motivo da visita</option>
-                                <option value="1" class="option">Agendamento</option>
-                                <option value="2" class="option">Serviços gerais</option>
-                                <option value="3" class="option">Entrega no andar</option>
-                                <option value="4" class="option">Falar com funcionário</option>
-                                <option value="5" class="option">Outro</option>
-                            </select>
-
-                        </div>
-
-                    </div>
+                    <!-- Input document ( id ) -->
+                    <label for="input-document" class="d-none"></label>
+                    <input id="input-document" type="text" class="form-control mt-3"
+                        placeholder="Documento ( apenas N° )">
 
                 </div>
 
-                <button id="btn-register" class="btn btn-success btn-sm border shadow-sm d-flex gap-2 mt-2">
-                    Cadastrar
-                </button>
+                <!-- SELECTS -->
+                <div>
+                    <!-- Select visit floor -->
+                    <label for="floor-select" class="d-none"></label>
+                    <select id="floor-select" class="form-select" aria-label="Default select example">
+                        <option value="0" class="option" selected>Selecione o andar</option>
+                        <option value="1" class="option">1° Andar</option>
+                        <option value="2" class="option">2° Andar</option>
+                        <option value="3" class="option">3° Andar</option>
+                        <option value="4" class="option">4° Andar</option>
+                        <option value="5" class="option">5° Andar</option>
+                        <option value="6" class="option">6° Andar</option>
+                        <option value="7" class="option">7° Andar</option>
+                        <option value="8" class="option">8° Andar</option>
+                    </select>
+
+                    <!-- Select visit purpose -->
+                    <label for="visit-purpose-select" class="d-none"></label>
+                    <select id="visit-purpose-select" class="form-select mt-3">
+                        <option value="0" class="option" selected>Motivo da visita</option>
+                        <option value="1" class="option">Agendamento</option>
+                        <option value="2" class="option">Serviços gerais</option>
+                        <option value="3" class="option">Entrega no andar</option>
+                        <option value="4" class="option">Falar com funcionário</option>
+                        <option value="5" class="option">Outro</option>
+                    </select>
+
+                </div>
+
             </form>
+
+            <button id="btn-register" class="btn btn-success btn-sm border shadow-sm d-flex gap-2 mt-2">
+                Cadastrar
+            </button>
 
         </div>
 
@@ -122,6 +114,32 @@
         </div>
 
 
+        <!-- SEARCH BY PERIOD -->
+        <div class="py-1 px-2 border-end">
+
+            <p class="">Pesquisa por período</p>
+
+            <!-- Date begin -->
+            <div class="">
+                <label for="datepicker-begin" class="form-label d-none"></label>
+                <input type="text" id="datepicker-begin" class="form-control " placeholder="Data início">
+            </div>
+
+
+
+            <!-- Date end -->
+            <div class="mt-3">
+                <label for="datepicker-end" class="form-label d-none"></label>
+                <input type="text" id="datepicker-end" class="form-control" placeholder="Data fim">
+            </div>
+
+
+            <button id="btn-search-by-period" class="btn btn-success btn-sm text-light mt-2">
+                Procurar
+            </button>
+
+        </div>
+
         <!-- DATE PICKER -->
         <div class="py-1 px-2 border-end">
 
@@ -130,7 +148,7 @@
 
             <div class="">
                 <label for="input-datepicker" class="form-label d-none"></label>
-                <input type="date" id="input-datepicker" class="form-control">
+                <input type="date" id="input-datepicker" class="form-control" placeholder="Abrir calendário">
             </div>
 
 
@@ -172,7 +190,9 @@
 
     </div>
 
-    <div class="bg-body-tertiary vh-100 w-100 border-top " style="overflow-y: hidden;">
+
+    <!-- RESULTS INTERFACE -->
+    <div class=" w-100  border-top ">
 
         <table class="table table-striped  ">
 
@@ -196,6 +216,7 @@
 
         <div class="nada-encontrado alert alert-danger align-items-center w-25 d-none align-items-center justify-content-center gap-3 m-auto"
             role="alert">
+
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                 class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
                 <path
@@ -226,9 +247,9 @@
 
                 <div class="modal-header">
 
-
-                    <h5 class="modal-title fs-5" id="modal-label">Informações do usuário</h5>
+                    <h5 class="modal-title fs-5" id="modal-label">Informações de visitante</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
                 </div>
 
                 <div class="modal-body">
@@ -241,44 +262,70 @@
                         <!-- User visits table -->
                         <div id="visits-table" class="d-flex flex-column">
 
-                            <!-- User info table -->
-                            <table class="table ">
-                                <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th>Documento</th>
-                                    </tr>
-                                </thead>
+                            <!-- User info  -->
+                            <div class="d-flex align-items-center">
 
-                                <tbody id="visitors-table-body">
-                                    <tr>
-                                        <td id="td-visitor-name"></td>
-                                        <td id="td-visitor-id"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="currentColor"
+                                    class="bi bi-person-circle" viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path fill-rule="evenodd"
+                                        d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1" />
+                                </svg>
+
+                                <table class="table  ms-2">
+
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Documento</th>
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="visitors-table-body">
+                                        <tr>
+                                            <td id="td-visitor-name"></td>
+                                            <td id="td-visitor-id"></td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+                            <button id="btn-new-register" type="button" class="btn btn-success btn-sm mb-3"
+                                style="width: fit-content;">Registrar novamente</button>
+
 
 
                             <h5 class="mt=5">Visitas</h5>
 
-                            <table class="table table-striped bg-success p-5"
-                                style="max-height: 400px; overflow-y: scroll;">
+                            <div class="user-visits-contaier p-3" style="">
+
+                                <table class="table table-striped bg-success p-5">
+
+                                    <thead>
+                                        <tr>
+                                            <th>Data e hora</th>
+                                            <th>Motivo da visita</th>
+                                            <th>Andar</th>
+                                        </tr>
+                                    </thead>
 
 
-                                <thead>
-                                    <tr>
-                                        <th>Data e hora</th>
-                                        <th>Motivo da visita</th>
-                                        <th>Andar</th>
-                                    </tr>
-                                </thead>
+                                    <tbody id="visits-table-body" class="bg-transparent p-5">
 
-                                <tbody id="visits-table-body" class="bg-transparent p-5"
-                                    style="max-height: 400px; overflow-y: scroll;">
+                                    </tbody>
 
-                                </tbody>
 
-                            </table>
+                                </table>
+                            </div>
+
                         </div>
 
 
@@ -293,24 +340,21 @@
                                 <div class="mb-2">
                                     <label for="input-name-new-register" class="form-label m-0">Nome</label>
 
-                                    <input disabled id="input-name-new-register" type="email" class="form-control"
-                                        aria-describedby="emailHelp">
+                                    <input disabled id="input-name-new-register" type="email" class="form-control">
                                 </div>
 
                                 <!-- Input document (id) -->
                                 <div class="mb-2">
                                     <label for="input-document-new-register" class="form-label m-0">Documento</label>
 
-                                    <input disabled id="input-document-new-register" type="email" class="form-control"
-                                        aria-describedby="emailHelp">
+                                    <input disabled id="input-document-new-register" type="email" class="form-control">
                                 </div>
 
                                 <!-- Input date -->
                                 <div class="mb-2">
                                     <label for="input-date-new-register" class="form-label m-0">Data</label>
 
-                                    <input disabled id="input-date-new-register" value="Data: 19/09/23" type="email"
-                                        class="form-control" aria-describedby="emailHelp">
+                                    <input disabled id="input-date-new-register" type="email" class="form-control">
                                 </div>
 
                                 <!-- Floor select -->
@@ -336,8 +380,7 @@
                                     <label for="select-visit-purpose-new-register" class="form-label m-0">Motivo da
                                         visita</label>
 
-                                    <select id="select-visit-purpose-new-register" class="form-select"
-                                        aria-label="Default select example">
+                                    <select id="select-visit-purpose-new-register" class="form-select">
                                         <option value="0" class="option" selected>Motivo da visita</option>
                                         <option value="1" class="option">Agendamento</option>
                                         <option value="2" class="option">Serviços gerais</option>
@@ -352,6 +395,7 @@
                                 <div id="alert-new-register-error"
                                     class="alert alert-danger align-items-center w-100 d-none align-items-center justify-content-center gap-3 m-auto mt-3"
                                     role="alert">
+
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                         class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
                                         <path
@@ -366,6 +410,7 @@
                                 <button id="btn-new-register-submit" class="btn btn-success btn-sm">Confirmar</button>
 
                             </form>
+
                         </div>
 
 
@@ -373,17 +418,11 @@
                     </div>
 
 
-
-                    <div id="modal-registrar-novamente" class="d-none flex-column">
-                        <h5>Registrar usuário novamente</h5>
-                    </div>
-
                 </div>
 
                 <div class="modal-footer">
 
                     <div class="btns-container-perfil">
-                        <button id="btn-new-register" type="button" class="btn btn-success">Registrar novamente</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     </div>
 

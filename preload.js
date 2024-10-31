@@ -17,6 +17,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     //Date picker input
     search_by_calendar: (data) => ipcRenderer.invoke('search_by_calendar', data),
 
+    //Date picker input
+    search_by_period: (data) => ipcRenderer.invoke('search_by_period', data),
+
     //Find one visit
     find_one: (id) => ipcRenderer.invoke('find_one', id),
 

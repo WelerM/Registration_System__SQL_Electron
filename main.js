@@ -19,11 +19,11 @@ Visit.belongsTo(Visitor, { foreignKey: 'user_id' }); // Each Visit belongs to on
 async function initializeDatabase() {
   try {
     await sequelize.authenticate();
-    console.log('Connection to the database has been established successfully.');
+
 
     // Sync models with the database (optional)
     await sequelize.sync();
-    console.log('Database & tables created!');
+
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
@@ -40,11 +40,15 @@ const createWindow = () => {
       nodeIntegration: false  // Keep this false for security
     }
   })
-  win.setMenu(null)
+  win.setMenu(null);
+
   win.maximize();
 
   win.webContents.once('did-finish-load', () => {
     win.webContents.openDevTools();
+  
+    win.webContents.insertCSS('* { user-select: none !important; -webkit-user-select: none !important; }');
+  
   });
 
 
@@ -64,10 +68,11 @@ const createWindow = () => {
 
       // Define the new user data
       const newUser = {
-        name: data.name,
+        name: data.name.toLowerCase(),
         visitor_id: data.visitor_id,
         // created_at: new Date() // or any specific date string
       };
+
 
 
       // Insert the new user into the database
@@ -83,7 +88,7 @@ const createWindow = () => {
       const newVisit = {
         user_id: nearly_created_user_id,  // Use the newly created user ID
         visiting_floor: data.visiting_floor, // Assuming you're passing this in 'data'
-        visit_purpose: data.visit_purpose
+        visit_purpose: data.visit_purpose.toLowerCase()
       };
 
       // Insert the new visit into the database
@@ -100,7 +105,7 @@ const createWindow = () => {
 
   })
 
- 
+
   //New register
   ipcMain.on('new_visit', async (event, data) => {
 
@@ -128,15 +133,15 @@ const createWindow = () => {
       let visit_purpose = null;
 
       if (data.visit_purpose === 1) {
-        visit_purpose = 'Agendamento';
+        visit_purpose = 'agendamento';
       } else if (data.visit_purpose === 2) {
-        visit_purpose = 'Serviços gerais';
+        visit_purpose = 'serviços gerais';
       } else if (data.visit_purpose === 3) {
-        visit_purpose = 'Entrega no andar';
+        visit_purpose = 'entrega no andar';
       } else if (data.visit_purpose === 4) {
-        visit_purpose = 'Falar com funcionário';
+        visit_purpose = 'falar com funcionário';
       } else if (data.visit_purpose === 5) {
-        visit_purpose = 'Outro';
+        visit_purpose = 'outro';
       }
 
       // Now insert the new record for the "visits" table
@@ -327,6 +332,53 @@ const createWindow = () => {
     return result;
 
   });
+
+  ipcMain.handle('search_by_period', async (event, data) => {
+  // Convert dates to UTC by using toISOString().slice(0, 19) to get the YYYY-MM-DDTHH:MM:SS format
+  let initial_date = new Date(data.initial_date).toISOString().slice(0, 19).replace('T', ' ');
+  let ending_date = new Date(data.ending_date);
+  
+  // Set ending_date to the end of the specified day in UTC and format it
+  ending_date.setUTCHours(23, 59, 59, 999);
+  ending_date = ending_date.toISOString().slice(0, 19).replace('T', ' ');
+
+  const whereCondition = {
+      created_at: {
+          [Sequelize.Op.between]: [initial_date, ending_date]
+      }
+  };
+
+  // Query the Visit table with the specified date range
+  let visits = await Visit.findAll({
+      where: whereCondition,
+      order: [['created_at', 'DESC']],
+      include: [
+          {
+              model: Visitor,
+              as: 'Visitor'
+          }
+      ]
+  });
+
+  // Format the result
+  let result = visits.map(visit => {
+      return {
+          visiting_floor: visit.visiting_floor,
+          visit_purpose: visit.visit_purpose,
+          created_at: visit.created_at,
+          visitor: {
+              id: visit.Visitor.id,
+              name: visit.Visitor.name,
+              visitor_id: visit.Visitor.visitor_id,
+              created_at: visit.Visitor.created_at
+          }
+      };
+  });
+
+
+    return JSON.stringify(result);
+  })
+
 
   ipcMain.handle('find_one', async (event, data) => {
     // Validate the incoming ID to ensure it's an integer

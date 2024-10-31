@@ -1,16 +1,14 @@
-
-//INputs error handling
-
-document.querySelector('#input-nome').addEventListener('input', (e) => {
+document.querySelector('#input-name').addEventListener('input', (e) => {
 
     // Get the current value of the input field
     let value = e.target.value;
+
     // Allow only alphabetic characters (A-Z and a-z)
     e.target.value = value.replace(/[^a-zA-Z]/g, '');
 
 })
 
-document.querySelector('#input-documento').addEventListener('input', (e) => {
+document.querySelector('#input-document').addEventListener('input', (e) => {
     let value = e.target.value;
     // Allow only numeric characters (0-9)
     e.target.value = value.replace(/[^0-9]/g, '');
@@ -84,6 +82,7 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
             document.querySelector('.nada-encontrado').classList.add('d-flex');
             return;
         }
+
 
         // Call function to list users if results are found
         list_users(data);
@@ -190,7 +189,113 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
 
 
 
+
+
+//SEARCH BY PERIOD, DATE BEGIN 
+// Initialize Flatpickr on the date input
+flatpickr("#datepicker-begin", {
+    dateFormat: "Y-m-d",
+    allowInput: true,
+    locale: "pt"
+});
+document.querySelector('#datepicker-begin').addEventListener('keydown', (e) => {
+    e.preventDefault();
+    document.querySelector('#datepicker-begin')._flatpickr.open();
+});
+
+
+//SEARCH BY PERIOD, DATE END
+// Initialize Flatpickr on the date input
+flatpickr("#datepicker-end", {
+    dateFormat: "Y-m-d",
+    allowInput: true,
+    locale: "pt"
+});
+document.querySelector('#datepicker-end').addEventListener('keydown', (e) => {
+    e.preventDefault();
+    document.querySelector('#datepicker-end')._flatpickr.open();
+});
+
+document.querySelector('#btn-search-by-period').addEventListener('click', async () => {
+
+    document.querySelector('.nada-encontrado').classList.remove('d-flex');
+    document.querySelector('.nada-encontrado').classList.add('d-none');
+
+    let initial_date = document.querySelector('#datepicker-begin').value;
+    let ending_date = document.querySelector('#datepicker-end').value;
+
+    if (initial_date === '' || ending_date === '') {
+        return
+    }
+
+
+    let obj = {
+        initial_date: initial_date,
+        ending_date: ending_date
+    }
+
+    try {
+
+
+
+        let data = JSON.parse(await window.electronAPI.search_by_period(obj))//Maybe rename to calendar_search
+
+
+
+        if (data.length === 0) {
+            clear_results(true);
+            document.querySelector('.nada-encontrado').classList.remove('d-none');
+            document.querySelector('.nada-encontrado').classList.add('d-flex');
+
+
+            document.querySelector('#datepicker-begin').value = ''
+            document.querySelector('#datepicker-end').value = ''
+
+            setTimeout(() => {
+                list_users(null);
+            }, 2000)
+            return;
+        }
+
+        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+        document.querySelector('.nada-encontrado').classList.add('d-none');
+        
+        //Cleans of input date picker
+        document.querySelector('#datepicker-begin').value = ''
+        document.querySelector('#datepicker-end').value = ''
+
+        list_users(data);
+
+
+    } catch (error) {
+        console.log(error);
+    }
+
+
+
+
+})
+
+//=====================================================================================
+
+
+
+
+
+
+
+
 //INPUT SEARCH BY CALENDAR (DATEPICKER)
+flatpickr("#input-datepicker", {
+    dateFormat: "Y-m-d",
+    allowInput: true,
+    locale: "pt"
+});
+document.querySelector('#input-datepicker').addEventListener('keydown', (e) => {
+    e.preventDefault();
+    document.querySelector('#input-datepicker')._flatpickr.open();
+});
+
 document.querySelector('#search').addEventListener('click', async () => {
 
 
@@ -198,8 +303,12 @@ document.querySelector('#search').addEventListener('click', async () => {
     document.querySelector('.nada-encontrado').classList.add('d-none');
 
     let input_datepicker = document.querySelector('#input-datepicker').value
-    let [year, month, day] = input_datepicker.split("-");
 
+    if (input_datepicker === '') {
+        return
+    }
+
+    let [year, month, day] = input_datepicker.split("-");
 
     try {
 
@@ -214,9 +323,19 @@ document.querySelector('#search').addEventListener('click', async () => {
 
 
         if (data.length === 0) {
+
             clear_results(true);
+
             document.querySelector('.nada-encontrado').classList.remove('d-none');
             document.querySelector('.nada-encontrado').classList.add('d-flex');
+
+            //Cleans off input datepicker
+            document.querySelector('#input-datepicker').value = ''
+
+            setTimeout(() => {
+                list_users(null);
+            }, 2000)
+
             return;
         }
 
@@ -233,68 +352,76 @@ document.querySelector('#search').addEventListener('click', async () => {
 })
 
 
+
+
+
+
+
 //=============== REGISTRATION INTERFACE ================================//
 document.querySelector('#btn-register').addEventListener('click', (e) => {
     e.preventDefault();
 
     //Validação do formulário
-    let input_nome = document.querySelector('#input-nome')
-    let input_documento = document.querySelector('#input-documento')
-    let andar_select = document.querySelector('#andar-select')
-    let motivo_visita_select = document.querySelector('#motivo-visita-select')
+    let input_name = document.querySelector('#input-name')
+    let input_document = document.querySelector('#input-document')
+    let floor_select = document.querySelector('#floor-select')
+    let visit_purpose_select = document.querySelector('#visit-purpose-select')
 
-
+    
     // Validação do Nome
-    if (input_nome) {
+    if (input_name) {
 
-        if (input_nome.value.trim() === '') {
+        if (input_name.value.trim() === '') {
             // hasError = true;
-            show_error(input_nome, 'Por favor, insira o nome completo.');
+            show_error(input_name, 'Por favor, insira o nome completo.');
         } else {
-            remove_error(input_nome);
+            remove_error(input_name);
         }
     }
-    // Validação do Documento
-    if (input_documento) {
 
-        if (input_documento.value.trim() === '') {
+    // Validação do Documento
+    if (input_document) {
+
+        if (input_document.value.trim() === '') {
             // hasError = true;
-            show_error(input_documento, 'Por favor, insira o documento.');
+            show_error(input_document, 'Por favor, insira o documento.');
         } else {
-            remove_error(input_documento);
+            remove_error(input_document);
         }
 
     }
 
     // Validação do Andar
-    if (andar_select) {
-        if (andar_select.value === "0") {
+    if (floor_select) {
+        if (floor_select.value === "0") {
             // hasError = true;
-            show_error(andar_select, 'Por favor, selecione um andar.');
+            show_error(floor_select, 'Por favor, selecione um andar.');
         } else {
-            remove_error(andar_select);
+            remove_error(floor_select);
         }
     }
 
     // Validação do motivo da visita select
-    if (motivo_visita_select) {
-        if (motivo_visita_select.value === "0") {
+    if (visit_purpose_select) {
+        if (visit_purpose_select.value === "0") {
             // hasError = true;
-            show_error(motivo_visita_select, 'Por favor, selecione um motivo válido.');
+            show_error(visit_purpose_select, 'Por favor, selecione um motivo válido.');
         } else {
-            remove_error(motivo_visita_select);
+            remove_error(visit_purpose_select);
         }
     }
 
 
-    if (input_nome.value && input_documento.value != '' && andar_select.selectedIndex && motivo_visita_select.selectedIndex != 0) {
+
+
+    if (input_name.value && input_document.value != '' && floor_select.selectedIndex && visit_purpose_select.selectedIndex != 0) {
 
 
         //Opens swal
 
         Swal.fire({
             title: 'Cadastrar novo usuário?',
-            text: `${input_nome.value}`,
+            text: `${input_name.value}`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Cadastrar'
@@ -306,15 +433,15 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
 
                 //This function creates an object with guest's data and save it in the backend
                 //and saves it in the database
-                let andar_select = document.querySelector('#andar-select');
+                let floor_select = document.querySelector('#floor-select');
 
                 try {
 
                     const data = {
-                        name: input_nome.value,
-                        visitor_id: input_documento.value,
-                        visiting_floor: andar_select.options[andar_select.selectedIndex].value,
-                        visit_purpose: motivo_visita_select.options[motivo_visita_select.selectedIndex].text
+                        name: input_name.value,
+                        visitor_id: input_document.value,
+                        visiting_floor: floor_select.options[floor_select.selectedIndex].value,
+                        visit_purpose: visit_purpose_select.options[visit_purpose_select.selectedIndex].text
                     }
 
                     // Await the asynchronous insert_data call
@@ -331,20 +458,20 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
 
 
                 //Cleans up inputs
-                document.querySelector('#input-nome').value = ''
-                document.querySelector('#input-documento').value = ''
+                document.querySelector('#input-name').value = ''
+                document.querySelector('#input-document').value = ''
                 // Reset the select elements to their default values
-                document.getElementById('andar-select').selectedIndex = 0;
-                document.getElementById('motivo-visita-select').selectedIndex = 0;
+                document.getElementById('floor-select').selectedIndex = 0;
+                document.getElementById('visit-purpose-select').selectedIndex = 0;
 
 
             } else {
                 //Cleans up inputs
-                document.querySelector('#input-nome').value = ''
-                document.querySelector('#input-documento').value = ''
+                document.querySelector('#input-name').value = ''
+                document.querySelector('#input-document').value = ''
                 // Reset the select elements to their default values
-                document.getElementById('andar-select').selectedIndex = 0;
-                document.getElementById('motivo-visita-select').selectedIndex = 0;
+                document.getElementById('floor-select').selectedIndex = 0;
+                document.getElementById('visit-purpose-select').selectedIndex = 0;
 
             }
         });
@@ -372,10 +499,6 @@ function start() {
     list_users(null);
     reloadStatistics();
 
-    //Set currente date to the calendar input
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-    document.querySelector('#input-datepicker').value = formattedDate;
 
 }
 start();
@@ -415,19 +538,21 @@ async function list_users(data) {
             // Call the search function with the current date
             results = await window.electronAPI.search_by_calendar(obj_calendar);
 
+
         } catch (error) {
             console.log(error);
 
         }
     }
+    //-------------------------------------------------------
 
-    // Get the table body element
-    const table_body = document.getElementById('visitors-table-body');
+
 
     //Creates list of users within the table
     for (i of results) {
 
         const row = document.createElement('tr');
+        row.classList.add('tr-visit')
         // Convert the ISO date string to a Date object
         const visitante_date = new Date(i.created_at);
 
@@ -469,42 +594,41 @@ async function list_users(data) {
             `;
 
         // Append the row to the table body
-        table_body.appendChild(row)
+        document.getElementById('visitors-table-body').appendChild(row)
 
         //---------------------------------------------------------------------------
 
 
-
+        //Opnes modal with user information
         row.addEventListener('click', async (e) => {
 
+            //Cleans off previous rows from the table
+            document.querySelector('#visits-table-body').innerHTML = ''
 
             document.querySelector('#btn-new-register').classList.remove('d-none')
 
-            let user_id = Number(row.getAttribute('data-id'));
+
+            document.querySelector('#visits-table').classList.add('d-flex');
+            document.querySelector('#visits-table').classList.remove('d-none');
+
+
+            document.querySelector('#container-form-new-register').classList.add('d-none');
+            document.querySelector('#container-form-new-register').classList.remove('d-flex');
 
 
             //Search database to retrieve user's information
-            let user_information = await window.electronAPI.find_one(user_id);
-            user_information = JSON.parse(user_information);
-
-            let visits_table = document.querySelector('#visits-table')
-            visits_table.classList.add('d-flex');
-            visits_table.classList.remove('d-none');
-
-            let container_form_new_register = document.querySelector('#container-form-new-register')
-            container_form_new_register.classList.add('d-none');
-            container_form_new_register.classList.remove('d-flex');
-
+            let user_id = Number(row.getAttribute('data-id'));
+            user_information = JSON.parse(await window.electronAPI.find_one(user_id));
 
             document.querySelector('#td-visitor-name').innerHTML = user_information.name
             document.querySelector('#td-visitor-id').innerHTML = user_information.visitor_id
 
 
-            let visits_table_body = document.querySelector('#visits-table-body')
-            visits_table_body.innerHTML = ''
+
+
             //------------------------------------
 
-
+            //i
             let user_visits = user_information.visits;
             user_visits.reverse();
 
@@ -535,10 +659,11 @@ async function list_users(data) {
                     visits_tr.appendChild(td);
                 }
 
-                visits_table_body.appendChild(visits_tr);
+                document.querySelector('#visits-table-body').appendChild(visits_tr);
 
 
             })
+
 
 
             //Abrir modal user perfil
@@ -549,12 +674,23 @@ async function list_users(data) {
             document.querySelector('#btn-new-register')
                 .addEventListener('click', (e) => {
 
+
                     e.target.classList.add('d-none');
 
 
                     //Fills in input name for new register
                     document.querySelector('#input-name-new-register').value = user_information.name
                     document.querySelector('#input-document-new-register').value = user_information.visitor_id;
+
+                    //Set curent date to new register
+                    let today = new Date();
+                    today = today.toISOString().split('T')[0];
+
+                    let date_parts = today.split('-');
+                    date_parts.reverse();
+                    let formatted_date = `${date_parts[0]}/${date_parts[1]}/${date_parts[2]}`
+
+                    document.querySelector('#input-date-new-register').value = formatted_date
 
                     //Hides user information from the modal, allowing for a new register
                     let visits_table = document.querySelector('#visits-table')
@@ -568,6 +704,8 @@ async function list_users(data) {
 
                     //Actual button for submitting a new register
                     document.querySelector('#btn-new-register-submit').addEventListener('click', (e) => {
+
+
                         e.preventDefault();
 
 
@@ -593,7 +731,6 @@ async function list_users(data) {
                             }
                         }
                         //---------------------------------------------------------------------------
-
 
                         if (select_visit_purpose_new_register.value != 0 && select_floor_new_register.value != 0) {
 
@@ -622,6 +759,7 @@ async function list_users(data) {
                                         console.log(error);
 
                                     } finally {
+                                        // clear_results(f  );
                                         start();
 
                                         document.querySelector('.btn-close').click();
@@ -642,10 +780,15 @@ async function list_users(data) {
 
                             select_floor_new_register.value = 0;
                             select_visit_purpose_new_register.value = 0;
+
+
                         });
+
+
                         //----------------------------------------------------------------------------
 
                     })
+
 
                 })
         })
@@ -684,25 +827,30 @@ function remove_error(input) {
 
 
 
-function clear_results(error = null) {
+function clear_results(error) {
 
     //Removes old results
-    [...document.querySelector('#visitors-table-body').children].map(td => { td.remove() });
+    // [...document.querySelector('#visitors-table-body').children].map(td => { td.remove() });
+
+    // console.log( [...document.querySelector('#visitors-table-body').children])
+    document.querySelector('#visitors-table-body').innerHTML = '';
+    // document.querySelector('#visitors-table-body').remove();  
+
 
 
 
     if (error) {//Shows alert "nothing found"
 
-        document.querySelector('#visitors-table-body').innerHTML = ''
-
-
         document.querySelector('.nada-encontrado').classList.add('d-flex');
         document.querySelector('.nada-encontrado').classList.remove('d-remove');
 
     } else {//Removes alert "nothing found"
+
         document.querySelector('.nada-encontrado').classList.add('d-none');
         document.querySelector('.nada-encontrado').classList.remove('d-flex');
-    }
+    };
+
+
 }
 
 
@@ -782,5 +930,7 @@ async function reloadStatistics() {
     //--------------------------------------------
 
 }
+
+
 
 
