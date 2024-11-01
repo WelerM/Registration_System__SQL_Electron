@@ -47,8 +47,8 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
     if (e.inputType === 'insertFromPaste' || e.inputType === 'deleteContentBackward' || e.inputType.startsWith('delete')) {
         // Handle delete and backspace operations
 
-        document.querySelector('.nada-encontrado').classList.add('d-none');
-        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+        document.querySelector('.nothing-found').classList.add('d-none');
+        document.querySelector('.nothing-found').classList.remove('d-flex');
     }
 
 
@@ -68,8 +68,8 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
 
         if (typeof data != 'object' && data === null) {
 
-            document.querySelector('.nada-encontrado').classList.remove('d-none');
-            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            document.querySelector('.nothing-found').classList.remove('d-none');
+            document.querySelector('.nothing-found').classList.add('d-flex');
             return;
         }
 
@@ -78,8 +78,8 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
         if (data.length === 0) {
             clear_results(true);
             // Show "nothing found" message
-            document.querySelector('.nada-encontrado').classList.remove('d-none');
-            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            document.querySelector('.nothing-found').classList.remove('d-none');
+            document.querySelector('.nothing-found').classList.add('d-flex');
             return;
         }
 
@@ -93,8 +93,8 @@ document.querySelector('#search-by-name').addEventListener('input', async (e) =>
         console.error('Error fetching search results:', error);
 
         // Optionally show a user-friendly message for errors
-        document.querySelector('.nada-encontrado').classList.remove('d-none');
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nothing-found').classList.remove('d-none');
+        document.querySelector('.nothing-found').classList.add('d-flex');
     }
 });
 
@@ -134,8 +134,8 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
     // Ensure input is a valid number
     if (isNaN(input_number)) {
 
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
-        document.querySelector('.nada-encontrado').classList.remove('d-none');
+        document.querySelector('.nothing-found').classList.add('d-flex');
+        document.querySelector('.nothing-found').classList.remove('d-none');
 
         return;
 
@@ -156,8 +156,8 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
 
         if (typeof data != 'object' && data === null) {
             // If data is an array, no results were found, show the error message
-            document.querySelector('.nada-encontrado').classList.remove('d-flex');
-            document.querySelector('.nada-encontrado').classList.add('d-none');
+            document.querySelector('.nothing-found').classList.remove('d-flex');
+            document.querySelector('.nothing-found').classList.add('d-none');
             return;
         }
 
@@ -165,8 +165,8 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
         // Check if any results were found
         if (data.length === 0) {
             clear_results(true);
-            document.querySelector('.nada-encontrado').classList.remove('d-none');
-            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            document.querySelector('.nothing-found').classList.remove('d-none');
+            document.querySelector('.nothing-found').classList.add('d-flex');
             return;
         }
 
@@ -177,8 +177,8 @@ document.querySelector('#search-by-document').addEventListener('input', async (e
         console.error('Error fetching search results:', error);
         clear_results();
         // Optionally show a user-friendly message for errors
-        document.querySelector('.nada-encontrado').classList.remove('d-none');
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
+        document.querySelector('.nothing-found').classList.remove('d-none');
+        document.querySelector('.nothing-found').classList.add('d-flex');
     }
 });
 
@@ -218,8 +218,8 @@ document.querySelector('#datepicker-end').addEventListener('keydown', (e) => {
 
 document.querySelector('#btn-search-by-period').addEventListener('click', async () => {
 
-    document.querySelector('.nada-encontrado').classList.remove('d-flex');
-    document.querySelector('.nada-encontrado').classList.add('d-none');
+    document.querySelector('.nothing-found').classList.remove('d-flex');
+    document.querySelector('.nothing-found').classList.add('d-none');
 
     let initial_date = document.querySelector('#datepicker-begin').value;
     let ending_date = document.querySelector('#datepicker-end').value;
@@ -244,8 +244,8 @@ document.querySelector('#btn-search-by-period').addEventListener('click', async 
 
         if (data.length === 0) {
             clear_results(true);
-            document.querySelector('.nada-encontrado').classList.remove('d-none');
-            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            document.querySelector('.nothing-found').classList.remove('d-none');
+            document.querySelector('.nothing-found').classList.add('d-flex');
 
 
             document.querySelector('#datepicker-begin').value = ''
@@ -257,9 +257,9 @@ document.querySelector('#btn-search-by-period').addEventListener('click', async 
             return;
         }
 
-        document.querySelector('.nada-encontrado').classList.remove('d-flex');
-        document.querySelector('.nada-encontrado').classList.add('d-none');
-        
+        document.querySelector('.nothing-found').classList.remove('d-flex');
+        document.querySelector('.nothing-found').classList.add('d-none');
+
         //Cleans of input date picker
         document.querySelector('#datepicker-begin').value = ''
         document.querySelector('#datepicker-end').value = ''
@@ -299,8 +299,8 @@ document.querySelector('#input-datepicker').addEventListener('keydown', (e) => {
 document.querySelector('#search').addEventListener('click', async () => {
 
 
-    document.querySelector('.nada-encontrado').classList.remove('d-flex');
-    document.querySelector('.nada-encontrado').classList.add('d-none');
+    document.querySelector('.nothing-found').classList.remove('d-flex');
+    document.querySelector('.nothing-found').classList.add('d-none');
 
     let input_datepicker = document.querySelector('#input-datepicker').value
 
@@ -326,8 +326,8 @@ document.querySelector('#search').addEventListener('click', async () => {
 
             clear_results(true);
 
-            document.querySelector('.nada-encontrado').classList.remove('d-none');
-            document.querySelector('.nada-encontrado').classList.add('d-flex');
+            document.querySelector('.nothing-found').classList.remove('d-none');
+            document.querySelector('.nothing-found').classList.add('d-flex');
 
             //Cleans off input datepicker
             document.querySelector('#input-datepicker').value = ''
@@ -339,8 +339,8 @@ document.querySelector('#search').addEventListener('click', async () => {
             return;
         }
 
-        document.querySelector('.nada-encontrado').classList.remove('d-flex');
-        document.querySelector('.nada-encontrado').classList.add('d-none');
+        document.querySelector('.nothing-found').classList.remove('d-flex');
+        document.querySelector('.nothing-found').classList.add('d-none');
         list_users(data);
 
 
@@ -367,7 +367,7 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
     let floor_select = document.querySelector('#floor-select')
     let visit_purpose_select = document.querySelector('#visit-purpose-select')
 
-    
+
     // Validação do Nome
     if (input_name) {
 
@@ -452,7 +452,15 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
                     console.log(error);
 
                 } finally {
-                    start();
+                    clear_results(null);
+                    show_loading_status();
+
+                    //Delays for 500ms to prevent erros when refreshing
+                    setTimeout(() => {
+
+                        list_users(null);
+
+                    }, 1000);
                 }
 
 
@@ -493,23 +501,25 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
 function start() {
 
     console.log('app initiated');
-    document.querySelector('.nada-encontrado').classList.add('d-none');
-    document.querySelector('.nada-encontrado').classList.remove('d-flex');
+    document.querySelector('.nothing-found').classList.add('d-none');
+    document.querySelector('.nothing-found').classList.remove('d-flex');
 
     list_users(null);
     reloadStatistics();
-
 
 }
 start();
 
 
+let user_information;
+let user_id;
 
 async function list_users(data) {
 
     let results = data;
 
     clear_results(false);
+    remove_loading_statsus();
 
     //List today's visits
     if (results === null) {
@@ -554,14 +564,14 @@ async function list_users(data) {
         const row = document.createElement('tr');
         row.classList.add('tr-visit')
         // Convert the ISO date string to a Date object
-        const visitante_date = new Date(i.created_at);
+        const visitor_date = new Date(i.created_at);
 
 
         // Format the date in pt-BR format
-        const visitante_date_str = visitante_date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        const visitor_date_str = visitor_date.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
 
         // Format the time in HH:MM:SS format in UTC
-        const visitante_time = visitante_date.toLocaleTimeString('pt-BR', { hour12: false, timeZone: 'UTC' });
+        const visitor_time = visitor_date.toLocaleTimeString('pt-BR', { hour12: false, timeZone: 'UTC' });
 
 
         // Add cells to the row for each data field
@@ -575,8 +585,8 @@ async function list_users(data) {
                 <td>${i.visiting_floor}°</td>
                 <td>${i.visit_purpose}</td>
 
-                <td>${visitante_date_str}</td>
-                <td>${visitante_time}</td>
+                <td>${visitor_date_str}</td>
+                <td>${visitor_time}</td>
                 
                 <td>
              
@@ -617,7 +627,7 @@ async function list_users(data) {
 
 
             //Search database to retrieve user's information
-            let user_id = Number(row.getAttribute('data-id'));
+            user_id = Number(row.getAttribute('data-id'));
             user_information = JSON.parse(await window.electronAPI.find_one(user_id));
 
             document.querySelector('#td-visitor-name').innerHTML = user_information.name
@@ -628,7 +638,7 @@ async function list_users(data) {
 
             //------------------------------------
 
-            //i
+
             let user_visits = user_information.visits;
             user_visits.reverse();
 
@@ -670,133 +680,137 @@ async function list_users(data) {
             document.querySelector('#btn-launch-modal').click();
 
 
-            //Fake button for new register
-            document.querySelector('#btn-new-register')
-                .addEventListener('click', (e) => {
 
-
-                    e.target.classList.add('d-none');
-
-
-                    //Fills in input name for new register
-                    document.querySelector('#input-name-new-register').value = user_information.name
-                    document.querySelector('#input-document-new-register').value = user_information.visitor_id;
-
-                    //Set curent date to new register
-                    let today = new Date();
-                    today = today.toISOString().split('T')[0];
-
-                    let date_parts = today.split('-');
-                    date_parts.reverse();
-                    let formatted_date = `${date_parts[0]}/${date_parts[1]}/${date_parts[2]}`
-
-                    document.querySelector('#input-date-new-register').value = formatted_date
-
-                    //Hides user information from the modal, allowing for a new register
-                    let visits_table = document.querySelector('#visits-table')
-                    visits_table.classList.add('d-none');
-                    visits_table.classList.remove('d-flex');
-
-                    //Shows new register form within the same modal
-                    let container_form_new_register = document.querySelector('#container-form-new-register')
-                    container_form_new_register.classList.add('d-flex');
-                    container_form_new_register.classList.remove('d-none');
-
-                    //Actual button for submitting a new register
-                    document.querySelector('#btn-new-register-submit').addEventListener('click', (e) => {
-
-
-                        e.preventDefault();
-
-
-                        //Checks if user has selected "floor" and "visit purpose" for new register
-                        let select_floor_new_register = document.querySelector('#select-floor-new-register');
-                        let select_visit_purpose_new_register = document.querySelector('#select-visit-purpose-new-register');
-
-                        if (select_floor_new_register) {
-                            if (select_floor_new_register.value === "0") {
-                                // hasError = true;
-                                show_error(select_floor_new_register, 'Por favor, selecione um andar.');
-                            } else {
-                                remove_error(select_floor_new_register);
-                            }
-                        }
-
-                        if (select_visit_purpose_new_register) {
-                            if (select_visit_purpose_new_register.value === "0") {
-                                // hasError = true;
-                                show_error(select_visit_purpose_new_register, 'Por favor, selecione um motivo da visita.');
-                            } else {
-                                remove_error(select_visit_purpose_new_register);
-                            }
-                        }
-                        //---------------------------------------------------------------------------
-
-                        if (select_visit_purpose_new_register.value != 0 && select_floor_new_register.value != 0) {
-
-                            Swal.fire({
-                                title: 'Registrar novamente o usuário?',
-                                text: "Nome: ",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Cadastrar',
-                                cancelButtonText: 'Cancelar',
-                            }).then(async (result) => {
-
-                                if (result.isConfirmed) {
-
-                                    let new_register = {
-                                        user_id: user_id,
-                                        visiting_floor: Number(select_floor_new_register.value),
-                                        visit_purpose: Number(select_visit_purpose_new_register.value)
-                                    };
-
-
-                                    try {
-                                        await window.electronAPI.new_visit(new_register)
-
-                                    } catch (error) {
-                                        console.log(error);
-
-                                    } finally {
-                                        // clear_results(f  );
-                                        start();
-
-                                        document.querySelector('.btn-close').click();
-                                    }
-
-                                }
-                            });
-
-                        }
-
-
-
-                        // When the "new register" modal is closed, removes any error the user 
-                        // might have had in the in the selects
-                        document.getElementById('modal').addEventListener('hidden.bs.modal', () => {
-                            remove_error(select_visit_purpose_new_register);
-                            remove_error(select_floor_new_register);
-
-                            select_floor_new_register.value = 0;
-                            select_visit_purpose_new_register.value = 0;
-
-
-                        });
-
-
-                        //----------------------------------------------------------------------------
-
-                    })
-
-
-                })
         })
     }
 
 }
 
 
+//Opnes modal for new register
+document.querySelector('#btn-new-register')
+    .addEventListener('click', (e) => {
+
+
+        //Hides user information from the modal, allowing for a new register
+        e.target.classList.add('d-none');
+        let visits_table = document.querySelector('#visits-table')
+        visits_table.classList.add('d-none');
+        visits_table.classList.remove('d-flex');
+
+
+        //Fills in input name for new register
+        document.querySelector('#input-name-new-register').value = user_information.name
+        document.querySelector('#input-document-new-register').value = user_information.visitor_id;
+
+        //Set curent date to new register
+        let today = new Date();
+        today = today.toISOString().split('T')[0];
+        let date_parts = today.split('-');
+        date_parts.reverse();
+        let formatted_date = `${date_parts[0]}/${date_parts[1]}/${date_parts[2]}`
+        document.querySelector('#input-date-new-register').value = formatted_date
+
+
+        //Shows new register form within the same modal
+        let container_form_new_register = document.querySelector('#container-form-new-register')
+        container_form_new_register.classList.add('d-flex');
+        container_form_new_register.classList.remove('d-none');
+
+    })
+
+//Actual button for submitting a new register
+document.querySelector('#btn-new-register-submit').addEventListener('click', (e) => {
+
+
+    e.preventDefault();
+
+
+    //Checks if user has selected "floor" and "visit purpose" for new register
+    let select_floor_new_register = document.querySelector('#select-floor-new-register');
+    let select_visit_purpose_new_register = document.querySelector('#select-visit-purpose-new-register');
+
+    if (select_floor_new_register) {
+        if (select_floor_new_register.value === "0") {
+            // hasError = true;
+            show_error(select_floor_new_register, 'Por favor, selecione um andar.');
+        } else {
+            remove_error(select_floor_new_register);
+        }
+    }
+
+    if (select_visit_purpose_new_register) {
+        if (select_visit_purpose_new_register.value === "0") {
+            // hasError = true;
+            show_error(select_visit_purpose_new_register, 'Por favor, selecione um motivo da visita.');
+        } else {
+            remove_error(select_visit_purpose_new_register);
+        }
+    }
+    //---------------------------------------------------------------------------
+
+    if (select_visit_purpose_new_register.value != 0 && select_floor_new_register.value != 0) {
+
+        Swal.fire({
+            title: 'Registrar novamente o usuário?',
+            text: "Nome: ",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Cadastrar',
+            cancelButtonText: 'Cancelar',
+        }).then(async (result) => {
+
+            if (result.isConfirmed) {
+
+                let new_register = {
+                    user_id: user_id,
+                    visiting_floor: Number(select_floor_new_register.value),
+                    visit_purpose: Number(select_visit_purpose_new_register.value)
+                };
+
+
+                try {
+                    await window.electronAPI.new_visit(new_register)
+
+                } catch (error) {
+                    console.log(error);
+
+                } finally {
+
+                    clear_results(null);
+                    show_loading_status();
+
+                    //Delays for 500ms to prevent erros when refreshing
+                    setTimeout(() => {
+
+                        list_users(null);
+
+                    }, 1000);
+                    document.querySelector('.btn-close').click();
+                }
+
+            }
+        });
+
+    }
+
+
+    // When the "new register" modal is closed, removes any error the user 
+    // might have had in the in the selects
+    document.getElementById('modal').addEventListener('hidden.bs.modal', () => {
+        remove_error(select_visit_purpose_new_register);
+        remove_error(select_floor_new_register);
+
+        select_floor_new_register.value = 0;
+        select_visit_purpose_new_register.value = 0;
+
+
+    });
+
+
+    //----------------------------------------------------------------------------
+
+})
 
 
 
@@ -830,24 +844,18 @@ function remove_error(input) {
 function clear_results(error) {
 
     //Removes old results
-    // [...document.querySelector('#visitors-table-body').children].map(td => { td.remove() });
 
-    // console.log( [...document.querySelector('#visitors-table-body').children])
     document.querySelector('#visitors-table-body').innerHTML = '';
-    // document.querySelector('#visitors-table-body').remove();  
-
-
-
 
     if (error) {//Shows alert "nothing found"
 
-        document.querySelector('.nada-encontrado').classList.add('d-flex');
-        document.querySelector('.nada-encontrado').classList.remove('d-remove');
+        document.querySelector('.nothing-found').classList.add('d-flex');
+        document.querySelector('.nothing-found').classList.remove('d-remove');
 
     } else {//Removes alert "nothing found"
 
-        document.querySelector('.nada-encontrado').classList.add('d-none');
-        document.querySelector('.nada-encontrado').classList.remove('d-flex');
+        document.querySelector('.nothing-found').classList.add('d-none');
+        document.querySelector('.nothing-found').classList.remove('d-flex');
     };
 
 
@@ -933,4 +941,13 @@ async function reloadStatistics() {
 
 
 
+function show_loading_status() {
+    document.querySelector('#gif-loading-status').classList.remove('d-none');
+    document.querySelector('#gif-loading-status').classList.add('d-flex');
 
+}
+
+function remove_loading_statsus() {
+    document.querySelector('#gif-loading-status').classList.add('d-none');
+    document.querySelector('#gif-loading-status').classList.remove('d-flex');
+}

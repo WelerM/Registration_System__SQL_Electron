@@ -15,8 +15,9 @@ DOING:
 TODO:
 
 
-
+    #trocar "camel case" para _
     #adicionar registro de foto para cada visitante
+    
     #bug: ao cadastrar novamente um usuário, a lista nao é atualizada;
 
     

@@ -41,44 +41,51 @@
                 <!-- INPUTS -->
                 <div>
                     <!-- Input name -->
-                    <label for="input-name" class="d-none"></label>
-                    <input id="input-name" type="email" class="form-control " id="exampleInputEmail1"
-                        aria-describedby="emailHelp" placeholder="Nome completo">
+                    <div>
+                        <label for="input-name" class="d-none"></label>
+                        <input id="input-name" type="email" class="form-control " id="exampleInputEmail1"
+                            aria-describedby="emailHelp" placeholder="Nome completo">
+                    </div>
 
-
-                    <!-- Input document ( id ) -->
-                    <label for="input-document" class="d-none"></label>
-                    <input id="input-document" type="text" class="form-control mt-3"
-                        placeholder="Documento ( apenas N° )">
+                    <div>
+                        <!-- Input document ( id ) -->
+                        <label for="input-document" class="d-none"></label>
+                        <input id="input-document" type="text" class="form-control mt-3"
+                            placeholder="Documento ( apenas N° )">
+                    </div>
 
                 </div>
 
                 <!-- SELECTS -->
                 <div>
-                    <!-- Select visit floor -->
-                    <label for="floor-select" class="d-none"></label>
-                    <select id="floor-select" class="form-select" aria-label="Default select example">
-                        <option value="0" class="option" selected>Selecione o andar</option>
-                        <option value="1" class="option">1° Andar</option>
-                        <option value="2" class="option">2° Andar</option>
-                        <option value="3" class="option">3° Andar</option>
-                        <option value="4" class="option">4° Andar</option>
-                        <option value="5" class="option">5° Andar</option>
-                        <option value="6" class="option">6° Andar</option>
-                        <option value="7" class="option">7° Andar</option>
-                        <option value="8" class="option">8° Andar</option>
-                    </select>
-
-                    <!-- Select visit purpose -->
-                    <label for="visit-purpose-select" class="d-none"></label>
-                    <select id="visit-purpose-select" class="form-select mt-3">
-                        <option value="0" class="option" selected>Motivo da visita</option>
-                        <option value="1" class="option">Agendamento</option>
-                        <option value="2" class="option">Serviços gerais</option>
-                        <option value="3" class="option">Entrega no andar</option>
-                        <option value="4" class="option">Falar com funcionário</option>
-                        <option value="5" class="option">Outro</option>
-                    </select>
+                    <div>
+                        <!-- Select visit floor -->
+                        <label for="floor-select" class="d-none"></label>
+                        <select id="floor-select" class="form-select" aria-label="Default select example">
+                            <option value="0" class="option" selected>Selecione o andar</option>
+                            <option value="1" class="option">1° Andar</option>
+                            <option value="2" class="option">2° Andar</option>
+                            <option value="3" class="option">3° Andar</option>
+                            <option value="4" class="option">4° Andar</option>
+                            <option value="5" class="option">5° Andar</option>
+                            <option value="6" class="option">6° Andar</option>
+                            <option value="7" class="option">7° Andar</option>
+                            <option value="8" class="option">8° Andar</option>
+                        </select>
+                    </div>
+<div>
+    
+                        <!-- Select visit purpose -->
+                        <label for="visit-purpose-select" class="d-none"></label>
+                        <select id="visit-purpose-select" class="form-select mt-3">
+                            <option value="0" class="option" selected>Motivo da visita</option>
+                            <option value="1" class="option">Agendamento</option>
+                            <option value="2" class="option">Serviços gerais</option>
+                            <option value="3" class="option">Entrega no andar</option>
+                            <option value="4" class="option">Falar com funcionário</option>
+                            <option value="5" class="option">Outro</option>
+                        </select>
+</div>
 
                 </div>
 
@@ -192,7 +199,7 @@
 
 
     <!-- RESULTS INTERFACE -->
-    <div class=" w-100  border-top ">
+    <div class=" w-100  border-top d-flex flex-column align-items-center">
 
         <table class="table table-striped  ">
 
@@ -214,7 +221,7 @@
 
         </table>
 
-        <div class="nada-encontrado alert alert-danger align-items-center w-25 d-none align-items-center justify-content-center gap-3 m-auto"
+        <div class="nothing-found alert alert-danger align-items-center w-25 d-none align-items-center justify-content-center gap-3 m-auto"
             role="alert">
 
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -226,6 +233,9 @@
             Nada encontrado
 
         </div>
+
+        <img id="gif-loading-status" class="d-none mt-5 mx-auto" src="./assets/img/loading_status.gif" alt="">
+
     </div>
 
 
@@ -340,21 +350,21 @@
                                 <div class="mb-2">
                                     <label for="input-name-new-register" class="form-label m-0">Nome</label>
 
-                                    <input disabled id="input-name-new-register" type="email" class="form-control">
+                                    <input disabled id="input-name-new-register" type="text" class="form-control">
                                 </div>
 
                                 <!-- Input document (id) -->
                                 <div class="mb-2">
                                     <label for="input-document-new-register" class="form-label m-0">Documento</label>
 
-                                    <input disabled id="input-document-new-register" type="email" class="form-control">
+                                    <input disabled id="input-document-new-register" type="text" class="form-control">
                                 </div>
 
                                 <!-- Input date -->
                                 <div class="mb-2">
                                     <label for="input-date-new-register" class="form-label m-0">Data</label>
 
-                                    <input disabled id="input-date-new-register" type="email" class="form-control">
+                                    <input disabled id="input-date-new-register" type="text" class="form-control">
                                 </div>
 
                                 <!-- Floor select -->
