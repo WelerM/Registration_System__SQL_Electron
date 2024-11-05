@@ -459,6 +459,7 @@ document.querySelector('#btn-register').addEventListener('click', (e) => {
                     setTimeout(() => {
 
                         list_users(null);
+                        reloadStatistics();
 
                     }, 1000);
                 }
@@ -615,7 +616,7 @@ async function list_users(data) {
             //Cleans off previous rows from the table
             document.querySelector('#visits-table-body').innerHTML = ''
 
-            document.querySelector('#btn-new-register').classList.remove('d-none')
+            document.querySelector('#btn-open-modal-new-register').classList.remove('d-none')
 
 
             document.querySelector('#visits-table').classList.add('d-flex');
@@ -688,7 +689,7 @@ async function list_users(data) {
 
 
 //Opnes modal for new register
-document.querySelector('#btn-new-register')
+document.querySelector('#btn-open-modal-new-register')
     .addEventListener('click', (e) => {
 
 
@@ -784,6 +785,7 @@ document.querySelector('#btn-new-register-submit').addEventListener('click', (e)
                     setTimeout(() => {
 
                         list_users(null);
+                        reloadStatistics();
 
                     }, 1000);
                     document.querySelector('.btn-close').click();

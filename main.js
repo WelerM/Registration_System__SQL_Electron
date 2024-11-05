@@ -45,7 +45,7 @@ const createWindow = () => {
   win.maximize();
 
   win.webContents.once('did-finish-load', () => {
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
   
     win.webContents.insertCSS('* { user-select: none !important; -webkit-user-select: none !important; }');
   
