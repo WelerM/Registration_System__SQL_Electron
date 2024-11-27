@@ -10,4 +10,6 @@ Technologies: JavaScript, ElectronJS, sqlite, bootstrap, html and css.
 ![gftehrgh3ew](https://github.com/user-attachments/assets/b80121c6-7519-49dc-8872-e6ba4aaf27ea)
 
 
-
+# Instructions
+$npm install
+$npm start
