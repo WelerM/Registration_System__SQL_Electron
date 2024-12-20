@@ -3,29 +3,30 @@ const path = require('path');
 const { Sequelize } = require('sequelize');
 const Visitor = require('./models/visitor'); // Adjust the path accordingly
 const Visit = require('./models/visits'); // Adjust the path accordingly
+const { storagePath } = require('./config/config.js'); // Dynamically import storage path based on config
 
 // Initialize Sequelize
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './database/registration_system.sqlite'
+  storage: storagePath // Using dynamic path from config
 });
 
 // Define associations
 Visitor.hasMany(Visit, { foreignKey: 'user_id' }); // One Visitor has many Visits
 Visit.belongsTo(Visitor, { foreignKey: 'user_id' }); // Each Visit belongs to one Visitor
 
-//=======================================================================
-
+// Function to initialize the database connection
 async function initializeDatabase() {
   try {
-    await sequelize.authenticate();
-
+    await sequelize.authenticate(); // Test connection
+    console.log('✅ Database connection established successfully.');
 
     // Sync models with the database (optional)
     await sequelize.sync();
+    console.log('✅ Database synced successfully.');
 
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error('❌ Unable to connect to the database:', error);
   }
 }
 
