@@ -1,12 +1,19 @@
 document.querySelector('#input-name').addEventListener('input', (e) => {
-
     // Get the current value of the input field
-    let value = e.target.value;
+    let input = e.target;
+    let value = input.value;
 
-    // Allow only alphabetic characters (A-Z and a-z)
-    e.target.value = value.replace(/[^a-zA-Z]/g, '');
+    // Allow alphabetic characters (A-Z, a-z) and spaces
+    let sanitizedValue = value.replace(/[^a-zA-Z\s]/g, '');
 
-})
+    // Update the input value without affecting the cursor
+    if (value !== sanitizedValue) {
+        let cursorPosition = input.selectionStart - (value.length - sanitizedValue.length);
+        input.value = sanitizedValue;
+        input.setSelectionRange(cursorPosition, cursorPosition);
+    }
+});
+
 
 document.querySelector('#input-document').addEventListener('input', (e) => {
     let value = e.target.value;
