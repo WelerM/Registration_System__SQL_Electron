@@ -3,7 +3,13 @@
 A desktop application to collect visitor's information and save it in a local sqlite file, which can be accessed in a friendly interface.
 Perfect for small business/places where people's id has to be collected before their entering.
 
-Technologies: JavaScript, ElectronJS, sqlite, bootstrap, html and css.
+# Technologies
+![Badge](https://img.shields.io/badge/SQL-FFFFFF)
+![Badge](https://img.shields.io/badge/Electron-47848F)
+![Badge](https://img.shields.io/badge/JavaScript-FFFF00)
+![Badge](https://img.shields.io/badge/Bootstrap-6E2BF2)
+![Badge](https://img.shields.io/badge/HTML-E34F26)
+![Badge](https://img.shields.io/badge/CSS-1572B6)
 
 
 
