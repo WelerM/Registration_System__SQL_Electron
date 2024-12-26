@@ -20,7 +20,9 @@ Perfect for small business/places where people's id has to be collected before t
 
 
 # Instructions
+```
 $npm install
+```
 $npm start
 
 # Try it
