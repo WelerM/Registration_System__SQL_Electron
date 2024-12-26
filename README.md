@@ -23,7 +23,10 @@ Perfect for small business/places where people's id has to be collected before t
 ```
 $npm install
 ```
+
+```
 $npm start
+```
 
 # Try it
 https://drive.google.com/drive/folders/1NFopkU7_LCVN9i9q97lM_rF7Q3r8UdAM
