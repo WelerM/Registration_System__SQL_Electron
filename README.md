@@ -11,6 +11,8 @@ Perfect for small business/places where people's id has to be collected before t
 ![Badge](https://img.shields.io/badge/Bootstrap-6E2BF2)
 ![Badge](https://img.shields.io/badge/HTML-E34F26)
 ![Badge](https://img.shields.io/badge/CSS-1572B6)
+![Badge](https://img.shields.io/badge/SweetAlert2-6E2BF2)
+![Badge](https://img.shields.io/badge/flatpickr-FFFFFF)
 
 
 
@@ -20,3 +22,6 @@ Perfect for small business/places where people's id has to be collected before t
 # Instructions
 $npm install
 $npm start
+
+# Try it
+https://drive.google.com/drive/folders/1NFopkU7_LCVN9i9q97lM_rF7Q3r8UdAM
