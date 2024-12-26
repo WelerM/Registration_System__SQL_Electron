@@ -4,8 +4,9 @@ A desktop application to collect visitor's information and save it in a local sq
 Perfect for small business/places where people's id has to be collected before their entering.
 
 # Technologies
-![Badge](https://img.shields.io/badge/SQL-FFFFFF)
 ![Badge](https://img.shields.io/badge/Electron-47848F)
+![Badge](https://img.shields.io/badge/SQLite-FFFFFF)
+![Badge](https://img.shields.io/badge/Sequelize-47848F)
 ![Badge](https://img.shields.io/badge/JavaScript-FFFF00)
 ![Badge](https://img.shields.io/badge/Bootstrap-6E2BF2)
 ![Badge](https://img.shields.io/badge/HTML-E34F26)
