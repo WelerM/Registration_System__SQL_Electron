@@ -12,7 +12,7 @@ Perfect for small business/places where people's id has to be collected before t
 ![Badge](https://img.shields.io/badge/HTML-E34F26)
 ![Badge](https://img.shields.io/badge/CSS-1572B6)
 ![Badge](https://img.shields.io/badge/SweetAlert2-6E2BF2)
-![Badge](https://img.shields.io/badge/flatpickr-FFFFFF)
+![Badge](https://img.shields.io/badge/Flatpickr-FFFFFF)
 
 
 
